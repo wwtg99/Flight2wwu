@@ -1,9 +1,17 @@
 {
-    "name": "Flight2wwu",
-    "description": "",
-    "keywords": [],
-    "type": "",
-    "license": "",
+    "name": "wwtg99/Flight2wwu",
+    "description": "PHP framework depends on Flight",
+    "keywords": ["MVC", "framework", "flight"],
+    "homepage": "https://github.com/wwtg99/Flight2wwu",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wentao Wu",
+            "email": "wwtg99@gmail.com",
+            "homepage": "https://github.com/wwtg99/Flight2wwu",
+            "role": "Original Developer"
+        }
+    ],
     "require": {
         "php": ">=5.6",
         "mikecao/flight": "~1.2",
