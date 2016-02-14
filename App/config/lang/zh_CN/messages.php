@@ -1,0 +1,58 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: wuwentao
+ * Date: 2015/9/8
+ * Time: 19:51
+ */
+
+return [
+    'page not found'=>'您访问的页面不存在！',
+    'authentication failed'=>'您无权访问此页面！',
+    'contact administrator'=>'请联系系统管理员以了解详情！',
+    'login to have our service'=>'请登录我们的服务',
+    'login failed'=>'登录失败！',
+    'not login'=>'您尚未登录！',
+    'change password'=>'修改密码',
+    'password mismatch'=>'密码不一致！',
+    'password changed'=>'密码修改成功！',
+    'password not changed'=>'密码修改失败！',
+    'confirm logout'=>'确定要注销吗？',
+    'server error'=>'服务器错误',
+    'Return'=>'返回',
+    'OK'=>'确定',
+    'Username'=>'用户名',
+    'Password'=>'密码',
+    'Login'=>'登录',
+    'Logout'=>'注销',
+    'Submit'=>'提交',
+    'Reset'=>'重置',
+    'Remember me'=>'记住我',
+    'Change Password'=>'修改密码',
+    'Old Password'=>'原密码',
+    'New Password'=>'新密码',
+    'Retype Password'=>'再次输入',
+    'Dear %name%'=>'亲爱的，%name%',
+    'User Center'=>'用户中心',
+    'Hello'=>'您好',
+    'Menu'=>'菜单',
+    'Help'=>'帮助',
+    'Change Log'=>'更新列表',
+    'Bug Report'=>'问题反馈',
+    'Version'=>'版本',
+    'Site Map'=>'网站地图',
+    'About Us'=>'关于我们',
+    'Home'=>'首页',
+    'Message'=>'消息',
+    'Search'=>'搜索',
+    'Debug Mode'=>'调试模式',
+    'Language'=>'语言',
+    'Error'=>'错误',
+    'Clear'=>'清空',
+    'Next'=>'下一步',
+    'Quit'=>'退出',
+    'Cancel'=>'取消',
+    'Refresh'=>'刷新',
+    'Show'=>'显示',
+    'Admin'=>'管理',
+];
