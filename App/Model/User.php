@@ -24,14 +24,15 @@ class User
     {
         $db = getDB();
         if (array_key_exists('token', $user)) {
-            $u = $db->queryOne('select id, name, email, superuser, descr, department from users where remember_token = :token and active is true', ['token'=>$user['token']]);
+            $u = $db->queryOne('select id, name, label, email, superuser, descr, department from users where remember_token = :token and active is true', ['token'=>$user['token']]);
             if ($u) {
                 if (self::verifyToken($user['token'], $u['id'])) {
-                    return ['user_id'=>$u['id'], 'username'=>$u['name'], 'department'=>$u['department'], 'email'=>$u['email'], 'superuser'=>$u['superuser'], 'descr'=>$u['descr'], 'token'=>$user['token']];
+                    $roles = self::getRoles($u['id']);
+                    return ['user_id'=>$u['id'], 'username'=>$u['name'], 'label'=>$u['label'], 'department'=>$u['department'], 'email'=>$u['email'], 'superuser'=>$u['superuser'], 'descr'=>$u['descr'], 'token'=>$user['token'], 'roles'=>$roles];
                 }
             }
         } else {
-            $u = $db->queryOne('select id, email, password, superuser, descr, department from users where name = :name and active is true', ['name' => $user['username']]);
+            $u = $db->queryOne('select id, label, email, password, superuser, descr, department from users where name = :name and active is true', ['name' => $user['username']]);
             if ($u) {
                 $uid = $u['id'];
                 $pwd = $u['password'];
@@ -39,7 +40,8 @@ class User
                 if (is_null($pwd) || $pwd === '' || password_verify($user['password'], $pwd)) {
                     $token = User::generateToken($uid, $age);
                     User::updateToken($uid, $token);
-                    return ['user_id' => $uid, 'username' => $user['username'], 'department'=>$u['department'], 'email' => $u['email'], 'superuser' => $u['superuser'], 'descr' => $u['descr'], 'token' => $token];
+                    $roles = self::getRoles($uid);
+                    return ['user_id' => $uid, 'username' => $user['username'], 'label'=>$u['label'], 'department'=>$u['department'], 'email' => $u['email'], 'superuser' => $u['superuser'], 'descr' => $u['descr'], 'token' => $token, 'roles'=>$roles];
                 }
             }
         }
@@ -89,6 +91,22 @@ class User
     }
 
     /**
+     * @param string $uid
+     * @return array
+     */
+    public static function getUser($uid)
+    {
+        $db = getDB();
+        $re = $db->queryOne("select id as user_id, name as username, label, email, department, superuser, descr, token from users where id = :uid", ['uid'=>$uid]);
+        if ($re) {
+            $roles = self::getRoles($uid);
+            $re['roles'] = $roles;
+            return $re;
+        }
+        return [];
+    }
+
+    /**
      * @param array $user
      * @return bool
      */
@@ -113,34 +131,14 @@ class User
 
     /**
      * @param string $uid
-     * @param string $object
-     * @param string $type
-     * @return int
-     */
-    public static function getAuth($uid, $object, $type)
-    {
-        $db = getDB();
-        $re = $db->queryOne("select get_auth(:uid, :obj, :type)", ['uid'=>$uid, 'obj'=>$object, 'type'=>$type]);
-        if ($re) {
-            return (int)$re['get_auth'];
-        }
-        return 0;
-    }
-
-    /**
-     * @param string $uid
      * @return array
      */
     public static function getRoles($uid)
     {
         $db = getDB();
-        $re = $db->query("select role_id from user_role where user_id = :uid", ['uid'=>$uid]);
+        $re = $db->query("select role_id, roles.name from user_role join roles on user_role.role_id = roles.id where user_id = :uid", ['uid'=>$uid]);
         if ($re) {
-            $roles = [];
-            foreach ($re as $r) {
-                array_push($roles, $r['role_id']);
-            }
-            return $roles;
+            return $re;
         }
         return [];
     }
@@ -210,7 +208,7 @@ class User
      * @param int $age
      * @return string
      */
-    public static function generateToken($uid, $age = 1)
+    private static function generateToken($uid, $age = 1)
     {
         $ip = \Flight::request()->ip;
         if (is_int($age)) {
@@ -226,7 +224,7 @@ class User
      * @param string $uid
      * @return bool
      */
-    public static function verifyToken($token, $uid)
+    private static function verifyToken($token, $uid)
     {
         if (!$token) {
             return false;

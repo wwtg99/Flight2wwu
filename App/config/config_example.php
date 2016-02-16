@@ -73,4 +73,8 @@ return [
     'assets'=>[
         'lib_conf'=>CONFIG . 'ui_libs.php'
     ],
+    //Auth
+    'auth'=>[
+        'rbac'=>CONFIG . 'rbac.php'
+    ]
 ];

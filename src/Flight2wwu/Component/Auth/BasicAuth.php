@@ -20,7 +20,7 @@ class BasicAuth implements ServiceProvider
     /**
      * @var array
      */
-    private $user = [];
+    protected $user = [];
 
     /**
      * Called after register.
@@ -116,6 +116,15 @@ class BasicAuth implements ServiceProvider
             }
         }
         return $this->user;
+    }
+
+    /**
+     * @return bool
+     */
+    public function updateUser()
+    {
+        $user = User::getUser($this->user['user_id']);
+        return $this->login($user);
     }
 
     /**

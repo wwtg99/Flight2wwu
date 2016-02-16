@@ -64,14 +64,14 @@ class Loader
         $c = $config['class_register'];
         $arr = $this->loadArrayConfig($prefix, $c);
         $this->registerClass($arr);
-        // route_controller_register
-        $c = $config['route_controller_register'];
-        $arr = $this->loadArrayConfig($prefix, $c);
-        $this->registerRouteController($arr);
         // route_register
         $c = $config['route_register'];
         $arr = $this->loadArrayConfig($prefix, $c);
         $this->registerRoute($arr);
+        // route_controller_register
+        $c = $config['route_controller_register'];
+        $arr = $this->loadArrayConfig($prefix, $c);
+        $this->registerRouteController($arr);
         // route
         $c = $config['route'];
         $f = $prefix . DIRECTORY_SEPARATOR . $c;

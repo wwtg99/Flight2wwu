@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-group text-center">
                     <button class="btn btn-primary" type="submit" id="submit" tabindex="3"><?php TIP('Submit'); ?></button>
-                    <button class="btn btn-primary" type="reset" id="reset" tabindex="4"><?php TIP('Reset'); ?></button>
+                    <button class="btn btn-default" type="reset" id="reset" tabindex="4"><?php TIP('Reset'); ?></button>
                 </div>
                 <?php if($errmsg): ?>
                     <div class="alert alert-danger text-center" role="alert">

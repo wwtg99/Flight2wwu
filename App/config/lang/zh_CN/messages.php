@@ -55,4 +55,12 @@ return [
     'Refresh'=>'刷新',
     'Show'=>'显示',
     'Admin'=>'管理',
+    'Plugins'=>'插件',
+    'operation'=>'操作',
+    'id'=>'编号',
+    'name'=>'名称',
+    'server_name'=>'服务名',
+    'category'=>'分类',
+    'description'=>'描述',
+    'enabled'=>'有效的',
 ];

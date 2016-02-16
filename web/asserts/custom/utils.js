@@ -6,32 +6,50 @@
  * jQuery plugins
  */
 (function($) {
-    // load content
-    $.fn.loadContent = function(setting, done_func, fail_func) {
-        if (!setting.hasOwnProperty('context')) {
-            setting['context'] = $(this);
-        }
-        if (!done_func) {
-            done_func = function (data, textStatus, jqXHR) {
-                $(this).html(data);
-            };
-        }
-        if (!fail_func) {
-            fail_func = function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR);
-                console.log('status: ' + textStatus);
+    $.fn.extend({
+        // bind enter button
+        bindEnter: function(callback) {
+            if (callback) {
+                $(this).keydown(function (e) {
+                    if (e.keyCode == 13) {
+                        callback();
+                    }
+                })
             }
+        },
+        // redirect to url after sec seconds
+        redirectAfter: function(url, sec) {
+            if (sec > 0) {
+                var div = $(this);
+                div.html('<p>Remain <span style="color: #8B0000;" id="span_sec">' + Math.ceil(sec) + '</span> s to redirect.</p>');
+                var d = setInterval(function() {
+                    sec--;
+                    div.find('#span_sec').text(Math.ceil(sec));
+                    if (sec <= 0) {
+                        clearInterval(d);
+                        location.href = url;
+                    }
+                }, 1000);
+            } else {
+                location.href = url;
+            }
+        },
+        // load content
+        loadContent: function(options) {
+            var opts = $.extend({}, loadContentDefault, options);
+            if (!opts.hasOwnProperty('context')) {
+                opts['context'] = $(this);
+            }
+            $.ajax(opts).done(opts.done_func).fail(opts.fail_func);
         }
-        $.ajax(setting).done(done_func).fail(fail_func);
-    };
-    // bind enter button
-    $.fn.bindEnter = function(callback) {
-        if (callback) {
-            $(this).keydown(function (e) {
-                if (e.keyCode == 13) {
-                    callback();
-                }
-            })
+    });
+    var loadContentDefault = {
+        done_func:  function (data, textStatus, jqXHR) {
+            $(this).html(data);
+        },
+        fail_func: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            console.log('status: ' + textStatus);
         }
     };
 }(jQuery));
@@ -136,19 +154,22 @@ function getJsonLength(jsonData){
  */
 function postDirect(url, pdata, new_window)
 {
-    var form = $("<form method='post'></form>");
+    var form = $("<form method='post' id='pform' class='hidden'></form>");
     form.attr({"action":url});
     if (new_window) {
         form.prop('target', '_blank');
     }
-    for (arg in pdata)
+    for (var arg in pdata)
     {
         var input = $("<input type='hidden'>");
         input.attr({"name":arg});
         input.val(pdata[arg]);
         form.append(input);
     }
-    form.submit();
+    var bt_submit = $('<input type="submit" id="pform_submit">');
+    form.append(bt_submit);
+    $(document.body).append(form);
+    $('#pform_submit').click();
 }
 
 
@@ -205,31 +226,4 @@ function getFormParams(form_id) {
         }
     });
     return params;
-}
-
-/**
- * Redirect to url after seconds show in ele.
- *
- * @param url
- * @param sec
- * @param ele Jquery element
- */
-function redirectAfter(url, sec, ele) {
-    if (sec > 0) {
-        if (ele) {
-            ele.html('<p>Remain <span style="color: darkred;">' + Math.ceil(sec) + '</span> s to redirect.</p>');
-        }
-        var d = setInterval(function() {
-            sec--;
-            if (ele) {
-                ele.html('<p>Remain <span style="color: darkred;">' + Math.ceil(sec) + '</span> s to redirect.</p>');
-            }
-            if (sec <= 0) {
-                clearInterval(d);
-                location.href = url;
-            }
-        }, 1000);
-    } else {
-        location.href = url;
-    }
 }

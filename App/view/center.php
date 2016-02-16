@@ -35,16 +35,24 @@
             </div>
         </div>
     </div>
+    <div>
+        <p>Roles</p>
+        <p><?php print_r(getAuth()->getRoles()); ?></p>
+    </div>
+    <div>
+        <input type="text" id="in_en">
+    </div>
     <div id="sec"></div>
+    <div id="lcont"></div>
     <script>
         function init_center() {
-//            redirectAfter('/', 3, $('#sec'));
-            $('#bt_test').click(function() {
-                alert('aaa');
+//            $('#sec').redirectAfter('/', 3);
+            $('#in_en').bindEnter(function(){
+                alert('aaaa');
             });
-            $('#a_test').click(function() {
-                alert('aaa');
-            });
+            $('#lcont').loadContent({url: '/', done_func: function(data) {
+                console.log(data);
+            }})
         }
     </script>
 </div>

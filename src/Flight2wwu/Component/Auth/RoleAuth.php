@@ -12,18 +12,6 @@ use App\Model\User;
 
 class RoleAuth extends BasicAuth
 {
-    /**
-     * @param string $object
-     * @return bool
-     */
-    public function isVisible($object)
-    {
-        $right = $this->getAuth($object, 'menu');
-        if ($right > 0) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * @param string $path
@@ -33,7 +21,7 @@ class RoleAuth extends BasicAuth
     public function access($path, $method = 'GET')
     {
         $method = strtoupper($method);
-        $right = $this->getAuth($path, 'path');
+        $right = $this->getPathAuth($path);
         if ($method == 'GET') {
             $m = 1;
         } elseif ($method == 'POST') {
@@ -49,43 +37,44 @@ class RoleAuth extends BasicAuth
 
     /**
      * @param string $object
-     * @return bool
-     */
-    public function isEnable($object)
-    {
-        $right = $this->getAuth($object, 'object');
-        if ($right > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param string $object
-     * @param string $type
      * @return int
      */
-    public function getAuth($object, $type)
+    public function getAuth($object)
     {
-        $uid = getUser('user_id');
-        if (!$uid) {
-            return 0;
+        $r = $this->getRoles();
+        $roles = [];
+        foreach ($r as $rr) {
+            array_push($roles, $rr['name']);
         }
-        $auth = User::getAuth($uid, $object, $type);
-        return $auth;
+        $rbac = \Flight::Rbac();
+        return $rbac->getAuth($roles, $object);
     }
 
     /**
-     * @return bool|array
+     * @param string $path
+     * @return int
      */
-    public function getRoleId()
+    public function getPathAuth($path)
+    {
+        $r = $this->getRoles();
+        $roles = [];
+        foreach ($r as $rr) {
+            array_push($roles, $rr['name']);
+        }
+        $rbac = \Flight::Rbac();
+        return $rbac->getPathAuth($roles, $path);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles()
     {
         $user = $this->getUser();
         if ($user) {
-            $id = $user['user_id'];
-            return User::getRoles($id);
+            return $user['roles'];
         }
-        return false;
+        return [];
     }
 
     /**

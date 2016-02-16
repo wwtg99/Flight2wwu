@@ -58,7 +58,7 @@ class PluginManager {
         $f = file_get_contents($conf);
         self::$instance = new PluginManager(json_decode($f, true));
         foreach (self::$instance->plugins as $id => $p) {
-            if (!$p['disabled']) {
+            if ($p['enabled']) {
                 self::$instance->enable($id);
             }
         }
@@ -118,7 +118,7 @@ class PluginManager {
             $ins = $ins->newInstance();
             if ($ins instanceof IPlugin) {
                 $this->enables[$name] = [$id, $ins];
-                $p['disabled'] = false;
+                $p['enabled'] = true;
                 $this->setPluginConfig($id, $p);
             }
         } catch (\Exception $e) {
@@ -133,7 +133,7 @@ class PluginManager {
     {
         $p = $this->getPluginConfig($id);
         $name = $p['server_name'];
-        $p['disabled'] = true;
+        $p['enabled'] = false;
         $this->setPluginConfig($id, $p);
         if (array_key_exists($name, $this->enables)) {
             if ($this->enables[$name][0] == $id) {

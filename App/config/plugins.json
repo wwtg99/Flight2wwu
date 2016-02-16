@@ -3,8 +3,8 @@
         "name": "PHP",
         "server_name": "php",
         "category": "interpreter",
-        "description": "",
+        "description": "PHP interpreter plugin",
         "class_name": "App\\Plugin\\PHPInterpreter",
-        "disabled": false
+        "enabled": true
     }
 }

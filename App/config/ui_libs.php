@@ -28,7 +28,7 @@ return [
         'prefix'=>'/asserts/custom'
     ],
     'jquery'=>[
-        'js'=>'jquery-2.1.4.min.js',
+        'js'=>'jquery-1.12.0.min.js',
         'prefix'=>'/asserts/jquery'
     ],
     'uploader'=>[
@@ -51,7 +51,7 @@ return [
     ],
     'bootstrap-table'=>[
         'css'=>'bootstrap-table.min.css',
-        'js'=>['bootstrap-table.min.js', 'bootstrap-table-zh-CN.min.js'],
+        'js'=>['bootstrap-table.min.js', 'bootstrap-table-zh-CN.min.js', 'table_utils.js'],
         'prefix'=>'/asserts/bootstrap-table'
     ],
     'bootstrap-dialog'=>[

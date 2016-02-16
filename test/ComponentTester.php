@@ -89,5 +89,52 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $body = $res->getBody();
         echo $body;
     }
+
+    public function testRbac()
+    {
+        $rbac = new \Flight2wwu\Component\Auth\RoleBasedAccessControl();
+        $rbac->loadConfig([
+            'admin'=>['*'=>3],
+            'common_user'=>[
+                '*'=>0,
+                '/view/*'=>3,
+                '/tran'=>1
+            ],
+            'test1'=>[
+                '/tran'=>2,
+                '/view/test/*'=>2
+            ]
+        ]);
+        $a = $rbac->getAuth('admin', '*');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getAuth('common_user', '*');
+        $this->assertEquals(0, $a);
+        $a = $rbac->getAuth('common_user', '/tran');
+        $this->assertEquals(1, $a);
+        $a = $rbac->getPathAuth('common_user', '/view/a');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getPathAuth('common_user', '/vie');
+        $this->assertEquals(0, $a);
+        $a = $rbac->getAuth('admin', '/v');
+        $this->assertEquals(-1, $a);
+        $a = $rbac->getAuth('common_user', '/v');
+        $this->assertEquals(-1, $a);
+        $a = $rbac->getAuth(['admin', 'common_user'], '/v');
+        $this->assertEquals(-1, $a);
+        $a = $rbac->getAuth('admin', '*');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getAuth('common_user', '*');
+        $this->assertEquals(0, $a);
+        $a = $rbac->getAuth(['admin', 'common_user'], '*');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getPathAuth(['admin', 'common_user'], '/v');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getPathAuth(['test1', 'common_user'], '/tran');
+        $this->assertEquals(3, $a);
+        $a = $rbac->getPathAuth(['test1', 'common_user'], '/view/test/a');
+        $this->assertEquals(2, $a);
+        $a = $rbac->getPathAuth('common_user', '/view/test/a');
+        $this->assertEquals(3, $a);
+    }
 }
  

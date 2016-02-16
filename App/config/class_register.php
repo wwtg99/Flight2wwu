@@ -12,6 +12,7 @@
 
 return [
     'Auth' => 'Flight2wwu\Component\Auth\RoleAuth',
+    'Rbac' => 'Flight2wwu\Component\Auth\RoleBasedAccessControl',
     'View' => 'Flight2wwu\Component\View\BorderView',
     'Log' => 'Flight2wwu\Component\Log\Monolog',
     'DB' => 'Flight2wwu\Component\Database\PdoDB',

@@ -12,4 +12,5 @@
 
 return [
     'App\Controller\Auth' => 'auth',
+    'App\Controller\Admin' => 'admin',
 ];
