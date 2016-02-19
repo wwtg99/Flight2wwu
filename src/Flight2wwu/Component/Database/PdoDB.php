@@ -11,6 +11,11 @@ namespace Flight2wwu\Component\Database;
 use Flight2wwu\Common\ServiceProvider;
 use Flight2wwu\Component\Log\Monolog;
 
+/**
+ * Class PdoDB
+ * @deprecated use MedooDB instead
+ * @package Flight2wwu\Component\Database
+ */
 class PdoDB implements ServiceProvider
 {
 
@@ -18,11 +23,6 @@ class PdoDB implements ServiceProvider
      * @var \PDO
      */
     private $db;
-
-    /**
-     * @var \PDOStatement
-     */
-    private $statement;
 
     /**
      * @var array
@@ -57,7 +57,7 @@ class PdoDB implements ServiceProvider
     /**
      * @return \PDO
      */
-    public function getDb()
+    public function getDB()
     {
         return $this->db;
     }
@@ -103,7 +103,8 @@ class PdoDB implements ServiceProvider
      */
     public function query($query, array $data = array())
     {
-        $stmt = $this->executeStatement($query, $data);
+        $stmt = $this->prepare($query);
+        $stmt = $this->executePrepare($stmt, $data);
         if ($stmt) {
             return $stmt->fetchAll();
         }
@@ -119,7 +120,8 @@ class PdoDB implements ServiceProvider
      */
     public function queryOne($query, array $data = array())
     {
-        $stmt = $this->executeStatement($query, $data);
+        $stmt = $this->prepare($query);
+        $stmt = $this->executePrepare($stmt, $data);
         if ($stmt) {
             return $stmt->fetch();
         }
@@ -135,7 +137,8 @@ class PdoDB implements ServiceProvider
      */
     public function exec($query, array $data = array())
     {
-        $stmt = $this->executeStatement($query, $data);
+        $stmt = $this->prepare($query);
+        $stmt = $this->executePrepare($stmt, $data);
         if ($stmt) {
             return $stmt->rowCount();
         }
@@ -143,42 +146,44 @@ class PdoDB implements ServiceProvider
     }
 
     /**
-     * Prepare query
+     * Prepare query.
      *
-     * @param string $query
+     * @param $query
+     * @return \PDOStatement
      */
     public function prepare($query)
     {
         $query = str_replace(';', ' ', $query);
-        $this->statement = $this->db->prepare($query);
-        $this->statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement = $this->db->prepare($query);
+        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        return $statement;
     }
 
     /**
      * Execute prepared query.
      *
+     * @param \PDOStatement $statement
      * @param array $data
-     * @return array|bool
+     * @return bool|\PDOStatement
      */
-    public function executePrepare(array $data = array())
+    public function executePrepare(\PDOStatement $statement, array $data = array())
     {
-        if ($this->statement) {
-            $this->bindValue($this->statement, $data);
-            try {
-                $re = $this->statement->execute();
-                $this->logDebug($this->statement->queryString, $data);
-                if (!$re) {
-                    $this->setError($this->statement->errorInfo());
-                    return false;
-                }
-                return $this->statement->fetchAll();
-            } catch (\Exception $e) {
-                $this->setError($this->statement->errorInfo());
-                $this->logError($this->lastError, $this->statement->queryString);
+
+        $this->bindValue($statement, $data);
+        try {
+            $re = $statement->execute();
+            $this->logDebug($statement->queryString, $data);
+            if (!$re) {
+                $this->setError($statement->errorInfo());
+                $this->logError($this->lastError, $statement->queryString);
                 return false;
             }
+            return $statement;
+        } catch (\Exception $e) {
+            $this->setError($statement->errorInfo());
+            $this->logError($this->lastError, $statement->queryString);
+            return false;
         }
-        return false;
     }
 
     /**
@@ -336,32 +341,6 @@ class PdoDB implements ServiceProvider
             $sep = ' or ';
         }
         return implode($sep, $out);
-    }
-
-    /**
-     * @param string $query
-     * @param array $data
-     * @return bool|\PDOStatement
-     */
-    private function executeStatement($query, array $data = array())
-    {
-        $query = str_replace(';', ' ', $query);
-        $stmt = $this->db->prepare($query);
-        $stmt->setFetchMode(\PDO::FETCH_ASSOC);
-        $this->bindValue($stmt, $data);
-        try {
-            $re = $stmt->execute();
-            $this->logDebug($stmt->queryString, $data);
-            if (!$re) {
-                $this->setError($stmt->errorInfo());
-                return false;
-            }
-            return $stmt;
-        } catch (\Exception $e) {
-            $this->setError($stmt->errorInfo());
-            $this->logError($this->lastError, $stmt->queryString);
-            return false;
-        }
     }
 
     /**

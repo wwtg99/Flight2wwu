@@ -6,7 +6,7 @@
  * Time: 9:40
  */
 
-namespace Flight2wwu\Common;
+namespace Flight2wwu\Plugin;
 
 
 class PluginManager {

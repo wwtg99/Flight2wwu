@@ -76,5 +76,23 @@ return [
     //Auth
     'auth'=>[
         'rbac'=>CONFIG . 'rbac.php'
-    ]
+    ],
+    //Cache
+    'cache'=>[
+        'adapter'=>'File',
+        'params'=>[
+            'cacheDir'=>TMP . 'cache',
+            'ttl'=>3600
+        ]
+    ],
+    //Express
+    'express'=>[
+        //[name, label, request url (<no> will be replaced), format function name]
+        ['yto', '圆通', 'http://www.kiees.cn/yto.php?wen=<no>&action=ajax', 'extractKieesTable'],
+        ['sto', '申通', 'http://www.kiees.cn/sto.php?wen=<no>&ajax=1', 'extractKieesTable'],
+        ['ems', 'EMS', 'http://www.kiees.cn/ems.php?wen=<no>&action=ajax', 'extractKieesTable'],
+        ['sf', '顺风', 'http://www.kiees.cn/sf.php?wen=<no>&action=ajax', 'extractKieesTable'],
+        ['zto', '中通', 'http://www.kiees.cn/zto.php?wen=<no>&action=ajax', 'extractKieesTable'],
+        ['yd', '韵达', 'http://www.kiees.cn/yd.php?wen=<no>&channel', 'extractKieesTable'],
+    ],
 ];

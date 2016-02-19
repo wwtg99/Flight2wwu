@@ -15,9 +15,11 @@ return [
     'Rbac' => 'Flight2wwu\Component\Auth\RoleBasedAccessControl',
     'View' => 'Flight2wwu\Component\View\BorderView',
     'Log' => 'Flight2wwu\Component\Log\Monolog',
-    'DB' => 'Flight2wwu\Component\Database\PdoDB',
+//    'DB' => 'Flight2wwu\Component\Database\PdoDB',
+    'DB' => 'Flight2wwu\Component\Database\MedooDB',
     'Locale' => 'Flight2wwu\Component\Translation\SymTrans',
     'Value' => 'Flight2wwu\Component\Session\LastValue',
     'Assets' => 'Flight2wwu\Component\View\AssetsManager',
     'Cache' => 'Flight2wwu\Component\Session\Cache',
+    'Express' => 'Flight2wwu\Component\Utils\Express',
 ];

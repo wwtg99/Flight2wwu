@@ -8,10 +8,20 @@
 
 namespace Flight2wwu\Component\Session;
 
+use Desarrolla2\Cache\Adapter\AbstractAdapter;
+use Desarrolla2\Cache\Adapter\Apcu;
+use Desarrolla2\Cache\Adapter\File;
 use Flight2wwu\Common\ServiceProvider;
+use League\Flysystem\Exception;
 
 class Cache implements ServiceProvider
 {
+
+    /**
+     * @var \Desarrolla2\Cache\Cache
+     */
+    private $cache;
+
     /**
      * Called after register.
      *
@@ -29,11 +39,10 @@ class Cache implements ServiceProvider
      */
     public function boot()
     {
-        $cacheDir = TMP . 'cache';
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
-        }
-        \FileSystemCache::$cacheDir = $cacheDir;
+        $conf = \Flight::get('cache');
+        $adapter = $conf['adapter'];
+        $params = $conf['params'];
+        $this->initAdapter($adapter, $params);
     }
 
     function __construct()
@@ -42,65 +51,70 @@ class Cache implements ServiceProvider
     }
 
     /**
-     * @param $name
-     * @return \FileSystemCacheKey
+     * @return \Desarrolla2\Cache\Cache
      */
-    public function generateKey($name)
+    public function getCache()
     {
-        $uid = getUser('user_id');
-        $key = \FileSystemCache::generateCacheKey($name, $uid);
-        return $key;
+        return $this->cache;
     }
 
     /**
-     * @param \FileSystemCacheKey $key
-     * @param $data
-     * @param int $ttl
-     * @return bool
+     * @param string $adapter
+     * @param array $params
+     * @throws Exception
      */
-    public function store(\FileSystemCacheKey $key, $data, $ttl = null)
+    private function initAdapter($adapter, array $params)
     {
-        return \FileSystemCache::store($key, $data, $ttl);
+        switch($adapter) {
+            case 'Apcu': $adapter = $this->initApcu($params); break;
+            case 'File': $adapter = $this->initFile($params); break;
+            default:
+                throw new Exception("Adapter $adapter is not supported");
+        }
+        $this->cache = new \Desarrolla2\Cache\Cache($adapter);
     }
 
     /**
-     * @param \FileSystemCacheKey $key
-     * @param $newer_than
-     * @return mixed
+     * @param array $params
+     * @return Apcu
      */
-    public function retrieve(\FileSystemCacheKey $key, $newer_than = null)
+    private function initApcu(array $params)
     {
-        return \FileSystemCache::retrieve($key, $newer_than);
+        $adapter = new Apcu();
+        $this->setOption($adapter, $params);
+        return $adapter;
     }
 
     /**
-     * @param \FileSystemCacheKey $key
-     * @param callable $callback
-     * @param bool $resetTtl
-     * @return mixed
+     * @param array $params
+     * @return File
      */
-    public function getAndModify(\FileSystemCacheKey $key, \Closure $callback, $resetTtl = false)
+    private function initFile(array $params)
     {
-        return \FileSystemCache::getAndModify($key, $callback, $resetTtl);
+        if (array_key_exists('cacheDir', $params)) {
+            $cd = $params['cacheDir'];
+            unset($params['cacheDir']);
+        } else {
+            $cd = null;
+        }
+        if (!file_exists($cd)) {
+            mkdir($cd, 0777, true);
+        }
+        $adapter = new File($cd);
+        $this->setOption($adapter, $params);
+        return $adapter;
     }
 
     /**
-     * @param \FileSystemCacheKey $key
-     * @return bool
+     * @param AbstractAdapter $adapter
+     * @param array $params
+     * @return AbstractAdapter
      */
-    public function invalidate(\FileSystemCacheKey $key)
+    private function setOption(AbstractAdapter $adapter, array $params)
     {
-        return \FileSystemCache::invalidate($key);
+        foreach ($params as $k => $v) {
+            $adapter->setOption($k, $v);
+        }
+        return $adapter;
     }
-
-    /**
-     * @param $name
-     * @param bool $recursice
-     * @throws \Exception
-     */
-    public function invalidateGroup($name = null, $recursice = true)
-    {
-        \FileSystemCache::invalidateGroup($name, $recursice);
-    }
-
 } 

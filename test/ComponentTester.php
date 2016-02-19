@@ -60,24 +60,11 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $cache->boot();
         $data = ['aa'=>'aaa', 'k1'=>'ggg', 'k2'=>['ga', 'ha']];
         foreach ($data as $k => $v) {
-            $key = $cache->generateKey($k);
-            $this->assertTrue($cache->store($key, $v));
-            $key = $cache->generateKey($k);
-            $gv = $cache->retrieve($key);
+            $cache->getCache()->set($k, $v);
+            $this->assertTrue($cache->getCache()->has($k));
+            $gv = $cache->getCache()->get($k);
             $this->assertEquals($v, $gv);
         }
-        $k1 = 'key1';
-        $v1 = 10;
-        $key = $cache->generateKey($k1);
-        $this->assertTrue($cache->store($key, $v1));
-        $gv = $cache->getAndModify($key, function($value){
-            $value += 1;
-            return $value;
-        });
-        $this->assertEquals($v1 + 1, $gv);
-        $this->assertEquals($v1 + 1, $cache->retrieve($key));
-        $cache->invalidate($key);
-        $this->assertFalse($cache->retrieve($key));
     }
 
     public function testGuzzle()
@@ -135,6 +122,39 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $this->assertEquals(2, $a);
         $a = $rbac->getPathAuth('common_user', '/view/test/a');
         $this->assertEquals(3, $a);
+    }
+
+    public function testMail()
+    {
+        $mail = \Flight2wwu\Component\Utils\Mail::getMail();
+        $re = $mail->send([
+            'subject'=>'test',
+            'from'=>['test@flight2wwu.com'],
+            'to'=>['wwu@genowise.com'],
+            'body'=>'test mail'
+        ]);
+        $this->assertEquals(0, $re);
+    }
+
+    public function testExpress()
+    {
+        $test = [
+            '1063163730100'=>'ems',
+            '114750081239'=>'sf',
+            '568657570837'=>'sto',
+            '1200878623037'=>'yd',
+            '199130201363'=>'sf'
+        ];
+        $exp = Flight::Express();
+        foreach ($test as $no => $com) {
+            $arr = $exp->track($com, $no);
+            $last = $exp->current($com, $no);
+            if ($arr) {
+                $this->assertEquals($last, $arr[count($arr) - 1]);
+            }
+            var_dump($arr);
+        }
+
     }
 }
  

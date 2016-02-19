@@ -6,8 +6,10 @@
  * Time: 10:42
  */
 
-namespace Flight2wwu\Common;
+namespace Flight2wwu\Plugin;
 
+
+use Flight2wwu\Common\ServiceProvider;
 
 interface IPlugin extends ServiceProvider
 {

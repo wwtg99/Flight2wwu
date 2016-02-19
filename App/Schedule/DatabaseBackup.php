@@ -8,12 +8,19 @@
 
 namespace App\Schedule;
 
-
 use Flight2wwu\Schedule\ISchedule;
 
 class DatabaseBackup implements ISchedule
 {
+    /**
+     * @var array
+     */
     private $conf = [];
+
+    /**
+     * @var string
+     */
+    private $backup_dir = '';
 
     /**
      * Call this function each time
@@ -41,6 +48,10 @@ class DatabaseBackup implements ISchedule
         } else {
             $this->conf = $db['main'];
         }
+        $this->backup_dir = STORAGE . 'backup';
+        if (!file_exists($this->backup_dir)) {
+            mkdir($this->backup_dir, 0777, true);
+        }
     }
 
     private function backupPgsql()
@@ -49,7 +60,8 @@ class DatabaseBackup implements ISchedule
         $dbname = array_key_exists('dbname', $this->conf) ? ('-d ' . $this->conf['dbname']) : '';
         $user = array_key_exists('user', $this->conf) ? ('-U ' . $this->conf['user']) : '';
         $port = array_key_exists('port', $this->conf) ? ('-p ' . $this->conf['port']) : '';
-        $cmd = "pg_dump -h $host -p $port -d $dbname -U $user";
+        $outd = $this->backup_dir . DIRECTORY_SEPARATOR . date('Y-m-d_H-i-s');
+        $cmd = "pg_dump $host $port $dbname $user -b -w -Fd -f $outd";
         $re = exec($cmd);
     }
 

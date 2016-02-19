@@ -4,6 +4,6 @@
         "name": "Database Backup",
         "class_name": "App\\Schedule\\DatabaseBackup",
         "interval": 1,
-        "disabled": false
+        "enabled": false
     }
 ]

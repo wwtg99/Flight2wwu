@@ -9,15 +9,15 @@
 namespace App\Plugin;
 
 
-use Flight2wwu\Common\IPlugin;
+use Flight2wwu\Plugin\CommandPlugin;
 
-class PHPInterpreter implements IPlugin
+class PHPInterpreter extends CommandPlugin
 {
-
-    /**
-     * @var string
-     */
-    private $path = 'php';
+    function __construct()
+    {
+        $this->async = false;
+        $this->cmd = 'php';
+    }
 
     /**
      * @return string
@@ -25,7 +25,7 @@ class PHPInterpreter implements IPlugin
     public function getVersion()
     {
         $re = $this->exec('-v');
-        return $re[count($re) - 1];
+        return $re;
     }
 
     /**
@@ -36,25 +36,6 @@ class PHPInterpreter implements IPlugin
     public function run()
     {
 
-    }
-
-    /**
-     * Execute command
-     *
-     * @return mixed
-     */
-    public function exec()
-    {
-        $args = func_get_args();
-        $op = $args[0];
-        if (count($args) > 1) {
-            $code = $args[1];
-        } else {
-            $code = '';
-        }
-        $out = [];
-        $re = exec("$this->path $op $code", $out);
-        return $out;
     }
 
     /**

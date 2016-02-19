@@ -8,6 +8,7 @@
 
 namespace Flight2wwu\Common;
 
+use Flight2wwu\Plugin\PluginManager;
 use Symfony\Component\ClassLoader\Psr4ClassLoader;
 use Flight2wwu\Component\Utils\FormatUtils;
 

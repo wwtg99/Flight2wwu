@@ -66,7 +66,7 @@ class ScheduleManager {
     public function register()
     {
         foreach ($this->config as $s) {
-            if ($s['disabled']) {
+            if (!$s['enabled']) {
                 continue;
             }
             $id = $s['id'];

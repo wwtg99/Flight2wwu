@@ -10,20 +10,20 @@
 
 /**
  * @param $name
- * @return \Flight2wwu\Common\IPlugin
+ * @return \Flight2wwu\Plugin\IPlugin
  * @throws Exception
  */
 function getPlugin($name)
 {
-    $p = \Flight2wwu\Common\PluginManager::getInstance()->getPlugin($name);
-    if (is_null($p) || !($p instanceof \Flight2wwu\Common\IPlugin)) {
+    $p = \Flight2wwu\Plugin\PluginManager::getInstance()->getPlugin($name);
+    if (is_null($p) || !($p instanceof \Flight2wwu\Plugin\IPlugin)) {
         throw new Exception("plugin $name not exists");
     }
     return $p;
 }
 
 /**
- * @return \Flight2wwu\Component\Database\PdoDB
+ * @return \Flight2wwu\Component\Database\PdoDB|\Flight2wwu\Component\Database\MedooDB
  */
 function getDB()
 {

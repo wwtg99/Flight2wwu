@@ -10,7 +10,6 @@ namespace Flight2wwu\Component\File;
 
 use Flight2wwu\Component\File\Sections\Section;
 use Flight2wwu\Component\File\Sections\SectionFile;
-use Respect\Validation\Rules\File;
 
 class ExcelFile extends CommonFile implements Downloadable
 {

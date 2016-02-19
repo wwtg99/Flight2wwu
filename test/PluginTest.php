@@ -18,13 +18,13 @@ class PluginTest extends PHPUnit_Framework_TestCase {
         $p = getPlugin('php');
         $v = $p->getVersion();
         echo "Version: $v\n";
-        $a = $p->exec('-r', "\"echo 'haha';\"");
-        $this->assertEquals(['haha'], $a);
-        \Flight2wwu\Common\PluginManager::getInstance()->disable('1');
-        $p = \Flight2wwu\Common\PluginManager::getInstance()->getPlugin('php');
+        $a = $p->exec('-r', 'print_r("haha");');
+        $this->assertEquals('haha', $a);
+        \Flight2wwu\Plugin\PluginManager::getInstance()->disable('1');
+        $p = \Flight2wwu\Plugin\PluginManager::getInstance()->getPlugin('php');
         $this->assertNull($p);
-        \Flight2wwu\Common\PluginManager::getInstance()->enable('1');
-        \Flight2wwu\Common\PluginManager::getInstance()->writeConfig();
+        \Flight2wwu\Plugin\PluginManager::getInstance()->enable('1');
+        \Flight2wwu\Plugin\PluginManager::getInstance()->writeConfig();
     }
 }
  
