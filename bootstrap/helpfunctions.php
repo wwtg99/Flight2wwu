@@ -214,3 +214,25 @@ function TAI(array $array, $parameters = [], $domain = 'messages', $locale = nul
     $trans = Flight::Locale();
     return $trans->transArrayi($array, $parameters, $domain, $locale);
 }
+
+/**
+ * Get valuable, return null if not exists.
+ *
+ * @param $var
+ * @return mixed
+ */
+function V($var)
+{
+    return isset($var) ? $var : null;
+}
+
+/**
+ * Print valuable, print '' if not exists.
+ *
+ * @param $var
+ */
+function VP($var)
+{
+    $p = isset($var) ? $var : '';
+    print_r($p);
+}

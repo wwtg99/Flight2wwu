@@ -11,7 +11,6 @@
 
 return [
     ["*", array('\\App\\Controller\\HomeController', 'rbac')],
-    ["*", array('\\App\\Controller\\HomeController', 'access')],
     ["*", array('\\App\\Controller\\HomeController', 'language')],
     ["/", array('\\App\\Controller\\HomeController', 'home')],
     ["/home", array('\\App\\Controller\\HomeController', 'home')],

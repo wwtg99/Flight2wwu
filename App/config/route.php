@@ -60,3 +60,20 @@ Flight::route('/print', function() {
 Flight::route('/error', function() {
     throw new Exception('error test', 1);
 });
+
+Flight::route('/php', function() {
+    if (Flight::request()->method == 'POST') {
+        $code = Flight::request()->data['code'];
+        $p = getPlugin('php');
+        $v = $p->getVersion();
+        echo "<p>$v</p>";
+        if ($code) {
+            $re = $p->exec('-r', $code);
+            echo "<p>Result: </p>";
+            echo $re;
+        }
+    } else {
+        echo "<p><strong>Run PHP Code</strong></p>";
+        echo "<form method='post'><textarea name='code'></textarea><br><button type='submit'>Submit</button></form>";
+    }
+});

@@ -11,7 +11,7 @@ namespace App\Controller;
 
 use App\Model\Admin;
 use Flight2wwu\Common\BaseController;
-use Flight2wwu\Common\PluginManager;
+use Flight2wwu\Plugin\PluginManager;
 use Flight2wwu\Component\Utils\FormatUtils;
 
 class AdminController extends BaseController
@@ -19,7 +19,7 @@ class AdminController extends BaseController
 
     public static function plugins()
     {
-        $plugins = Admin::plugins();
+        $plugins = PluginManager::getInstance()->getPluginConfig();
         $phead = ['name', 'server_name', 'category', 'description', 'enabled'];
         $pl = [];
         foreach ($plugins as $id => $p) {

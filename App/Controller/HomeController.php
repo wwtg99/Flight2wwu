@@ -14,35 +14,12 @@ use Flight2wwu\Component\Log\Monolog;
 
 class HomeController extends BaseController
 {
+    /**
+     * Home page
+     */
     public static function home()
     {
         getView()->render('home');
-    }
-
-    /**
-     * Log access info
-     * @return bool
-     */
-    public static function access()
-    {
-        // access log
-        $logger = getLog();
-        $ip = self::getRequest()->ip;
-        $path = self::getRequest()->url;
-        $method = self::getRequest()->method;
-        if (getAuth()->isLogin()) {
-            $user = getUser()['user_id'];
-        } else {
-            $user = 'anonymous';
-        }
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger('access');
-        }
-        $logger->info("Access from $ip by $user for $path method $method");
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger();
-        }
-        return true;
     }
 
     /**
@@ -60,22 +37,22 @@ class HomeController extends BaseController
     }
 
     /**
-     * Role based access control
+     * Role based access control and access log
      * @return bool
      */
     public static function rbac()
     {
-        $skip_path = ['/', '/403', '/auth/login'];
-        $path = parse_url(self::getRequest()->url, PHP_URL_PATH);
-        if (in_array($path, $skip_path)) {
-            return true;
-        }
+        $ip = self::getRequest()->ip;
+        $url = self::getRequest()->url;
+        $method = self::getRequest()->method;
+        $path = parse_url($url, PHP_URL_PATH);
         if (getAuth()->isLogin()) {
             $user = getUser()['user_id'];
         } else {
             $user = 'anonymous';
         }
         $logger = getLog();
+        // log access
         if (!getAuth()->access($path, self::getRequest()->method)) {
             if ($logger instanceof Monolog) {
                 $logger->setCurrentLogger('access');
@@ -85,10 +62,22 @@ class HomeController extends BaseController
                 $logger->setCurrentLogger();
             }
             \Flight::redirect('/403');
+        } else {
+            if ($logger instanceof Monolog) {
+                $logger->setCurrentLogger('access');
+            }
+            $logger->info("Access from $ip by $user for $url method $method");
+            if ($logger instanceof Monolog) {
+                $logger->setCurrentLogger();
+            }
         }
         return true;
     }
 
+    /**
+     * Forbidden, error 403
+     * @return bool
+     */
     public static function forbidden()
     {
         if (self::getRequest()->ajax) {
@@ -99,6 +88,9 @@ class HomeController extends BaseController
         return false;
     }
 
+    /**
+     * Change log
+     */
     public static function changelog()
     {
         self::defaultHeader();

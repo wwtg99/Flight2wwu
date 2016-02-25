@@ -110,6 +110,9 @@ class RoleBasedAccessControl implements ServiceProvider
                 $a = $this->getAuth($role, '*');
             }
         }
+        if ($a < 0) {
+            $a = 0;
+        }
         return $a;
     }
 

@@ -41,10 +41,14 @@ class RoleAuth extends BasicAuth
      */
     public function getAuth($object)
     {
-        $r = $this->getRoles();
-        $roles = [];
-        foreach ($r as $rr) {
-            array_push($roles, $rr['name']);
+        if ($this->isLogin()) {
+            $r = $this->getRoles();
+            $roles = [];
+            foreach ($r as $rr) {
+                array_push($roles, $rr['name']);
+            }
+        } else {
+            $roles = 'anonymous';
         }
         $rbac = \Flight::Rbac();
         return $rbac->getAuth($roles, $object);
@@ -56,10 +60,14 @@ class RoleAuth extends BasicAuth
      */
     public function getPathAuth($path)
     {
-        $r = $this->getRoles();
-        $roles = [];
-        foreach ($r as $rr) {
-            array_push($roles, $rr['name']);
+        if ($this->isLogin()) {
+            $r = $this->getRoles();
+            $roles = [];
+            foreach ($r as $rr) {
+                array_push($roles, $rr['name']);
+            }
+        } else {
+            $roles = 'anonymous';
         }
         $rbac = \Flight::Rbac();
         return $rbac->getPathAuth($roles, $path);
@@ -72,6 +80,10 @@ class RoleAuth extends BasicAuth
     {
         $user = $this->getUser();
         if ($user) {
+            if (!array_key_exists('roles', $user)) {
+                $user['roles'] = User::getRoles($user['user_id']);
+                $this->login($user);
+            }
             return $user['roles'];
         }
         return [];
