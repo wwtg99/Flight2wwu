@@ -17,9 +17,14 @@ class MedooDB implements ServiceProvider
 {
 
     /**
-     * @var \medoo
+     * @var array
      */
-    private $database;
+    private $connections = [];
+
+    /**
+     * @var string
+     */
+    private $current = '';
 
     /**
      * Called after register.
@@ -39,11 +44,6 @@ class MedooDB implements ServiceProvider
     public function boot()
     {
         $this->reconnect();
-    }
-
-    public function getDB()
-    {
-        return $this->database;
     }
 
     /**
@@ -106,7 +106,7 @@ class MedooDB implements ServiceProvider
     public function prepare($query)
     {
         $query = str_replace(';', ' ', $query);
-        $statement = $this->database->pdo->prepare($query);
+        $statement = $this->getConnection()->pdo->prepare($query);
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
         return $statement;
     }
@@ -124,20 +124,22 @@ class MedooDB implements ServiceProvider
         try {
             $re = $statement->execute();
             if (!$re) {
-                $this->logError($this->getLastError(), $this->database->last_query());
+                $this->logError($this->getLastError(), $this->getConnection()->last_query());
                 return false;
             }
             return $statement;
         } catch (\Exception $e) {
-            $this->logError($this->getLastError(), $this->database->last_query());
+            $this->logError($this->getLastError(), $this->getConnection()->last_query());
             return false;
         }
     }
 
     /**
      * @param array $conf
+     * @param string $name
+     * @return $this
      */
-    public function connect(array $conf)
+    public function connect(array $conf, $name = 'main')
     {
         $db_conf = [
             'database_type' => $conf['driver'],
@@ -154,21 +156,47 @@ class MedooDB implements ServiceProvider
         if (array_key_exists('prefix', $conf)) {
             $db_conf['prefix'] = $conf['prefix'];
         }
-        $this->database = new \medoo($db_conf);
+        $database = new \medoo($db_conf);
+        $this->connections[$name] = $database;
+        return $this;
     }
 
     /**
      * @param string $name
+     * @return $this
      * @throws Exception
      */
     public function reconnect($name = 'main')
     {
-        $conf = \Flight::get('database');
-        if (!array_key_exists($name, $conf)) {
-            throw new Exception("database config $name is not exists");
+        if (!array_key_exists($name, $this->connections)) {
+            $conf = \Flight::get('database');
+            if (!array_key_exists($name, $conf)) {
+                throw new Exception("database config $name is not exists");
+            }
+            $main = $conf[$name];
+            $this->connect($main, $name);
         }
-        $main = $conf[$name];
-        $this->connect($main);
+        $this->current = $name;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return \medoo
+     * @throws Exception
+     */
+    public function getConnection($name = null)
+    {
+        if (is_null($name)) {
+            $name = $this->current;
+        }
+        if (count($this->connections) <= 0) {
+            throw new Exception('no connections yet');
+        }
+        if (!array_key_exists($name, $this->connections)) {
+            $this->current = key($this->connections);
+        }
+        return $this->connections[$this->current];
     }
 
     /**
@@ -176,7 +204,7 @@ class MedooDB implements ServiceProvider
      */
     public function getLastError()
     {
-        return $this->database->error();
+        return $this->getConnection()->error();
     }
 
     /**
