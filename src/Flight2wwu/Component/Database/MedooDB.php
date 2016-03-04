@@ -234,7 +234,7 @@ class MedooDB implements ServiceProvider
         if ($logger instanceof Monolog) {
             $logger->setCurrentLogger('database');
         }
-        $logger->error("Code (" . $error['code'] . ') ' . $error['message'] . " by $sql");
+        $logger->error("Code (" . $error[1] . ') ' . $error[2] . " by $sql");
         if ($logger instanceof Monolog) {
             $logger->setCurrentLogger();
         }
