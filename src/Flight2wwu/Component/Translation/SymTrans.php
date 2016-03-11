@@ -12,7 +12,7 @@ use Flight2wwu\Common\ServiceProvider;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 
-class SymTrans implements ServiceProvider
+class SymTrans implements ServiceProvider, ITranslator
 {
 
     /**
@@ -42,7 +42,7 @@ class SymTrans implements ServiceProvider
      */
     public function boot()
     {
-        $locale = getLValue()->getOld('language');
+        $locale = getOValue()->getOld('language');
         if (!$locale) {
             $locale = \Flight::get('language');
         }
@@ -66,11 +66,13 @@ class SymTrans implements ServiceProvider
 
     /**
      * @param string $locale
+     * @return $this
      */
     public function setLocale($locale)
     {
         $this->translator->setLocale($locale);
         $this->addResource($locale, 'messages');
+        return $this;
     }
 
     /**
@@ -79,6 +81,52 @@ class SymTrans implements ServiceProvider
     public function getLocale()
     {
         return $this->translator->getLocale();
+    }
+
+    /**
+     * @param string $key
+     * @param array $parameters
+     * @param bool $case_sensitive
+     * @param string $domain
+     * @param string $locale
+     * @return string
+     */
+    public function trans($key, $parameters = [], $case_sensitive = false, $domain = 'messages', $locale = null)
+    {
+        if ($case_sensitive) {
+            $key = strtolower($key);
+        }
+        return $this->translator->trans($key, $parameters, $domain, $locale);
+    }
+
+    /**
+     * @param array $array
+     * @param array $parameters
+     * @param bool $case_sensitive
+     * @param string $domain
+     * @param string $locale
+     * @return string
+     */
+    public function transArray(array $array, $parameters = [], $case_sensitive = false, $domain = 'messages', $locale = null)
+    {
+        $out = [];
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                $out[$k] = $this->transArray($v, $parameters, $case_sensitive, $domain, $locale);
+            } else {
+                $out[$k] = $this->trans($v, $parameters, $case_sensitive, $domain, $locale);
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * @param string $locale
+     * @return array
+     */
+    public function getAll($locale = null)
+    {
+        return $this->translator->getMessages($locale);
     }
 
     /**
@@ -98,86 +146,6 @@ class SymTrans implements ServiceProvider
             $re = include "$file";
             $this->translator->addResource('array', $re, $locale, $domain);
         }
-    }
-
-    /**
-     * @param string $key
-     * @param array $parameters
-     * @param string $domain
-     * @param string $locale
-     * @return string
-     */
-    public function trans($key, $parameters = [], $domain = 'messages', $locale = null)
-    {
-        return $this->translator->trans($key, $parameters, $domain, $locale);
-    }
-
-    /**
-     * @param string $key
-     * @param array $parameters
-     * @param string $domain
-     * @param string $locale
-     * @return string
-     */
-    public function transi($key, $parameters = [], $domain = 'messages', $locale = null)
-    {
-        $v = $this->trans($key, $parameters, $domain, $locale);
-        if ($v == $key) {
-            $vv = $this->trans(strtolower($key), $parameters, $domain, $locale);
-            if ($vv != strtolower($key)) {
-                $v = $vv;
-            }
-        }
-        return $v;
-    }
-
-    /**
-     * @param array $array
-     * @param array $parameters
-     * @param string $domain
-     * @param string $locale
-     * @return array
-     */
-    public function transArray(array $array, $parameters = [], $domain = 'messages', $locale = null)
-    {
-        $out = [];
-        foreach ($array as $k => $v) {
-            if (is_array($v)) {
-                $out[$k] = $this->transArray($v, $parameters, $domain, $locale);
-            } else {
-                $out[$k] = $this->trans($v, $parameters, $domain, $locale);
-            }
-        }
-        return $out;
-    }
-
-    /**
-     * @param array $array
-     * @param array $parameters
-     * @param string $domain
-     * @param string $locale
-     * @return array
-     */
-    public function transArrayi(array $array, $parameters = [], $domain = 'messages', $locale = null)
-    {
-        $out = [];
-        foreach ($array as $k => $v) {
-            if (is_array($v)) {
-                $out[$k] = $this->transArrayi($v, $parameters, $domain, $locale);
-            } else {
-                $out[$k] = $this->transi($v, $parameters, $domain, $locale);
-            }
-        }
-        return $out;
-    }
-
-    /**
-     * @param string $locale
-     * @return array
-     */
-    public function getAll($locale = null)
-    {
-        return $this->translator->getMessages($locale);
     }
 
 } 

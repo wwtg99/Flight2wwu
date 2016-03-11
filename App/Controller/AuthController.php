@@ -100,11 +100,11 @@ class AuthController extends BaseController
         $name = self::getPost('name');
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
-        getLValue()->addOld('username', $name);
+        getOValue()->addOld('username', $name);
         if (getAuth()->attempt(['username'=>$name, 'password'=>$pwd, 'remember'=>$rem])) {
             \Flight::redirect(self::$redirectPath);
         } else {
-            getLValue()->addOldOnce('login_error', 'login failed');
+            getOValue()->addOldOnce('login_error', 'login failed');
             \Flight::redirect(self::$loginPath);
         }
     }
@@ -134,13 +134,13 @@ class AuthController extends BaseController
         $new1 = self::getPost('new1');
         $new2 = self::getPost('new2');
         if ($new1 != $new2) {
-            getLValue()->addOldOnce('auth_error', 'password mismatch');
+            getOValue()->addOldOnce('auth_error', 'password mismatch');
             \Flight::redirect(self::$pwdPath);
         } else {
             if (getAuth()->changePwd($old, $new1)) {
-                getLValue()->addOldOnce('auth_error', 'password changed');
+                getOValue()->addOldOnce('auth_error', 'password changed');
             } else {
-                getLValue()->addOldOnce('auth_error', 'password not changed');
+                getOValue()->addOldOnce('auth_error', 'password not changed');
             }
             \Flight::redirect(self::$pwdPath);
         }

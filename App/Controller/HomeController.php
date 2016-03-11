@@ -31,7 +31,7 @@ class HomeController extends BaseController
         $locale = self::getInput('language');
         if ($locale) {
             \Flight::Locale()->setLocale($locale);
-            getLValue()->addOld('language', $locale);
+            getOValue()->addOld('language', $locale);
         }
         return true;
     }

@@ -51,9 +51,9 @@ function getView()
 }
 
 /**
- * @return \Flight2wwu\Component\Session\LastValue
+ * @return \Flight2wwu\Component\Storage\OldValue
  */
-function getLValue()
+function getOValue()
 {
     return Flight::Value();
 }
@@ -65,7 +65,7 @@ function getLValue()
  */
 function getOld($name, $def = '')
 {
-    $v = getLValue();
+    $v = getOValue();
     if (array_key_exists($name, $v->getOlds())) {
         return $v->getOld($name, $def);
     } else {
@@ -108,11 +108,35 @@ function getUser($key = '')
 }
 
 /**
- * @return \Flight2wwu\Component\Session\Cache
+ * @return \Flight2wwu\Component\Storage\Cache
  */
 function getCache()
 {
     return Flight::Cache();
+}
+
+/**
+ * @return \Flight2wwu\Component\Storage\SessionUtil
+ */
+function getSession()
+{
+    return Flight::Session();
+}
+
+/**
+ * @return \Flight2wwu\Component\Storage\CookieUtil
+ */
+function getCookie()
+{
+    return Flight::Cookie();
+}
+
+/**
+ * @return \Flight2wwu\Component\Utils\Mail
+ */
+function getMailer()
+{
+    return Flight::Mail();
 }
 
 /**
@@ -140,7 +164,7 @@ function isDebug()
 function T($key, $parameters = [], $domain = 'messages', $locale = null)
 {
     $trans = Flight::Locale();
-    return $trans->trans($key, $parameters, $domain, $locale);
+    return $trans->trans($key, $parameters, false, $domain, $locale);
 }
 
 /**
@@ -155,7 +179,7 @@ function T($key, $parameters = [], $domain = 'messages', $locale = null)
 function TI($key, $parameters = [], $domain = 'messages', $locale = null)
 {
     $trans = Flight::Locale();
-    return $trans->transi($key, $parameters, $domain, $locale);
+    return $trans->trans($key, $parameters, true, $domain, $locale);
 }
 
 /**
@@ -197,7 +221,7 @@ function TIP($key, $parameters = [], $domain = 'messages', $locale = null)
 function TA(array $array, $parameters = [], $domain = 'messages', $locale = null)
 {
     $trans = Flight::Locale();
-    return $trans->transArray($array, $parameters, $domain, $locale);
+    return $trans->transArray($array, $parameters, false, $domain, $locale);
 }
 
 /**
@@ -212,27 +236,5 @@ function TA(array $array, $parameters = [], $domain = 'messages', $locale = null
 function TAI(array $array, $parameters = [], $domain = 'messages', $locale = null)
 {
     $trans = Flight::Locale();
-    return $trans->transArrayi($array, $parameters, $domain, $locale);
-}
-
-/**
- * Get valuable, return null if not exists.
- *
- * @param $var
- * @return mixed
- */
-function V($var)
-{
-    return isset($var) ? $var : null;
-}
-
-/**
- * Print valuable, print '' if not exists.
- *
- * @param $var
- */
-function VP($var)
-{
-    $p = isset($var) ? $var : '';
-    print_r($p);
+    return $trans->transArray($array, $parameters, true, $domain, $locale);
 }

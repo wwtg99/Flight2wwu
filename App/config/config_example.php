@@ -75,15 +75,34 @@ return [
     ],
     //Auth
     'auth'=>[
-        'rbac'=>CONFIG . 'rbac.php'
+        'rbac'=>CONFIG . 'rbac.php', //role based access control config file
+        'session'=>true, //use session to store user info
+        'cookie'=>true, //use cookie to store token
     ],
-    //Cache
-    'cache'=>[
-        'adapter'=>'File',
+    //Storage
+    'storage'=>[
+        'cache'=>[
+            'adapter'=>'File', //Adapter for Desarrolla2\Cache: File, Apcu
+            'params'=>[
+                'cacheDir'=>TMP . 'cache',
+                'ttl'=>3600
+            ]
+        ],
+        'session'=>true, //enable session
+        'cookie'=>true, //enable cookie
+        'old_value'=>'cache', //storage method for old_value: cache, session
+    ],
+    //Mail
+    'mail'=>[
+        'method'=>'mail', //method to send mail: mail, sendmail, smtp
         'params'=>[
-            'cacheDir'=>TMP . 'cache',
-            'ttl'=>3600
-        ]
+            'command'=>'/usr/sbin/sendmail -bs', //used for sendmail
+            'host'=>'localhost', //host for smtp
+            'port'=>25, //port for smtp
+            'security'=>null, //security for smtp
+            'username'=>'', //username for smtp
+            'password'=>'', //password for smtp
+        ],
     ],
     //Express
     'express'=>[

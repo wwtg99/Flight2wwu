@@ -129,15 +129,14 @@ class Pagination
      */
     public static function getAutoPage($name)
     {
-        $pages = getLValue()->getOld(Pagination::PAG_KEY);
+        $pages = getOValue()->getOld(Pagination::PAG_KEY);
         if ($pages && array_key_exists($name, $pages)) {
-            $page = $pages[$name];
-            $page = $page->next(Pagination::$pageSize);
-            $pages[$name] = $page;
+            $page = & $pages[$name];
+            $page->next(Pagination::$pageSize);
             return $page;
         }
         $pag = new Pagination(self::$pageSize, 0);
-        getLValue()->addOld(Pagination::PAG_KEY, [$name => $pag]);
+        getOValue()->addOld(Pagination::PAG_KEY, [$name => $pag]);
         return $pag;
     }
 
@@ -147,13 +146,13 @@ class Pagination
     public static function clearPage($name = '')
     {
         if ($name) {
-            $p = getLValue()->getOld(Pagination::PAG_KEY, null);
+            $p = getOValue()->getOld(Pagination::PAG_KEY, null);
             if ($p && array_key_exists($name, $p)) {
                 unset($p[$name]);
-                getLValue()->addOld(Pagination::PAG_KEY, $p);
+                getOValue()->addOld(Pagination::PAG_KEY, $p);
             }
         } else {
-            getLValue()->removeOld(Pagination::PAG_KEY);
+            getOValue()->deleteOld(Pagination::PAG_KEY);
         }
     }
 

@@ -7,6 +7,7 @@
  */
 
 namespace Flight2wwu\Component\Utils;
+use Flight2wwu\Common\ServiceProvider;
 
 
 /**
@@ -14,7 +15,8 @@ namespace Flight2wwu\Component\Utils;
  * Send mail depends on SwiftMail
  * @package Flight2wwu\Component\Utils
  */
-class Mail {
+class Mail implements ServiceProvider
+{
 
     /**
      * @var \Swift_Mailer
@@ -22,11 +24,143 @@ class Mail {
     private $mailer;
 
     /**
-     * @param \Swift_Mailer $mailer
+     * @var string
      */
-    function __construct(\Swift_Mailer $mailer)
+    private $from;
+
+    /**
+     * @var string
+     */
+    private $subject;
+
+    /**
+     * @var string
+     */
+    private $content_type = 'text/html';
+
+    /**
+     * @var string
+     */
+    private $date;
+
+    function __construct()
+    {
+
+    }
+
+    /**
+     * Called after register.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+
+    /**
+     * Called after all class is registered.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $conf = \Flight::get('mail');
+        if ($conf) {
+            $method = isset($conf['method']) ? $conf['method'] : 'mail';
+            $params = isset($conf['params']) ? $conf['params'] : [];
+            $this->mailer = self::getMail($method, $params);
+        }
+    }
+
+    /**
+     * @return \Swift_Mailer
+     */
+    public function getMailer()
+    {
+        return $this->mailer;
+    }
+
+    /**
+     * @param \Swift_Mailer $mailer
+     * @return Mail
+     */
+    public function setMailer($mailer)
     {
         $this->mailer = $mailer;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @param mixed $from
+     * @return Mail
+     */
+    public function setFrom($from)
+    {
+        $this->from = $from;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->content_type;
+    }
+
+    /**
+     * @param string $content_type
+     * @return Mail
+     */
+    public function setContentType($content_type)
+    {
+        $this->content_type = $content_type;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param mixed $subject
+     * @return Mail
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param mixed $date
+     * @return Mail
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
     }
 
     /**
@@ -36,11 +170,11 @@ class Mail {
     public function send($message)
     {
         if (is_array($message)) {
-            $subject = $message['subject'];
-            $from = $message['from'];
+            $subject = array_key_exists('subject', $message) ? $message['subject'] : $this->subject;
+            $from = array_key_exists('from', $message) ? $message['from'] : $this->from;
             $to = $message['to'];
             $body = $message['body'];
-            $ctype = array_key_exists('content_type', $message) ? $message['content_type'] : null;
+            $ctype = array_key_exists('content_type', $message) ? $message['content_type'] : $this->content_type;
             $msg = \Swift_Message::newInstance($subject, $body, $ctype, 'UTF-8')->setFrom($from)->setTo($to);
             if (array_key_exists('id', $message)) {
                 $msg->setId($message['id']);
@@ -54,7 +188,8 @@ class Mail {
             if (array_key_exists('reply-to', $message)) {
                 $msg->setReplyTo($message['reply-to']);
             }
-            if (array_key_exists('date', $message)) {
+            $date = array_key_exists('date', $message) ? $message['date'] : $this->date;
+            if ($date) {
                 $msg->setDate($message['date']);
             }
             return $this->mailer->send($msg);
@@ -68,7 +203,7 @@ class Mail {
     /**
      * @param string $type
      * @param array $param
-     * @return Mail
+     * @return \Swift_Mailer
      */
     public static function getMail($type = 'mail', $param = [])
     {
@@ -88,7 +223,7 @@ class Mail {
                 $tran = \Swift_MailTransport::newInstance();
                 break;
         }
-        return new Mail(\Swift_Mailer::newInstance($tran));
+        return \Swift_Mailer::newInstance($tran);
     }
 
 } 

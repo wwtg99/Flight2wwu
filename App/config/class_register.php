@@ -21,5 +21,6 @@ return [
     'Value' => 'Flight2wwu\Component\Session\LastValue',
     'Assets' => 'Flight2wwu\Component\View\AssetsManager',
     'Cache' => 'Flight2wwu\Component\Session\Cache',
+    'Mail' => 'Flight2wwu\Component\Utils\Mail',
     'Express' => 'Flight2wwu\Component\Utils\Express',
 ];
