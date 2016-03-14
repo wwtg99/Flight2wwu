@@ -10,8 +10,6 @@ namespace Flight2wwu\Component\Database;
 
 
 use Flight2wwu\Common\ServiceProvider;
-use Flight2wwu\Component\Log\Monolog;
-use League\Flysystem\Exception;
 
 class MedooDB implements ServiceProvider
 {
@@ -164,14 +162,14 @@ class MedooDB implements ServiceProvider
     /**
      * @param string $name
      * @return $this
-     * @throws Exception
+     * @throws \Exception
      */
     public function reconnect($name = 'main')
     {
         if (!array_key_exists($name, $this->connections)) {
             $conf = \Flight::get('database');
             if (!array_key_exists($name, $conf)) {
-                throw new Exception("database config $name is not exists");
+                throw new \Exception("database config $name is not exists");
             }
             $main = $conf[$name];
             $this->connect($main, $name);
@@ -183,7 +181,7 @@ class MedooDB implements ServiceProvider
     /**
      * @param string $name
      * @return \medoo
-     * @throws Exception
+     * @throws \Exception
      */
     public function getConnection($name = null)
     {
@@ -191,7 +189,7 @@ class MedooDB implements ServiceProvider
             $name = $this->current;
         }
         if (count($this->connections) <= 0) {
-            throw new Exception('no connections yet');
+            throw new \Exception('no connections yet');
         }
         if (!array_key_exists($name, $this->connections)) {
             $this->current = key($this->connections);
@@ -231,12 +229,7 @@ class MedooDB implements ServiceProvider
     private function logError(array $error, $sql = '')
     {
         $logger = getLog();
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger('database');
-        }
-        $logger->error("Code (" . $error[1] . ') ' . $error[2] . " by $sql");
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger();
-        }
+        $logger->changeLogger('database')->error("Code (" . $error[1] . ') ' . $error[2] . " by $sql");
+        $logger->changeLogger('main');
     }
 } 

@@ -66,7 +66,8 @@ function getOValue()
 function getOld($name, $def = '')
 {
     $v = getOValue();
-    if (array_key_exists($name, $v->getOlds())) {
+    $c = new \Flight2wwu\Component\Storage\Collection($v->getOlds());
+    if ($c->has($name)) {
         return $v->getOld($name, $def);
     } else {
         return $v->getOldOnce($name, $def);

@@ -16,7 +16,7 @@ if (isDebug()) {
     $debugbar = new \DebugBar\StandardDebugBar();
     if ($logger instanceof \Flight2wwu\Component\Log\Monolog) {
         $collector = new \DebugBar\Bridge\MonologCollector($logger->getLogger('main'));
-        foreach ($logger->getLoggers() as $name => $l) {
+        foreach ($logger->getLogger(null) as $name => $l) {
             if ($name != 'main') {
                 $collector->addLogger($l);
             }

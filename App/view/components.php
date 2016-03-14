@@ -96,6 +96,20 @@
     <div class="clear"></div>
     <br>
     <div>
+        <h3>Alert</h3>
+        <?php
+        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('success');
+        echo $a1->render(['data'=>'success']);
+        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('info');
+        echo $a1->render(['data'=>'info']);
+        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('warning');
+        echo $a1->render(['data'=>'warning']);
+        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('danger');
+        echo $a1->render(['data'=>'danger']);
+        ?>
+    </div>
+    <br>
+    <div>
         <h3>Pagination</h3>
         <p>First</p>
         <?php

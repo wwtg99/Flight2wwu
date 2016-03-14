@@ -11,6 +11,24 @@ namespace Flight2wwu\Component\Log;
 class SdoutLog implements ILog
 {
     /**
+     * @param $name
+     * @return mixed
+     */
+    public function getLogger($name)
+    {
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function changeLogger($name)
+    {
+        return $this;
+    }
+
+    /**
      * @param string $msg
      * @param array $context
      * @return bool

@@ -66,4 +66,15 @@ interface ILog
      */
     public function emergency($msg, array $context = array());
 
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function getLogger($name);
+
+    /**
+     * @param $name
+     * @return ILog
+     */
+    public function changeLogger($name);
 } 

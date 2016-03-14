@@ -53,9 +53,9 @@ interface IAuth
 
     /**
      * @param string $path
-     * @return bool
+     * @return AuthKey
      */
-    public function isAccessed($path);
+    public function accessPath($path);
 
     /**
      * @return bool

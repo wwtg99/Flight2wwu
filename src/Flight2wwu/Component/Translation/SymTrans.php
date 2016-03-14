@@ -94,7 +94,10 @@ class SymTrans implements ServiceProvider, ITranslator
     public function trans($key, $parameters = [], $case_sensitive = false, $domain = 'messages', $locale = null)
     {
         if ($case_sensitive) {
-            $key = strtolower($key);
+            $v = $this->translator->trans($key, $parameters, $domain, $locale);
+            if ($v == $key) {
+                $key = strtolower($key);
+            }
         }
         return $this->translator->trans($key, $parameters, $domain, $locale);
     }

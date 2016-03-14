@@ -375,13 +375,8 @@ class PdoDB implements ServiceProvider
     private function logError(array $error, $sql = '')
     {
         $logger = getLog();
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger('database');
-        }
-        $logger->error("Code (" . $error['code'] . ') ' . $error['message'] . " by $sql");
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger();
-        }
+        $logger->changeLogger('database')->error("Code (" . $error['code'] . ') ' . $error['message'] . " by $sql");
+        $logger->changeLogger('main');
     }
 
     /**
@@ -391,13 +386,8 @@ class PdoDB implements ServiceProvider
     private function logDebug($sql = '', array $data = [])
     {
         $logger = getLog();
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger('database');
-        }
-        $logger->debug("Execute $sql", $data);
-        if ($logger instanceof Monolog) {
-            $logger->setCurrentLogger();
-        }
+        $logger->changeLogger('database')->debug("Execute $sql", $data);
+        $logger->changeLogger('main');
     }
 
 } 

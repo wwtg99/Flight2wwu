@@ -2,16 +2,13 @@
     <div class="page-header text-center">
         <h1><?php TIP('login to have our service'); ?></h1>
     </div>
-    <?php
-    $errmsg = getOld('login_error');
-    ?>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <form class="form-horizontal" role="form" id="form_login" action="/auth/login" method="post">
                 <div class="form-group">
                     <label class="control-label col-md-2"><span class="glyphicon glyphicon-user"></span></label>
                     <div class="col-md-10">
-                        <input class="form-control" type="text" name="name" placeholder="<?php TIP('Username'); ?>" value="<?php echo getOld('username'); ?>" tabindex="1">
+                        <input class="form-control" type="text" name="username" placeholder="<?php TIP('Username'); ?>" value="<?php echo getOld('username'); ?>" tabindex="1">
                     </div>
                 </div>
                 <div class="form-group">
@@ -26,10 +23,11 @@
                 <div class="form-group text-center">
                     <button class="btn btn-primary" type="submit" id="submit" tabindex="3"><?php TIP('Login'); ?></button>
                 </div>
-                <?php if($errmsg): ?>
-                <div class="alert alert-danger text-center" role="alert">
-                    <?php TIP($errmsg); ?>
-                </div>
+                <?php if(isset($msg)): ?>
+                    <?php
+                    $ac = new \Flight2wwu\Component\View\Html\AlertComp($status);
+                    echo $ac->render(['data'=>TI($msg)]);
+                    ?>
                 <?php endif; ?>
             </form>
         </div>

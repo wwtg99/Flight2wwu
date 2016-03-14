@@ -54,6 +54,11 @@ class Monolog implements ILog, ServiceProvider
 
     }
 
+    /**
+     * @param $domain
+     * @param array $config
+     * @return mixed
+     */
     public function registerLogger($domain, array $config)
     {
         if (!array_key_exists($domain, $this->loggers)) {
@@ -72,14 +77,30 @@ class Monolog implements ILog, ServiceProvider
 
     /**
      * @param string $domain
-     * @return Logger
+     * @return Logger|array
      */
     public function getLogger($domain = 'main')
     {
+        if (is_null($domain)) {
+            return $this->loggers;
+        }
         if (!array_key_exists($domain, $this->loggers)) {
             $domain = 'main';
         }
         return $this->loggers[$domain];
+    }
+
+    /**
+     * @param $name
+     * @return $this
+     */
+    public function changeLogger($name = 'main')
+    {
+        $this->current = $name;
+        if (!array_key_exists($this->current, $this->loggers)) {
+            $this->current = 'main';
+        }
+        return $this;
     }
 
     /**
@@ -93,14 +114,6 @@ class Monolog implements ILog, ServiceProvider
             $this->current = 'main';
         }
         return $this->current;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLoggers()
-    {
-        return $this->loggers;
     }
 
     /**

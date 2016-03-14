@@ -26,13 +26,15 @@ return [
     'anonymous'=>[
         '/' => 3,
         '/403' => 3,
-        '/auth/login' => 3
+        '/auth/login' => 3,
     ],
     'admin' => [
         '*' => 3
     ],
     'common_user' => [
         '*' => 0,
+        '/' => 3,
+        '/403' => 3,
         '/admin/*' => 0,
         '/auth/*' => 3,
         '/view' => 1,

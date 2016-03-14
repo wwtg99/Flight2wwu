@@ -36,8 +36,8 @@
         </div>
     </div>
     <div>
-        <p>Roles</p>
-        <p><?php print_r(getAuth()->getRoles()); ?></p>
+        <p>User</p>
+        <p><?php print_r(getAuth()->getUser()); ?></p>
     </div>
     <div>
         <input type="text" id="in_en">

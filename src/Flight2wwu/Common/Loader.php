@@ -148,14 +148,6 @@ class Loader
     }
 
     /**
-     * @return bool
-     */
-    public function startSession()
-    {
-        return session_start();
-    }
-
-    /**
      * @param array $dirs [[prefix, path, <recursive>], ...]
      * @return Psr4ClassLoader
      */

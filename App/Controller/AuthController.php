@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\Model\Auth\User;
 use Flight2wwu\Common\BaseController;
 
 class AuthController extends BaseController
@@ -26,13 +27,6 @@ class AuthController extends BaseController
      * @var string
      */
     public static $logoutPath = '/auth/logout';
-
-    /**
-     * Path to change password.
-     *
-     * @var string
-     */
-    public static $pwdPath = '/auth/password';
 
     /**
      * Path to redirect after login.
@@ -97,15 +91,14 @@ class AuthController extends BaseController
 
     private static function postLogin()
     {
-        $name = self::getPost('name');
+        $name = self::getPost('username');
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
         getOValue()->addOld('username', $name);
         if (getAuth()->attempt(['username'=>$name, 'password'=>$pwd, 'remember'=>$rem])) {
             \Flight::redirect(self::$redirectPath);
         } else {
-            getOValue()->addOldOnce('login_error', 'login failed');
-            \Flight::redirect(self::$loginPath);
+            getView()->render('auth/login', ['msg'=>'login failed', 'status'=>'danger']);
         }
     }
 
@@ -133,17 +126,23 @@ class AuthController extends BaseController
         $old = self::getPost('old');
         $new1 = self::getPost('new1');
         $new2 = self::getPost('new2');
-        if ($new1 != $new2) {
-            getOValue()->addOldOnce('auth_error', 'password mismatch');
-            \Flight::redirect(self::$pwdPath);
+        if (!self::checkExists($new1, null, false) || !self::checkExists($new2, null, false)){
+            $msg = 'input password';
+            $status = 'danger';
+        } elseif ($new1 != $new2) {
+            $msg = 'password mismatch';
+            $status = 'danger';
         } else {
-            if (getAuth()->changePwd($old, $new1)) {
-                getOValue()->addOldOnce('auth_error', 'password changed');
+            if (User::changePassword($old, $new1)) {
+                $msg = 'password changed';
+                $status = 'success';
             } else {
-                getOValue()->addOldOnce('auth_error', 'password not changed');
+                $msg = 'password not changed';
+                $status = 'danger';
             }
-            \Flight::redirect(self::$pwdPath);
         }
+        getView()->render('auth/change_pwd', ['msg'=>$msg, 'status'=>$status]);
+        return false;
     }
 
     private static function getInfo()

@@ -79,8 +79,8 @@ class ComponentTester extends PHPUnit_Framework_TestCase
 
     public function testRbac()
     {
-        $rbac = new \Flight2wwu\Component\Auth\RoleBasedAccessControl();
-        $rbac->loadConfig([
+        $rbac = new \Flight2wwu\Component\Auth\RoleAuth();
+        $rbac->loadRBAC([
             'admin'=>['*'=>3],
             'common_user'=>[
                 '*'=>0,
@@ -92,27 +92,27 @@ class ComponentTester extends PHPUnit_Framework_TestCase
                 '/view/test/*'=>2
             ]
         ]);
-        $a = $rbac->getAuth('admin', '*');
+        $a = $rbac->getRoleAuth('admin', '*');
         $this->assertEquals(3, $a);
-        $a = $rbac->getAuth('common_user', '*');
+        $a = $rbac->getRoleAuth('common_user', '*');
         $this->assertEquals(0, $a);
-        $a = $rbac->getAuth('common_user', '/tran');
+        $a = $rbac->getRoleAuth('common_user', '/tran');
         $this->assertEquals(1, $a);
         $a = $rbac->getPathAuth('common_user', '/view/a');
         $this->assertEquals(3, $a);
         $a = $rbac->getPathAuth('common_user', '/vie');
         $this->assertEquals(0, $a);
-        $a = $rbac->getAuth('admin', '/v');
+        $a = $rbac->getRoleAuth('admin', '/v');
         $this->assertEquals(-1, $a);
-        $a = $rbac->getAuth('common_user', '/v');
+        $a = $rbac->getRoleAuth('common_user', '/v');
         $this->assertEquals(-1, $a);
-        $a = $rbac->getAuth(['admin', 'common_user'], '/v');
+        $a = $rbac->getRoleAuth(['admin', 'common_user'], '/v');
         $this->assertEquals(-1, $a);
-        $a = $rbac->getAuth('admin', '*');
+        $a = $rbac->getRoleAuth('admin', '*');
         $this->assertEquals(3, $a);
-        $a = $rbac->getAuth('common_user', '*');
+        $a = $rbac->getRoleAuth('common_user', '*');
         $this->assertEquals(0, $a);
-        $a = $rbac->getAuth(['admin', 'common_user'], '*');
+        $a = $rbac->getRoleAuth(['admin', 'common_user'], '*');
         $this->assertEquals(3, $a);
         $a = $rbac->getPathAuth(['admin', 'common_user'], '/v');
         $this->assertEquals(3, $a);

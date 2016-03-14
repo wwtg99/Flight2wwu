@@ -8,7 +8,7 @@
 
 namespace Flight2wwu\Component\Auth;
 
-use App\Model\User;
+use App\Model\Auth\User;
 use Flight2wwu\Common\ServiceProvider;
 
 class RoleAuth implements ServiceProvider, IAuth
@@ -74,7 +74,7 @@ class RoleAuth implements ServiceProvider, IAuth
      */
     public function isLogin()
     {
-        if ($this->user) {
+        if ($this->getUser()) {
             return true;
         }
         return $this->attempt([]);
@@ -99,6 +99,11 @@ class RoleAuth implements ServiceProvider, IAuth
      */
     public function getUser()
     {
+        if (!$this->user) {
+            if ($this->use_session) {
+                $this->user = getSession()->get(self::SESSION_KEY);
+            }
+        }
         return $this->user;
     }
 
@@ -141,25 +146,17 @@ class RoleAuth implements ServiceProvider, IAuth
      */
     public function getAuth($object)
     {
-        if ($this->isLogin()) {
-            $roles = $this->user['roles'];
-        } else {
-            $roles = 'anonymous';
-        }
+        $roles = $this->getRoles();
         return new AuthKey($this->getRoleAuth($roles, $object));
     }
 
     /**
      * @param string $path
-     * @return bool
+     * @return AuthKey
      */
-    public function isAccessed($path)
+    public function accessPath($path)
     {
-        if ($this->isLogin()) {
-            $roles = $this->user['roles'];
-        } else {
-            $roles = 'anonymous';
-        }
+        $roles = $this->getRoles();
         return new AuthKey($this->getPathAuth($roles, $path));
     }
 
@@ -170,16 +167,14 @@ class RoleAuth implements ServiceProvider, IAuth
     public function hasRole($role_name)
     {
         if ($this->isLogin()) {
-            $roles = $this->user['roles'];
+            $roles = $this->getRoles();
+            if (!is_array($roles)) {
+                $roles = [$roles];
+            }
             if (is_array($role_name)) {
-                foreach ($role_name as $r) {
-                    if (!array_key_exists($r, $roles)) {
-                        return false;
-                    }
-                }
-                return true;
+                return array_intersect($role_name, $roles) == $role_name;
             } else {
-                return array_key_exists($role_name, $roles);
+                return in_array($role_name, $roles);
             }
         }
         return false;
@@ -196,6 +191,25 @@ class RoleAuth implements ServiceProvider, IAuth
             }
         }
         return false;
+    }
+
+    /**
+     * @return array|string
+     */
+    private function getRoles()
+    {
+        if ($this->isLogin()) {
+            $roles = $this->user['roles'];
+            if (is_array($roles)) {
+                return $roles;
+            } else {
+                if (strpos($roles, ',') > 0) {
+                    return explode(',', $roles);
+                }
+                return $roles;
+            }
+        }
+        return 'anonymous';
     }
 
     /**

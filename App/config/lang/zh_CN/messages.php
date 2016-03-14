@@ -63,4 +63,6 @@ return [
     'category'=>'分类',
     'description'=>'描述',
     'enabled'=>'有效的',
+    'username'=>'用户名',
+    'password'=>'密码',
 ];

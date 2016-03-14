@@ -33,5 +33,3 @@ $loader = \Flight2wwu\Common\Loader::getInstance();
 $loader->loadConfig($app_conf);
 date_default_timezone_set(Flight::get('timezone'));
 $loader->registerAll();
-$loader->startSession();
-

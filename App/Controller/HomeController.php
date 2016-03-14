@@ -53,23 +53,14 @@ class HomeController extends BaseController
         }
         $logger = getLog();
         // log access
-        if (!getAuth()->access($path, self::getRequest()->method)) {
-            if ($logger instanceof Monolog) {
-                $logger->setCurrentLogger('access');
-            }
-            getLog()->info("forbidden for $path by $user");
-            if ($logger instanceof Monolog) {
-                $logger->setCurrentLogger();
-            }
+        if (!getAuth()->accessPath($path)->access(self::getRequest()->method)) {
+            $logger->changeLogger('access')->info("forbidden for $path by $user");
+            $logger->changeLogger('main');
             \Flight::redirect('/403');
+            return false;
         } else {
-            if ($logger instanceof Monolog) {
-                $logger->setCurrentLogger('access');
-            }
-            $logger->info("Access from $ip by $user for $url method $method");
-            if ($logger instanceof Monolog) {
-                $logger->setCurrentLogger();
-            }
+            $logger->changeLogger('access')->info("Access from $ip by $user for $url method $method");
+            $logger->changeLogger('main');
         }
         return true;
     }
