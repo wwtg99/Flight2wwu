@@ -9,28 +9,32 @@
 namespace App\Model;
 
 
-class Admin {
+class Admin
+{
 
+    /**
+     * @param $user_id
+     * @return array
+     */
     public static function getUser($user_id = null)
     {
 
     }
 
-    public static function addRole($user_id, $role)
-    {
-
-    }
-
-    public static function removeRole($user_id, $role)
-    {
-
-    }
-
+    /**
+     * @param $user_id
+     * @param array $roles
+     * @return array
+     */
     public static function changeRoles($user_id, $roles)
     {
 
     }
 
+    /**
+     * @param $user_id
+     * @return bool
+     */
     public static function resetPassword($user_id)
     {
 

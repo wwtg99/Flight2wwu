@@ -67,7 +67,7 @@ class Monolog implements ILog, ServiceProvider
             $level = self::getLevel($level);
             $name = array_key_exists('title', $config) ? $config['title'] : "$domain.log";
             $max = array_key_exists('max_logfile', $config) ? $config['max_logfile'] : 10;
-            $handler = new RotatingFileHandler(LOG . $name, $max, $level);
+            $handler = new RotatingFileHandler(LOG . $name, $max, $level, true, 0777);
             $logger->pushHandler($handler);
             $this->loggers[$domain] = $logger;
             $this->current = $domain;

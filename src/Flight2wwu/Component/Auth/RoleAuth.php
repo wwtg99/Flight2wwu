@@ -124,11 +124,8 @@ class RoleAuth implements ServiceProvider, IAuth
         $this->use_session = isset($auth['session']) ? $auth['session'] : false;
         $this->use_cookie = isset($auth['cookie']) ? $auth['cookie'] : false;
         if ($auth && array_key_exists('rbac', $auth)) {
-            $f = $auth['rbac'];
-            if (file_exists($f)) {
-                $c = require "$f";
-                $this->loadRBAC($c);
-            }
+            $c = $auth['rbac'];
+            $this->loadRBAC($c);
         }
     }
 

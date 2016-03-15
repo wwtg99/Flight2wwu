@@ -83,7 +83,7 @@ function getAssets()
 }
 
 /**
- * @return \Flight2wwu\Component\Auth\RoleAuth
+ * @return \Flight2wwu\Component\Auth\IAuth
  */
 function getAuth()
 {

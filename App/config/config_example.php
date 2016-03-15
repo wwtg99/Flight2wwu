@@ -21,13 +21,76 @@ return [
     'debug'=>1,
     //Config files
     'config'=>[
-        'prefix'=>CONFIG,  // relative path for config files
-        'register_loader'=>'register_loader.php',  // register class
-        'class_register'=>'class_register.php',  // class register in Flight
-        'route_controller_register'=>'route_controller_register.php',  // route controller register file
-        'route_register'=>'route_register.php',  // route register file
-        'route'=>'route.php',  // route definition file
-        'handler'=>'handlers.php', //other handler functions
+        /**
+         * Register classes
+         * [prefix, path, <recursive>]
+         * prefix for namespace
+         * path is relative to project root
+         * recursive default is false, true to register all subdirectories with first letter uppercase
+         */
+        'register_path'=>[
+            ['Flight2wwu', 'src' . DIRECTORY_SEPARATOR . 'Flight2wwu', true],
+            ['App\Controller', 'App' . DIRECTORY_SEPARATOR . 'Controller', true],
+            ['App\Model', 'App' . DIRECTORY_SEPARATOR . 'Model', true],
+            ['App\Plugin', 'App' . DIRECTORY_SEPARATOR . 'Plugin', true],
+            ['App\Schedule', 'App' . DIRECTORY_SEPARATOR . 'Schedule', true],
+        ],
+        /**
+         * Register class to Flight, Flight();:name to use
+         * name => full class name
+         * Class must implement ServiceProvider
+         */
+        'register_class'=>[
+            'Auth' => 'Flight2wwu\Component\Auth\RoleAuth',
+            'View' => 'Flight2wwu\Component\View\BorderView',
+            'Log' => 'Flight2wwu\Component\Log\Monolog',
+//            'DB' => 'Flight2wwu\Component\Database\PdoDB',
+            'DB' => 'Flight2wwu\Component\Database\MedooDB',
+            'Locale' => 'Flight2wwu\Component\Translation\SymTrans',
+            'Cache' => 'Flight2wwu\Component\Storage\Cache',
+            'Session' => 'Flight2wwu\Component\Storage\SessionUtil',
+            'Cookie' => 'Flight2wwu\Component\Storage\CookieUtil',
+            'Value' => 'Flight2wwu\Component\Storage\OldValue',
+            'Assets' => 'Flight2wwu\Component\View\AssetsManager',
+            'Mail' => 'Flight2wwu\Component\Utils\Mail',
+            'Express' => 'Flight2wwu\Component\Utils\Express',
+        ],
+        /**
+         * Register route here
+         * All path will be registered in sequence
+         */
+        'route'=>[
+            /**
+             * Route path for functions
+             * [route, array(full class name, function name)]
+             */
+            'path'=>[
+                ["*", array('\\App\\Controller\\HomeController', 'rbac')],
+                ["*", array('\\App\\Controller\\HomeController', 'language')],
+                ["/", array('\\App\\Controller\\HomeController', 'home')],
+                ["/home", array('\\App\\Controller\\HomeController', 'home')],
+                ["/403", array('\\App\\Controller\\HomeController', 'forbidden')],
+                ["/changelog", array('\\App\\Controller\\HomeController', 'changelog')],
+            ],
+            /**
+             * Register whole controller class with static public functions
+             * full class name (without Controller) => prefix
+             * All public static functions will register routes by /prefix/function
+             * Controller must extends BaseController
+             */
+            'controller'=>[
+                'App\Controller\Auth'=>'auth',
+                'App\Controller\Admin'=>'admin',
+            ],
+            /**
+             * Other route definition file
+             */
+            'file'=>CONFIG . 'route.php',
+        ],
+        /**
+         * Other handler functions
+         */
+        'handler'=>CONFIG . 'handlers.php',
     ],
     //Plugin
     'plugin'=>[
@@ -75,7 +138,41 @@ return [
     ],
     //Auth
     'auth'=>[
-        'rbac'=>CONFIG . 'rbac.php', //role based access control config file
+        /**
+         * Define role based access control
+         * role_name => ['object or path' => auth]
+         *
+         * auth
+         * 0: forbidden
+         * 1: GET access or enable
+         * 2: POST access
+         * 3: 1 | 2
+         *
+         * For path
+         * 1. check exact same path
+         * 2. if not found, check upper dir /*
+         * 3. if all upper dir is not found, check *
+         */
+        'rbac'=>[
+            'anonymous'=>[
+                '/' => 3,
+                '/403' => 3,
+                '/auth/login' => 3,
+            ],
+            'admin' => [
+                '*' => 3
+            ],
+            'common_user' => [
+                '*' => 0,
+                '/' => 3,
+                '/403' => 3,
+                '/admin/*' => 0,
+                '/auth/*' => 3,
+                '/view' => 1,
+                '/comp' => 1,
+                '/changelog' => 1,
+            ],
+        ],
         'session'=>true, //use session to store user info
         'cookie'=>true, //use cookie to store token
     ],
@@ -90,7 +187,7 @@ return [
         ],
         'session'=>true, //enable session
         'cookie'=>true, //enable cookie
-        'old_value'=>'cache', //storage method for old_value: cache, session
+        'old_value'=>'session', //storage method for old_value: cache, session
     ],
     //Mail
     'mail'=>[
@@ -105,8 +202,8 @@ return [
         ],
     ],
     //Express
+    //[name, label, request url (<no> will be replaced), format function name]
     'express'=>[
-        //[name, label, request url (<no> will be replaced), format function name]
         ['yto', '圆通', 'http://www.kiees.cn/yto.php?wen=<no>&action=ajax', 'extractKieesTable'],
         ['sto', '申通', 'http://www.kiees.cn/sto.php?wen=<no>&ajax=1', 'extractKieesTable'],
         ['ems', 'EMS', 'http://www.kiees.cn/ems.php?wen=<no>&action=ajax', 'extractKieesTable'],

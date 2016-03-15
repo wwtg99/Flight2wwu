@@ -36,12 +36,16 @@ class Loader
     }
 
     /**
-     * @param string $conf_file
+     * @param string|array $conf
      */
-    public function loadConfig($conf_file)
+    public function loadConfig($conf)
     {
-        if (file_exists($conf_file)) {
-            $c = require "$conf_file";
+        if (is_array($conf)) {
+            foreach ($conf as $k => $v) {
+                \Flight::set($k, $v);
+            }
+        } elseif (file_exists($conf)) {
+            $c = require "$conf";
             foreach ($c as $k => $v) {
                 \Flight::set($k, $v);
             }
@@ -56,34 +60,24 @@ class Loader
     public function registerAll()
     {
         $config = \Flight::get('config');
-        $prefix = $config['prefix'];
-        // register_loader
-        $c = $config['register_loader'];
-        $arr = $this->loadArrayConfig($prefix, $c);
-        $this->loadClass($arr);
-        // class_register
-        $c = $config['class_register'];
-        $arr = $this->loadArrayConfig($prefix, $c);
-        $this->registerClass($arr);
-        // route_register
-        $c = $config['route_register'];
-        $arr = $this->loadArrayConfig($prefix, $c);
-        $this->registerRoute($arr);
-        // route_controller_register
-        $c = $config['route_controller_register'];
-        $arr = $this->loadArrayConfig($prefix, $c);
-        $this->registerRouteController($arr);
-        // route
-        $c = $config['route'];
-        $f = $prefix . DIRECTORY_SEPARATOR . $c;
-        if (file_exists($f)) {
-            require "$f";
+        // register path
+        $c = $config['register_path'];
+        $this->loadClass($c);
+        // register class
+        $c = $config['register_class'];
+        $this->registerClass($c);
+        // register route
+        $route = $config['route'];
+        $this->registerRoute($route['path']);
+        $this->registerRouteController($route['controller']);
+        $route_file = $route['file'];
+        if (file_exists($route_file)) {
+            require "$route_file";
         }
         // handler
-        $c = $config['handler'];
-        $f = $prefix . DIRECTORY_SEPARATOR . $c;
-        if (file_exists($f)) {
-            require "$f";
+        $handler_file = $config['handler'];
+        if (file_exists($handler_file)) {
+            require "$handler_file";
         }
         // plugin
         $pc = \Flight::get('plugin');
@@ -184,32 +178,6 @@ class Loader
         }
     }
 
-//
-//    /**
-//     * @param $root
-//     * @return Psr4ClassLoader
-//     */
-//    public function classLoader($root)
-//    {
-//        $loader = new Psr4ClassLoader();
-//        $path = [];
-//        $src = implode(DIRECTORY_SEPARATOR, [$root, 'src', 'Flight2wwu']);
-//        //Common
-//        $comm = $src . DIRECTORY_SEPARATOR . 'Common';
-//        $path = array_merge($path, self::getPrefixPath('Flight2wwu\\Common', $comm));
-//        //Component
-//        $comp = $src . DIRECTORY_SEPARATOR . 'Component';
-//        $path = array_merge($path, self::getPrefixPath('Flight2wwu\\Component', $comp));
-//        //App
-//        $app = $root . DIRECTORY_SEPARATOR . 'App';
-//        $path = array_merge($path, self::getPrefixPath('App', $app));
-//        foreach ($path as $p) {
-//            $loader->addPrefix($p['prefix'], $p['path']);
-//        }
-//        $loader->register();
-//        return $loader;
-//    }
-
     /**
      * @param $prefix
      * @param $realPath
@@ -252,22 +220,5 @@ class Loader
             array_push($paths, ['prefix'=>$prefix, 'path'=>$dir]);
         }
         return $paths;
-    }
-
-    /**
-     * @param string $prefix
-     * @param string $name
-     * @return array
-     * @throws \Exception
-     */
-    private function loadArrayConfig($prefix, $name)
-    {
-        $f = $prefix . DIRECTORY_SEPARATOR . $name;
-        if (file_exists($f)) {
-            $arr = require "$f";
-            return $arr;
-        } else {
-            throw new \Exception('config file not exists', 1);
-        }
     }
 }
