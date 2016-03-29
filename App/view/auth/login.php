@@ -25,8 +25,8 @@
                 </div>
                 <?php if(isset($msg)): ?>
                     <?php
-                    $ac = new \Flight2wwu\Component\View\Html\AlertComp($status);
-                    echo $ac->render(['data'=>TI($msg)]);
+                    $ac = new \Components\Comp\AlertView($status);
+                    echo $ac->view(['message'=>TI($msg)]);
                     ?>
                 <?php endif; ?>
             </form>

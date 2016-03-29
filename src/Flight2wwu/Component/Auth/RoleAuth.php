@@ -198,12 +198,11 @@ class RoleAuth implements ServiceProvider, IAuth
         if ($this->isLogin()) {
             $roles = $this->user['roles'];
             if (is_array($roles)) {
+                array_push($roles, 'common_user');
                 return $roles;
             } else {
-                if (strpos($roles, ',') > 0) {
-                    return explode(',', $roles);
-                }
-                return $roles;
+                $roles .= ',common_user';
+                return explode(',', $roles);
             }
         }
         return 'anonymous';

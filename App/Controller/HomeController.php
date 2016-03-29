@@ -52,6 +52,10 @@ class HomeController extends BaseController
             $user = 'anonymous';
         }
         $logger = getLog();
+        //skip /403
+        if ($path == '/403') {
+            return true;
+        }
         // log access
         if (!getAuth()->accessPath($path)->access(self::getRequest()->method)) {
             $logger->changeLogger('access')->info("forbidden for $path by $user");

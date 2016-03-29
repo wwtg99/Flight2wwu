@@ -3,50 +3,44 @@
     <div>
         <h3>Normal input</h3>
         <?php
-        $comp1 = new \Flight2wwu\Component\View\Html\InputComp('id1');
+        $comp1 = new \HtmlObject\Input('text', 'id1');
         echo $comp1->render();
         echo ' ';
-        $comp2 = new \Flight2wwu\Component\View\Html\InputComp('id2', 'text', '', 'aa');
+        $comp2 = new \HtmlObject\Input('text', 'id2', 'text');
         echo $comp2->render();
-        echo ' ';
-        $comp3 = new \Flight2wwu\Component\View\Html\InputComp('id3', 'text', '', ['aa', 'bb'], ['value'=>'value']);
-        echo $comp3->render();
-        echo ' ';
-        $comp4 = new \Flight2wwu\Component\View\Html\InputComp('id4', 'text', 'label');
-        echo $comp4->render();
         ?>
     </div>
     <br>
     <div>
         <h3>Radio and checkbox</h3>
         <?php
-        $comp5 = new \Flight2wwu\Component\View\Html\InputComp('id5', 'radio');
+        $comp5 = new \HtmlObject\Input('radio', 'radio1');
         echo $comp5->render();
         echo ' ';
-        $comp6 = new \Flight2wwu\Component\View\Html\InputComp('id6', 'checkbox');
+        $comp5 = new \HtmlObject\Input('radio', 'radio1');
+        echo $comp5->render();
+        echo ' ';
+        $comp5 = new \HtmlObject\Input('radio', 'radio1');
+        echo $comp5->render();
+        echo ' ';
+        $comp6 = new \HtmlObject\Input('checkbox', 'id6');
         echo $comp6->render();
         echo ' ';
-        $comp7 = new \Flight2wwu\Component\View\Html\InputComp('id7', 'radio', 'radio1', '', ['name'=>'g1']);
-        echo $comp7->render();
-        echo ' ';
-        $comp8 = new \Flight2wwu\Component\View\Html\InputComp('id8', 'radio', 'radio2', '', ['name'=>'g1']);
-        echo $comp8->render();
-        echo ' ';
-        $comp9 = new \Flight2wwu\Component\View\Html\InputComp('id9', 'checkbox', 'checked', '', ['checked'=>'1']);
-        echo $comp9->render();
+        $comp6 = new \HtmlObject\Input('checkbox', 'id7', null, ['checked'=>1]);
+        echo $comp6->render();
         ?>
     </div>
     <br>
     <div>
         <h3>Buttons</h3>
         <?php
-        $comp10 = new \Flight2wwu\Component\View\Html\InputComp('id10', 'button', 'button', ['btn', 'btn-default']);
+        $comp10 = new \HtmlObject\Input('button', 'button', 'button');
         echo $comp10->render();
         echo ' ';
-        $comp11 = new \Flight2wwu\Component\View\Html\InputComp('id11', 'submit', 'submit');
+        $comp11 = new \HtmlObject\Input('submit', 'submit', 'submit');
         echo $comp11->render();
         echo ' ';
-        $comp12 = new \Flight2wwu\Component\View\Html\InputComp('id12', 'reset', 'reset');
+        $comp12 = new \HtmlObject\Input('reset', 'reset', 'reset');
         echo $comp12->render();
         ?>
     </div>
@@ -54,16 +48,16 @@
     <div>
         <h3>Other inputs</h3>
         <?php
-        $comp13 = new \Flight2wwu\Component\View\Html\InputComp('id13', 'password', 'password');
+        $comp13 = new \HtmlObject\Input('password', 'password', 'password');
         echo $comp13->render();
         echo ' ';
-        $comp14 = new \Flight2wwu\Component\View\Html\InputComp('id14', 'file', 'file');
+        $comp14 = new \HtmlObject\Input('file', 'file', 'file');
         echo $comp14->render();
         echo ' ';
-        $comp15 = new \Flight2wwu\Component\View\Html\InputComp('id15', 'number', 'number');
+        $comp15 = new \HtmlObject\Input('number', 'number', 'number');
         echo $comp15->render();
         echo ' ';
-        $comp16 = new \Flight2wwu\Component\View\Html\InputComp('id16', 'date', 'date');
+        $comp16 = new \HtmlObject\Input('date', 'date', 'date');
         echo $comp16->render();
         ?>
     </div>
@@ -71,7 +65,7 @@
     <div>
         <h3>Steps</h3>
         <?php
-        echo $steps->render(['current'=>2]);
+        echo $steps->view(['current'=>2]);
         ?>
     </div>
     <div class="clear"></div>
@@ -80,17 +74,17 @@
         <h3>List view</h3>
         <p>1 column left align</p>
         <?php
-        echo $listview1->render(['data'=>['field1'=>'value1', 'field2'=>'value2']]);
+        echo $listview1->view(['data'=>['field1'=>'value1', 'field2'=>'value2']]);
         ?>
         <div class="clear"></div>
         <p>2 columns right align</p>
         <?php
-        echo $listview2->render(['data'=>['field3'=>'value3', 'field4'=>'value4', 'field5'=>'value5']]);
+        echo $listview2->view(['data'=>['field3'=>'value3', 'field4'=>'value4', 'field5'=>'value5']]);
         ?>
         <div class="clear"></div>
         <p>3 columns center align</p>
         <?php
-        echo $listview3->render(['data'=>['field6'=>'value6', 'field7'=>'value7', 'field8'=>'value8', 'field9'=>'value9', 'field10'=>'value10', 'field11'=>'value11']]);
+        echo $listview3->view(['data'=>['field6'=>'value6', 'field7'=>'value7', 'field8'=>'value8', 'field9'=>'value9', 'field10'=>'value10', 'field11'=>'value11']]);
         ?>
     </div>
     <div class="clear"></div>
@@ -98,14 +92,14 @@
     <div>
         <h3>Alert</h3>
         <?php
-        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('success');
-        echo $a1->render(['data'=>'success']);
-        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('info');
-        echo $a1->render(['data'=>'info']);
-        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('warning');
-        echo $a1->render(['data'=>'warning']);
-        $a1 = new \Flight2wwu\Component\View\Html\AlertComp('danger');
-        echo $a1->render(['data'=>'danger']);
+        $a1 = new \Components\Comp\AlertView('success');
+        echo $a1->view(['message'=>'success']);
+        $a1 = new \Components\Comp\AlertView('info');
+        echo $a1->view(['message'=>'info']);
+        $a1 = new \Components\Comp\AlertView('warning');
+        echo $a1->view(['message'=>'warning']);
+        $a1 = new \Components\Comp\AlertView('danger');
+        echo $a1->view(['message'=>'danger']);
         ?>
     </div>
     <br>
