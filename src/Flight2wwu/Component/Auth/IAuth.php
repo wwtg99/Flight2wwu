@@ -14,15 +14,17 @@ interface IAuth
 
     /**
      * @param array $user
+     * @param bool $cookie
      * @return bool
      */
-    public function attempt(array $user);
+    public function attempt(array $user, $cookie = true);
 
     /**
      * @param array $user
+     * @param int|null $expires: expire minutes
      * @return mixed
      */
-    public function login(array $user);
+    public function login(array $user, $expires = null);
 
     /**
      * @return bool

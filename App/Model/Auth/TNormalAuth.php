@@ -24,7 +24,7 @@ trait TNormalAuth
             $u = $db->getConnection('main')->get(User::VIEW_USER, User::$head, ['AND'=>['remember_token'=>$user['token'], 'active'=>'true']]);
             if ($u) {
                 if (self::verifyToken($user['token'], $u[User::KEY_USER_ID])) {
-                    return ['user_id'=>$u[User::KEY_USER_ID], 'username'=>$u[User::KEY_USER_NAME], 'label'=>$u['label'], 'department'=>$u['department'], 'email'=>$u[User::KEY_USER_EMAIL], 'superuser'=>$u['superuser'], 'descr'=>$u['descr'], 'token'=>$user[User::KEY_USER_TOKEN], 'roles'=>$u['roles']];
+                    return ['user_id'=>$u[User::KEY_USER_ID], 'name'=>$u[User::KEY_USER_NAME], 'label'=>$u['label'], 'department'=>$u['department'], 'email'=>$u[User::KEY_USER_EMAIL], 'superuser'=>$u['superuser'], 'descr'=>$u['descr'], 'token'=>$user[User::KEY_USER_TOKEN], 'roles'=>$u['roles']];
                 }
             }
         } elseif (array_key_exists('username', $user) && $user['username']) {
@@ -36,7 +36,7 @@ trait TNormalAuth
                 if (is_null($pwd) || $pwd === '' || password_verify($user['password'], $pwd)) {
                     $token = self::generateToken($uid, $age);
                     self::updateToken($uid, $token);
-                    return ['user_id' => $uid, 'username' => $u[User::KEY_USER_NAME], 'label'=>$u['label'], 'department'=>$u['department'], 'email' => $u[User::KEY_USER_EMAIL], 'superuser' => $u['superuser'], 'descr' => $u['descr'], 'roles'=>$u['roles'], 'token'=>$u[User::KEY_USER_TOKEN]];
+                    return ['user_id' => $uid, 'name' => $u[User::KEY_USER_NAME], 'label'=>$u['label'], 'department'=>$u['department'], 'email' => $u[User::KEY_USER_EMAIL], 'superuser' => $u['superuser'], 'descr' => $u['descr'], 'roles'=>$u['roles'], 'token'=>$u[User::KEY_USER_TOKEN]];
                 }
             }
         }

@@ -12,6 +12,21 @@ class FormatUtils
 {
 
     /**
+     * @param int $length
+     * @return string
+     */
+    public static function randStr($length)
+    {
+        $str = null;
+        $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+        $max = strlen($strPol) - 1;
+        for($i = 0; $i < $length; $i++){
+            $str .= $strPol[rand(0,$max)];
+        }
+        return $str;
+    }
+
+    /**
      * Format path without last separator.
      *
      * @param string $path

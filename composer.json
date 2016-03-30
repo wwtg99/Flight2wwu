@@ -33,6 +33,7 @@
         "league/flysystem": "~1.0",
         "swiftmailer/swiftmailer": "~5.4",
         "catfan/Medoo": "~1.0",
+        "jwage/purl": "*",
         "wwtg99/structure-files": "~0.1",
         "wwtg99/html_component": "~0.1"
     },

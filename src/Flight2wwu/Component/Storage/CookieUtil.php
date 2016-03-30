@@ -60,13 +60,13 @@ class CookieUtil implements ServiceProvider, IAttribute
     /**
      * @param string $name
      * @param $val
-     * @param int $expire: minutes to expire
+     * @param int $expire
      * @return $this
      */
     public function set($name, $val, $expire = 0)
     {
         if ($this->enabled) {
-            setcookie($name, $val, $this->calExpireMinutes($expire));
+            setcookie($name, $val, $this->calExpireSeconds($expire), '/');
         }
         return $this;
     }
@@ -109,12 +109,12 @@ class CookieUtil implements ServiceProvider, IAttribute
     }
 
     /**
-     * @param int $minutes
+     * @param int $sec
      * @return int
      */
-    private function calExpireMinutes($minutes)
+    private function calExpireSeconds($sec)
     {
-        return ($minutes > 0) ? time() + $minutes * 60 : 0;
+        return ($sec > 0) ? time() + $sec : 0;
     }
 
 }

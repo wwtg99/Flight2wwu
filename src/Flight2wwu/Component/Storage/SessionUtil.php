@@ -53,7 +53,7 @@ class SessionUtil implements ServiceProvider, IAttribute
     public function get($name)
     {
         if ($this->has($name)) {
-            return $this->session[$name];
+            return $this->session[$name][0];
         }
         return null;
     }
@@ -61,12 +61,13 @@ class SessionUtil implements ServiceProvider, IAttribute
     /**
      * @param string $name
      * @param $val
+     * @param int $expire
      * @return $this
      */
-    public function set($name, $val)
+    public function set($name, $val, $expire = 0)
     {
         if ($this->enabled) {
-            $this->session[$name] = $val;
+            $this->session[$name] = [$val, $this->calExpireSeconds($expire)];
         }
         return $this;
     }
@@ -78,7 +79,11 @@ class SessionUtil implements ServiceProvider, IAttribute
     public function has($name)
     {
         if ($this->enabled) {
-            return isset($this->session[$name]);
+            if (isset($this->session[$name])) {
+                if (!$this->session[$name][1] || time() <= $this->session[$name][1]) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -122,4 +127,12 @@ class SessionUtil implements ServiceProvider, IAttribute
         return $this;
     }
 
+    /**
+     * @param int $sec
+     * @return int
+     */
+    private function calExpireSeconds($sec)
+    {
+        return ($sec > 0) ? time() + $sec : 0;
+    }
 }

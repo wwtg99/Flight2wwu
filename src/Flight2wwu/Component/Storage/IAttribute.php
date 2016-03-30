@@ -21,9 +21,10 @@ interface IAttribute
     /**
      * @param string $name
      * @param $val
+     * @param int $expire
      * @return IAttribute
      */
-    public function set($name, $val);
+    public function set($name, $val, $expire = 0);
 
     /**
      * @param string $name

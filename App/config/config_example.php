@@ -80,6 +80,7 @@ return [
              */
             'controller'=>[
                 'App\Controller\Auth'=>'auth',
+                'App\Controller\OAuth'=>'oauth',
                 'App\Controller\Admin'=>'admin',
             ],
             /**
@@ -158,6 +159,8 @@ return [
                 '/' => 3,
                 '/403' => 3,
                 '/auth/login' => 3,
+                '/auth/logout' => 3,
+                '/oauth/login' => 3,
             ],
             'admin' => [
                 '*' => 3
@@ -168,6 +171,7 @@ return [
                 '/403' => 3,
                 '/admin/*' => 0,
                 '/auth/*' => 3,
+                '/oauth/*' => 3,
                 '/view' => 1,
                 '/comp' => 1,
                 '/changelog' => 1,
@@ -175,6 +179,18 @@ return [
         ],
         'session'=>true, //use session to store user info
         'cookie'=>true, //use cookie to store token
+    ],
+    //OAuth
+    'oauth'=>[
+        'code_uri'=>'http://192.168.0.21:10000/authorize',
+        'token_uri'=>'http://192.168.0.21:10000/token',
+        'redirect_uri'=>'http://localhost:8880',
+        'redirect_uri_key'=>'redirect_uri',
+        'app_id'=>'',
+        'app_id_key'=>'client_id',
+        'app_secret'=>'',
+        'app_secret_key'=>'client_secret',
+        'state_key'=>'state',
     ],
     //Storage
     'storage'=>[

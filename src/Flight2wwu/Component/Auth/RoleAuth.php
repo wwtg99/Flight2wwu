@@ -15,7 +15,7 @@ class RoleAuth implements ServiceProvider, IAuth
 {
 
     const SESSION_KEY = 'user';
-    const COOKIE_KEY = 'user';
+    const COOKIE_KEY = 'access_token';
 
     /**
      * @var array
@@ -39,16 +39,21 @@ class RoleAuth implements ServiceProvider, IAuth
 
     /**
      * @param array $user
+     * @param bool $cookie
      * @return bool
      */
-    public function attempt(array $user)
+    public function attempt(array $user, $cookie = true)
     {
-        if ($this->use_cookie) {
-            $user['token'] = getCookie()->get(self::COOKIE_KEY);
+        if ($cookie && $this->use_cookie) {
+            $cookie_user = getCookie()->get(self::COOKIE_KEY);
+            if ($cookie_user) {
+                $user['token'] = $cookie_user;
+            }
         }
         $u = User::verify($user);
         if ($u) {
-            $this->login($u);
+            $expires = array_key_exists('expires_in', $u) ? $u['expires_in'] : null;
+            $this->login($u, $expires);
             return true;
         }
         return false;
@@ -56,16 +61,22 @@ class RoleAuth implements ServiceProvider, IAuth
 
     /**
      * @param array $user
+     * @param int|null $expires: expire minutes
      * @return mixed
      */
-    public function login(array $user)
+    public function login(array $user, $expires = null)
     {
         $this->user = $user;
         if ($this->use_session) {
-            getSession()->set(self::SESSION_KEY, $user);
+            getSession()->set(self::SESSION_KEY, $user, $expires);
         }
         if ($this->use_cookie) {
-            getCookie()->set(self::COOKIE_KEY, (isset($user['token']) ? $user['token'] : null));
+            if (isset($user['token'])) {
+                $cookie_user = $user['token'];
+                if (!getCookie()->has(self::COOKIE_KEY)) {
+                    getCookie()->set(self::COOKIE_KEY, $cookie_user, $expires);
+                }
+            }
         }
     }
 

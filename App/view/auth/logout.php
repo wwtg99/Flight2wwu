@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row text-center">
         <h1>
-            <?php TIP('Dear %name%', ['%name%'=>getUser('username')]); echo ', '; TP('confirm logout'); ?>
+            <?php TIP('Dear %name%', ['%name%'=>getUser('name')]); echo ', '; TP('confirm logout'); ?>
         </h1>
         <div class="row"></div>
         <form class="form" id="form_logout" role="form" action="/auth/logout" method="post">

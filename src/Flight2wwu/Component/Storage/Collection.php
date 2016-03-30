@@ -78,9 +78,10 @@ class Collection implements IAttribute, \Iterator
     /**
      * @param string $name
      * @param $val
+     * @param int $expires: not supported
      * @return IAttribute
      */
-    public function set($name, $val)
+    public function set($name, $val, $expires = 0)
     {
         if (is_null($name)) {
             $this->content = $val;

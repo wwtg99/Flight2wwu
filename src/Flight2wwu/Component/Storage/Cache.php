@@ -78,13 +78,13 @@ class Cache implements ServiceProvider, IAttribute
     /**
      * @param string $name
      * @param $val
-     * @param $ttl
+     * @param int $expire
      * @return IAttribute
      */
-    public function set($name, $val, $ttl = null)
+    public function set($name, $val, $expire = null)
     {
         if ($this->cache) {
-            $this->cache->set($name, $val, $ttl);
+            $this->cache->set($name, $val, $expire);
         }
         return $this;
     }
