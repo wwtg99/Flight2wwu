@@ -15,8 +15,8 @@ namespace App\Model\Auth;
 class User
 {
 
-//    use TNormalAuth;
-    use TOpenAuth;
+    use TNormalAuth;
+//    use TOpenAuth;
 
     const KEY_USER_ID = 'user_id';
     const KEY_USER_NAME = 'name';
