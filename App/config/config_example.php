@@ -46,6 +46,7 @@ return [
             'Log' => 'Flight2wwu\Component\Log\Monolog',
 //            'DB' => 'Flight2wwu\Component\Database\PdoDB',
             'DB' => 'Flight2wwu\Component\Database\MedooDB',
+            'ORM' => 'Flight2wwu\Component\Database\OrmManager',
             'Locale' => 'Flight2wwu\Component\Translation\SymTrans',
             'Cache' => 'Flight2wwu\Component\Storage\Cache',
             'Session' => 'Flight2wwu\Component\Storage\SessionUtil',
