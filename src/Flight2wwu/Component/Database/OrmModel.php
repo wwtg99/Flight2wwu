@@ -45,20 +45,39 @@ abstract class OrmModel
     /**
      * @param string|array $select
      * @param array|null $where
+     * @param bool|Pagination $page: true for auto page
      * @return array
      * @throws \Exception
      */
-    public function lists($select = null, $where = null)
+    public function lists($select = null, $where = null, $page = null)
     {
         $db = getDB();
         if (is_null($select)) {
             $select = '*';
+        }
+        if ($page === true) {
+            $page = Pagination::getAutoPage($this->getTableName());
+        }
+        if ($page instanceof Pagination) {
+            $where['LIMIT'] = [$page->getOffset(), $page->getLimit()];
         }
         $re = $db->getConnection()->select($this->getTableName(), $select, $where);
         if ($re) {
             return $re;
         }
         return [];
+    }
+
+    /**
+     * @param array|null $where
+     * @return int
+     * @throws \Exception
+     */
+    public function count($where = null)
+    {
+        $db = getDB();
+        $re = $db->getConnection()->count($this->getTableName(), $where);
+        return $re;
     }
 
     /**
@@ -97,6 +116,41 @@ abstract class OrmModel
         $db = getDB();
         $re = $db->getConnection()->delete($this->getTableName(), $where);
         return $re;
+    }
+
+    /**
+     * @param string|array $text
+     * @param string|array $fields
+     * @param string|array $select
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function search($text, $fields = [], $select = null)
+    {
+        if (is_null($select)) {
+            $select = '*';
+        }
+        if (!$fields) {
+            $fields = $this->getTableKey();
+        }
+        if (!$fields) {
+            return [];
+        }
+        if (is_array($fields)) {
+            $where = ['OR'=>[]];
+            foreach ($fields as $field) {
+                $where['OR'][$field . '[~]'] = $text;
+            }
+        } else {
+            $f = $fields . '[~]';
+            $where = [$f => $text];
+        }
+        $db = getDB();
+        $re = $db->getConnection()->select($this->getTableName(), $select, $where);
+        if ($re) {
+            return $re;
+        }
+        return [];
     }
 
     /**
