@@ -45,7 +45,7 @@ abstract class OrmModel
     /**
      * @param string|array $select
      * @param array|null $where
-     * @param bool|Pagination $page: true for auto page
+     * @param bool|Pagination $page: true for auto page, false for new auto page, null for all
      * @return array
      * @throws \Exception
      */
@@ -56,6 +56,9 @@ abstract class OrmModel
             $select = '*';
         }
         if ($page === true) {
+            $page = Pagination::getAutoPage($this->getTableName());
+        } elseif ($page === false) {
+            Pagination::clearPage($this->getTableName());
             $page = Pagination::getAutoPage($this->getTableName());
         }
         if ($page instanceof Pagination) {
@@ -122,10 +125,11 @@ abstract class OrmModel
      * @param string|array $text
      * @param string|array $fields
      * @param string|array $select
+     * @param bool|Pagination $page: true for auto page, false for new auto page, null for all
      * @return array|bool
      * @throws \Exception
      */
-    public function search($text, $fields = [], $select = null)
+    public function search($text, $fields = [], $select = null, $page = null)
     {
         if (is_null($select)) {
             $select = '*';
@@ -143,7 +147,16 @@ abstract class OrmModel
             }
         } else {
             $f = $fields . '[~]';
-            $where = [$f => $text];
+            $where = ['OR'=>[$f => $text]];
+        }
+        if ($page === true) {
+            $page = Pagination::getAutoPage($this->getTableName() . '_search');
+        } elseif ($page === false) {
+            Pagination::clearPage($this->getTableName() . '_search');
+            $page = Pagination::getAutoPage($this->getTableName() . '_search');
+        }
+        if ($page instanceof Pagination) {
+            $where['LIMIT'] = [$page->getOffset(), $page->getLimit()];
         }
         $db = getDB();
         $re = $db->getConnection()->select($this->getTableName(), $select, $where);
