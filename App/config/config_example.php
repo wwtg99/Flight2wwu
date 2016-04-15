@@ -205,6 +205,8 @@ return [
         'prefix'=>'fwwu', //prefix for session and cookie, auto add _ after prefix
         'session'=>true, //enable session
         'cookie'=>true, //enable cookie
+        'cookie_path'=>'/', // path for cookies
+        'cookie_domain'=>null, //domain for cookies
         'old_value'=>'session', //storage method for old_value: cache, session
     ],
     //Mail

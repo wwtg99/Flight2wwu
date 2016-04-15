@@ -3,6 +3,12 @@
         <h1><?php TP('Plugins'); ?></h1>
     </div>
     <div class="row">
+        <div class="btn-group" role="group">
+            <a class="btn btn-default" href="/admin/home" role="button"><span class="glyphicon glyphicon-home"></span> <?php TP('Return'); ?></a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <table class="table" id="tb_plugin"></table>
         </div>

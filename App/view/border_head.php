@@ -34,16 +34,19 @@
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <?php if (getAuth()->isLogin()): ?>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php TIP('Hello'); ?>, <?php echo getUser('name'); ?> <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><span class="glyphicon glyphicon-user"></span> <?php TP('User Center'); ?></a></li>
-                        <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> <?php TP('Change Password'); ?></a></li>
-                        <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> <?php TP('Logout'); ?></a></li>
-                    </ul>
-                </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php TIP('Hello'); ?>, <?php echo getUser('name'); ?> <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <?php if(getAuth()->isSuperuser() || getAuth()->hasRole('admin')): ?>
+                                <li><a href="/admin/home"><span class="glyphicon glyphicon-cog"></span> <?php TP('Admin'); ?></a></li>
+                            <?php endif; ?>
+                            <li><a href="/auth/info"><span class="glyphicon glyphicon-user"></span> <?php TP('User Center'); ?></a></li>
+                            <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> <?php TP('Change Password'); ?></a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> <?php TP('Logout'); ?></a></li>
                 <?php else: ?>
-                <li><a href="/auth/login"><?php TP('Login'); ?></a></li>
+                    <li><a href="/auth/login"><?php TP('Login'); ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>

@@ -24,7 +24,6 @@
         "monolog/monolog": "~1.17",
         "desarrolla2/cache":  "~2.0",
         "respect/validation": "~1.0",
-        "phpoffice/phpexcel": "~1.8",
         "maximebf/debugbar": "~1.11",
         "erusev/parsedown": "~1.6",
         "tecnickcom/tcpdf": "~6.2",

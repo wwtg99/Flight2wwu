@@ -14,5 +14,6 @@ use Flight2wwu\Component\Database\OrmModel;
 class Users extends OrmModel
 {
 
+    protected $tableName = 'users';
     protected $tableKey = 'user_id';
 }
