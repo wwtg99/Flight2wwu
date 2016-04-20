@@ -93,5 +93,14 @@ return [
     'delete failed'=>'删除失败！',
     'joined on'=>'加入于',
     'from department'=>'来自于',
-    'Edit'=>'编辑'
+    'Edit'=>'编辑',
+    'Reset Password'=>'重置密码',
+    'confirm to reset password'=>'确认重置密码？',
+    'illegal id or name'=>'非法的ID或名称！',
+    'fail to create'=>'创建失败！',
+    'fail to update'=>'更新失败！',
+    'fail to delete'=>'删除失败！',
+    'update successfully'=>'修改成功！',
+    'invalid roles'=>'无效的角色！',
+    'create successfully'=>'创建成功！',
 ];

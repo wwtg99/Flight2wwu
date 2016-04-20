@@ -69,7 +69,7 @@ class AdminController extends BaseController
             $user = Admin::getUser($uid);
             $dep = Admin::getDepartment();
             $roles = Admin::getRole();
-            getAssets()->addLibrary(['bootstrap-table', 'bootstrap-select', 'icheck', 'lodash']);
+            getAssets()->addLibrary(['bootstrap-table', 'bootstrap-select', 'icheck', 'lodash', 'bootstrap-dialog']);
             getView()->render('admin/user_info', ['user_id' => $uid, 'user' => $user, 'departments' => $dep, 'roles' => $roles]);
         } else {
             $users = Admin::getUser();
@@ -143,6 +143,17 @@ class AdminController extends BaseController
         return false;
     }
 
+    public static function reset_pwd()
+    {
+        if (self::checkMethod('POST')) {
+            $uid = self::getInput('user_id');
+            $re = Admin::resetPassword($uid);
+            \Flight::json(['result'=>$re]);
+            return false;
+        }
+        \Flight::redirect('/404');
+        return false;
+    }
 
     public static function roles()
     {

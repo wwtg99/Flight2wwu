@@ -180,6 +180,7 @@ class Admin
 
     /**
      * @param $user_id
+     * @param $user_name
      * @return array
      */
     public static function getUser($user_id = null, $user_name = null)
@@ -229,7 +230,7 @@ class Admin
     public static function deleteUser($user_id)
     {
         $db = getDB()->getConnection('main');
-        $re = $db->delete(Admin::SCHEMA . 'users', ['user_id'=>$user_id]);
+        $db->delete(Admin::SCHEMA . 'users', ['user_id'=>$user_id]);
         return true;
     }
 
@@ -307,7 +308,7 @@ class Admin
                 return true;
             }
         } else {
-            $re = $db->delete(Admin::SCHEMA . 'users', ['user_id'=>$user_id]);
+            $db->delete(Admin::SCHEMA . 'users', ['user_id'=>$user_id]);
             return true;
         }
         return false;

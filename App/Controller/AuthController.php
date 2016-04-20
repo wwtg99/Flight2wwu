@@ -8,7 +8,6 @@
 
 namespace App\Controller;
 
-use App\Model\Admin;
 use App\Model\Auth\User;
 use App\Model\Message;
 use Flight2wwu\Common\BaseController;
@@ -159,7 +158,7 @@ class AuthController extends BaseController
 
     private static function getInfo()
     {
-        $user = Admin::getUser(getUser('user_id'));
+        $user = getUser();
         getView()->render('auth/user_info', ['user'=>FormatUtils::formatTransArray($user)]);
     }
 
@@ -180,7 +179,7 @@ class AuthController extends BaseController
 
     private static function getEdit()
     {
-        $user = Admin::getUser(getUser('user_id'));
+        $user = getUser();
         getView()->render('auth/user_edit', ['user'=>$user]);
     }
 
@@ -195,7 +194,7 @@ class AuthController extends BaseController
             $msg = Message::getMessage(3);
         }
         getOValue()->addOldOnce('user_msg', $msg);
-        $user = Admin::getUser(getUser('user_id'));
+        $user = getUser();
         getView()->render('auth/user_edit', ['user'=>$user]);
     }
 } 

@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 0.1.7
+    - Add reset password in user info
+    - Fix getUser() in AuthController when use oauth
+    - Add translations
+
 ### 0.1.6
     - Fullfil Admin model, admin for departments, roles, users and plugins
     - Add views for admin
