@@ -150,7 +150,6 @@ class Admin
         }
         $db = getDB()->getConnection('main');
         $re = $db->delete(Admin::SCHEMA . 'roles', ['role_id'=>$role_id]);
-        getLog()->warning('---' . print_r($re, true) . '---' . $db->last_query());
         if ($re) {
             return true;
         }

@@ -27,6 +27,10 @@ abstract class CommandPlugin implements IPlugin
     protected $cmd = '';
 
     /**
+     * @var int
+     */
+    protected $timeout = 60;
+    /**
      * @var string
      */
     protected $out = '';
@@ -45,6 +49,7 @@ abstract class CommandPlugin implements IPlugin
         }
         $build = new ProcessBuilder();
         $pro = $build->setPrefix($this->cmd)->setArguments($args)->getProcess();
+        $pro->setTimeout($this->timeout);
         $rm = new \ReflectionMethod($this, 'output');
         $func = $rm->getClosure($this);
         $re = 0;

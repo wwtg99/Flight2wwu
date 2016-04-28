@@ -195,24 +195,25 @@ abstract class OrmModel
 
     /**
      * @param string|array $key
-     * @return array|null
+     * @return array
+     * @throws \Exception
      */
     protected function formatKey($key)
     {
         $tkey = $this->getTableKey();
         if (!$tkey) {
-            return null;
+            throw new \Exception('no key found');
         } elseif (is_array($tkey) && is_array($key)) {
             foreach ($tkey as $item) {
                 if (!array_key_exists($item, $key)) {
-                    return null;
+                    return [$tkey => null];
                 }
             }
             return ['AND' => $key];
         } elseif (is_string($tkey) && is_string($key)) {
             return ['AND' => [$tkey => $key]];
         } else {
-            return null;
+            return [$tkey => null];
         }
     }
 }
