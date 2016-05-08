@@ -15,7 +15,8 @@ return [
      */
     'register_class'=>[
         'Auth' => 'Flight2wwu\Component\Auth\RoleAuth',
-        'View' => 'Flight2wwu\Component\View\BorderView',
+//        'View' => 'Flight2wwu\Component\View\BorderView',
+        'View' => 'Flight2wwu\Component\View\TwigView',
         'Log' => 'Flight2wwu\Component\Log\Monolog',
 //        'DB' => 'Flight2wwu\Component\Database\MedooDB',
         'DB' => 'Flight2wwu\Component\Database\MedooPool',

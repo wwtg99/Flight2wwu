@@ -71,7 +71,6 @@ return [
         'lib_conf'=>CONFIG . 'ui_libs.php'
     ],
     'view'=>[
-        'render'=>'border',
         'view_dir'=>APP . 'view',
     ],
     //Auth

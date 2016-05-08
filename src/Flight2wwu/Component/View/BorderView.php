@@ -9,6 +9,8 @@
 namespace Flight2wwu\Component\View;
 
 
+use Flight2wwu\Component\Utils\FormatUtils;
+
 class BorderView extends AbstractView
 {
     /**
@@ -48,12 +50,25 @@ class BorderView extends AbstractView
      */
     public function boot()
     {
+        $view = \Flight::get('view');
+        $this->loadConfig($view);
         $this->head = 'border_head';
         $this->foot = 'border_foot';
         $this->left = 'border_left';
         $this->right = 'border_right';
         $this->center = 'border_center';
         $this->layoutTemplate = 'border_layout';
+    }
+
+    /**
+     * @param array $conf
+     */
+    public function loadConfig($conf)
+    {
+        $dir = isset($conf['view_dir']) ? FormatUtils::formatPath($conf['view_dir']) : '';
+        if ($dir && file_exists($dir)) {
+            \Flight::set('flight.views.path', $dir);
+        }
     }
 
     /**

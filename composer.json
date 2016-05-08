@@ -33,6 +33,7 @@
         "swiftmailer/swiftmailer": "~5.4",
         "catfan/Medoo": "~1.0",
         "jwage/purl": "*",
+        "twig/twig": "~1.0",
         "wwtg99/structure-files": "~0.1",
         "wwtg99/html_component": "~0.1"
     },

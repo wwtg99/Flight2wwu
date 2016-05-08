@@ -77,3 +77,7 @@ Flight::route('/comp', function() {
     $v = getView();
     $v->render('components', $data);
 });
+
+Flight::route('/test', function() {
+    getView()->render('test', ['title'=>'title', 'a'=>'aaa']);
+});

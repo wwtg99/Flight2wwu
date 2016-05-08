@@ -10,6 +10,8 @@
     - Add refreshUser in IAuth
     - Add formatPathArray
     - Add log_directory, backup_directory to config
+    - Add TwigView
+    - Add maintainence mode
 
 ## 0.1.7
     - Add reset password in user info

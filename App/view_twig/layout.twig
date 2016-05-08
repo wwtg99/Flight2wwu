@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+
+    {% endblock %}
+    <title>{{ title }}</title>
+</head>
+<body>
+<header class="border_head">
+    {% block header %}
+    {% endblock %}
+</header>
+<div class="border_body">
+    <div class="border_left">
+        {% block left %}
+        {% endblock %}
+    </div>
+    <div class="border_center">
+        {% block center %}
+        {% endblock %}
+    </div>
+    <div class="border_right">
+        {% block right %}
+        {% endblock %}
+    </div>
+</div>
+<footer class="border_foot">
+    {% block footer %}
+    {% endblock %}
+</footer>
+
+<script>
+//    $(document).ready(function(){
+//        if (typeof init_head === 'function') {
+//            init_head();
+//        }
+//        if (typeof init_left === 'function') {
+//            init_left();
+//        }
+//        if (typeof init_center === 'function') {
+//            init_center();
+//        }
+//        if (typeof init_right === 'function') {
+//            init_right();
+//        }
+//        if (typeof init_foot === 'function') {
+//            init_foot();
+//        }
+//    });
+</script>
+</body>
+</html>

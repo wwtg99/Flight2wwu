@@ -61,8 +61,6 @@ class Register
         date_default_timezone_set(\Flight::get('timezone'));
         $f = CONFIG . 'register_config.php';
         $this->load($f);
-        // view
-        $this->registerView();
         // plugin
         $pc = \Flight::get('plugin');
         $f = isset($pc['config']) ? FormatUtils::formatPath($pc['config']) : '';
@@ -154,21 +152,6 @@ class Register
                         \Flight::route($path, [$classname, $m->getName()]);
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * Register view
-     */
-    public function registerView()
-    {
-        $view = \Flight::get('view');
-        $render = isset($view['render']) ? $view['render'] : '';
-        if ($render) {//TODO
-            $dir = isset($view['view_dir']) ? FormatUtils::formatPath($view['view_dir']) : '';
-            if ($dir && file_exists($dir)) {
-                \Flight::set('flight.views.path', $dir);
             }
         }
     }
