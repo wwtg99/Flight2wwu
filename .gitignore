@@ -5,6 +5,6 @@ storage/*
 composer.lock
 test/*
 !test/*.php
-web/php_errors.log
+php_errors.log
 !web/.htaccess
 App/config/app_config.php

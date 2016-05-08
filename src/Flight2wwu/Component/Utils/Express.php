@@ -42,7 +42,7 @@ class Express implements ServiceProvider
      */
     public function boot()
     {
-        $this->loadConf(\Flight::get('express'));
+        $this->loadConfig(\Flight::get('express'));
     }
 
     /**
@@ -82,7 +82,7 @@ class Express implements ServiceProvider
     /**
      * @param array $arr
      */
-    private function loadConf(array $arr)
+    public function loadConfig(array $arr)
     {
         foreach ($arr as $a) {
             $name = $a[0];

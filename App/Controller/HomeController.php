@@ -52,13 +52,18 @@ class HomeController extends BaseController
         $url = self::getRequest()->url;
         $method = self::getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
+        // last path
+        $skip = ['/403', '/404', '/auth/login', '/oauth/login'];
+        if (!in_array($path, $skip)) {
+            getOValue()->addOldOnce('last_path', $path);
+        }
         if (getAuth()->isLogin()) {
             $user = getUser()['user_id'];
         } else {
             $user = 'anonymous';
         }
         $logger = getLog();
-        //skip /403
+        // skip /403
         if ($path == '/403') {
             return true;
         }

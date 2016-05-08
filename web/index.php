@@ -8,4 +8,9 @@
 
 require '../bootstrap/init.php';
 
-Flight::start();
+if (Flight::get('maintain')) {
+    header('HTTP/1.1 503 Service Unavailable');
+    echo 'Maintenance';
+} else {
+    Flight::start();
+}

@@ -41,5 +41,11 @@
     },
     "autoload": {
         "psr-4": {"Flight2wwu\\": "src/Flight2wwu"}
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     }
 }

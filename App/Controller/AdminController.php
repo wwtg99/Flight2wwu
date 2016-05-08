@@ -48,7 +48,7 @@ class AdminController extends BaseController
             PluginManager::getInstance()->writeConfig();
             \Flight::json(['enabled'=>$pid]);
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
     }
 
     public static function disable_plugin()
@@ -59,7 +59,7 @@ class AdminController extends BaseController
             PluginManager::getInstance()->writeConfig();
             \Flight::json(['disabled'=>$pid]);
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
     }
 
     public static function users()
@@ -139,7 +139,7 @@ class AdminController extends BaseController
             \Flight::json(['result'=>$re]);
             return false;
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
         return false;
     }
 
@@ -151,7 +151,7 @@ class AdminController extends BaseController
             \Flight::json(['result'=>$re]);
             return false;
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
         return false;
     }
 
@@ -217,7 +217,7 @@ class AdminController extends BaseController
             \Flight::json(['result'=>$re]);
             return false;
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
         return false;
     }
 
@@ -283,7 +283,7 @@ class AdminController extends BaseController
             \Flight::json(['result'=>$re]);
             return false;
         }
-        \Flight::redirect('/404');
+        \Flight::redirect('/404', 404);
         return false;
     }
 } 

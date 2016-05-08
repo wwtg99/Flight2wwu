@@ -131,6 +131,22 @@ trait TOpenAuth
     }
 
     /**
+     * @param array $user
+     * @return array
+     * @throws \Exception
+     */
+    public static function refreshUser($user)
+    {
+        if (isset($user[User::KEY_USER_TOKEN])) {
+            $user = self::getUser($user[User::KEY_USER_TOKEN]);
+            if ($user) {
+                return $user;
+            }
+        }
+        return [];
+    }
+
+    /**
      * @param string $token
      * @return array
      */

@@ -45,6 +45,10 @@ class OAuthController extends BaseController
             $token = User::getAccessToken($code, $state);
             if (isset($token['access_token']) && isset($token['expires_in'])) {
                 if (getAuth()->attempt(['token'=>$token['access_token'], 'expires_in'=>$token['expires_in']], false)) {
+                    $path = getOValue()->getOldOnce('last_path');
+                    if ($path) {
+                        self::$redirectPath = $path;
+                    }
                     \Flight::redirect(self::$redirectPath);
                     return false;
                 }

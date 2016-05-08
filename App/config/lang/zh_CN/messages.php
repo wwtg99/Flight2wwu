@@ -103,4 +103,6 @@ return [
     'update successfully'=>'修改成功！',
     'invalid roles'=>'无效的角色！',
     'create successfully'=>'创建成功！',
+    'reset successfully'=>'重置成功！',
+    'reset failed'=>'重置失败！',
 ];

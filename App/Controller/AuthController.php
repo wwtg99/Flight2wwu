@@ -107,6 +107,10 @@ class AuthController extends BaseController
         $rem = self::getPost('remember');
         getOValue()->addOld('username', $name);
         if (getAuth()->attempt(['username'=>$name, 'password'=>$pwd, 'remember'=>$rem], false)) {
+            $path = getOValue()->getOldOnce('last_path');
+            if ($path) {
+                self::$redirectPath = $path;
+            }
             \Flight::redirect(self::$redirectPath);
         } else {
             getView()->render('auth/login', ['msg'=>'login failed', 'status'=>'danger']);
@@ -194,7 +198,7 @@ class AuthController extends BaseController
             $msg = Message::getMessage(3);
         }
         getOValue()->addOldOnce('user_msg', $msg);
-        $user = getUser();
+        $user = getAuth()->refreshUser(getUser());
         getView()->render('auth/user_edit', ['user'=>$user]);
     }
 } 

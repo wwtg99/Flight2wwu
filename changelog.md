@@ -1,5 +1,16 @@
 # ChangeLog
 
+## 0.1.8
+    - Add database pool interface, use MedooPlus instead of medoo, MedooPool instead of MedooDB
+    - Split app_config.php into two files, app_config.php and register_config.php
+    - Add autoload.php, Loader is only used for loading class
+    - Add Register to register instead of Loader
+    - Simplify init.php
+    - Add last_path and change redirect_path after login
+    - Add refreshUser in IAuth
+    - Add formatPathArray
+    - Add log_directory, backup_directory to config
+
 ## 0.1.7
     - Add reset password in user info
     - Fix getUser() in AuthController when use oauth
