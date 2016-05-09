@@ -89,7 +89,7 @@ class HomeController extends BaseController
         if (self::getRequest()->ajax) {
             \Flight::json([]);
         } else {
-            getView()->render('error/403');
+            getView()->render('error/403', ['title'=>'authentication failed']);
         }
         return false;
     }

@@ -40,7 +40,7 @@ if (isDebug()) {
         if (Flight::request()->ajax) {
             \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
         } else {
-            getView()->render('error/500', ['message'=>T($m), 'code'=>$ex->getCode(), 'title'=>'Error']);
+            getView()->render('error/500', ['message'=>$m, 'code'=>$ex->getCode(), 'title'=>'Error']);
         }
     } catch (\Exception $e) {
         exit($msg);
@@ -78,6 +78,3 @@ Flight::route('/comp', function() {
     $v->render('components', $data);
 });
 
-Flight::route('/test', function() {
-    getView()->render('test', ['title'=>'title', 'a'=>'aaa']);
-});

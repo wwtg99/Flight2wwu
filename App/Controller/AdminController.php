@@ -20,6 +20,7 @@ class AdminController extends BaseController
 
     public static function home()
     {
+        getAssets()->addLibrary(['peity']);
         getView()->render('admin/home');
     }
 

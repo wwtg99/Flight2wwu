@@ -11,7 +11,10 @@
     - Add formatPathArray
     - Add log_directory, backup_directory to config
     - Add TwigView
+    - Add twig views
+    - Add more Message
     - Add maintainence mode
+    - Update asserts lib
 
 ## 0.1.7
     - Add reset password in user info

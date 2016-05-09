@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     {% block head %}
         {{ renderAsserts() }}
-        {{ debugbarHead() }}
     {% endblock %}
-    <title>{% block title %}{{ title|T }} {% endblock %}</title>
+    <title>{{ 'Admin'|T }}</title>
 </head>
 <body>
 <header class="border_head">
@@ -47,19 +46,19 @@
                     </form>
                     <ul class="nav navbar-nav navbar-right">
                         {% if isLogin() %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                {% if isSuperuser() and hasRole('admin') %}
-                                <li><a href="/admin/home"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
-                                {% endif %}
-                                <li><a href="/auth/info"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
-                                <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% if isSuperuser() and hasRole('admin') %}
+                                        <li><a href="/admin/home"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
+                                    {% endif %}
+                                    <li><a href="/auth/info"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                    <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
                         {% else %}
-                        <li><a href="/auth/login">{{ 'Login'|T }}</a></li>
+                            <li><a href="/auth/login">{{ 'Login'|T }}</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -67,21 +66,33 @@
         </nav>
     {% endblock %}
 </header>
-<div class="border_body">
-    <div class="border_left">
-        {% block left %}
-        {% endblock %}
+<div class="container border_body">
+    <div class="page-header text-center">
+        <h1>{% block title %}{{ 'Admin'|T }}{% endblock %}</h1>
     </div>
-    <div class="border_center">
-        {% block center %}
-        {% endblock %}
-    </div>
-    <div class="border_right">
-        {% block right %}
-        {% endblock %}
+    <div class="row">
+        <div class="col-md-3">
+            {% block left %}
+            <div class="list-group">
+                <a href="/admin/home" class="list-group-item {% block sidenav_0 %}active{% endblock %}">{{ 'Home'|T }}</a>
+                <a href="/admin/departments" class="list-group-item {% block sidenav_1 %}{% endblock %}">{{ 'Department Management'|T }}</a>
+                <a href="/admin/users" class="list-group-item {% block sidenav_2 %}{% endblock %}">{{ 'User Management'|T }}</a>
+                <a href="/admin/roles" class="list-group-item {% block sidenav_3 %}{% endblock %}">{{ 'Role Management'|T }}</a>
+                <a href="/admin/plugins" class="list-group-item {% block sidenav_4 %}{% endblock %}">{{ 'Plugin Management'|T }}</a>
+            </div>
+            {% endblock %}
+        </div>
+        <div class="col-md-8 col-md-offset-1">
+            {% block center %}
+                <script>
+                    function init_center() {
+
+                    }
+                </script>
+            {% endblock %}
+        </div>
     </div>
 </div>
-{{ renderDebugbar() }}
 <footer class="border_foot">
     {% block footer %}
         <nav class="navbar navbar-default">
@@ -100,7 +111,6 @@
         </nav>
     {% endblock %}
 </footer>
-
 <script>
     $(document).ready(function(){
         if (typeof init_head === 'function') {

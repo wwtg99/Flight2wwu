@@ -96,7 +96,7 @@ class AuthController extends BaseController
         if (getAuth()->isLogin()) {
             \Flight::redirect(self::$logoutPath);
         } else {
-            getView()->render('auth/login');
+            getView()->render('auth/login', ['title'=>'Login']);
         }
     }
 
@@ -113,13 +113,14 @@ class AuthController extends BaseController
             }
             \Flight::redirect(self::$redirectPath);
         } else {
-            getView()->render('auth/login', ['msg'=>'login failed', 'status'=>'danger']);
+            $msg = Message::getMessage(5);
+            getView()->render('auth/login', ['msg'=>$msg, 'title'=>'Login']);
         }
     }
 
     private static function getLogout()
     {
-        getView()->render('auth/logout', getUser());
+        getView()->render('auth/logout', ['user'=>getUser(), 'title'=>'Logout']);
     }
 
     private static function postLogout() {
@@ -130,7 +131,7 @@ class AuthController extends BaseController
     private static function getChangePwd()
     {
         if (getAuth()->isLogin()) {
-            getView()->render('auth/change_pwd');
+            getView()->render('auth/change_pwd', ['title'=>'Change Password']);
         } else {
             \Flight::redirect(self::$loginPath);
         }
@@ -142,28 +143,24 @@ class AuthController extends BaseController
         $new1 = self::getPost('new1');
         $new2 = self::getPost('new2');
         if (!self::checkExists($new1, null, false) || !self::checkExists($new2, null, false)){
-            $msg = 'input password';
-            $status = 'danger';
+            $msg = Message::getMessage(9);
         } elseif ($new1 != $new2) {
-            $msg = 'password mismatch';
-            $status = 'danger';
+            $msg = Message::getMessage(6);
         } else {
             if (User::changePassword($old, $new1)) {
-                $msg = 'password changed';
-                $status = 'success';
+                $msg = Message::getMessage(7);
             } else {
-                $msg = 'password not changed';
-                $status = 'danger';
+                $msg = Message::getMessage(8);
             }
         }
-        getView()->render('auth/change_pwd', ['msg'=>$msg, 'status'=>$status]);
+        getView()->render('auth/change_pwd', ['msg'=>$msg, 'title'=>'Change Password']);
         return false;
     }
 
     private static function getInfo()
     {
         $user = getUser();
-        getView()->render('auth/user_info', ['user'=>FormatUtils::formatTransArray($user)]);
+        getView()->render('auth/user_info', ['user'=>FormatUtils::formatTransArray($user), 'title'=>'User Info']);
     }
 
     private static function postInfo()
@@ -184,7 +181,7 @@ class AuthController extends BaseController
     private static function getEdit()
     {
         $user = getUser();
-        getView()->render('auth/user_edit', ['user'=>$user]);
+        getView()->render('auth/user_edit', ['user'=>$user, 'title'=>'Edit User']);
     }
 
     private static function postEdit()
@@ -199,6 +196,6 @@ class AuthController extends BaseController
         }
         getOValue()->addOldOnce('user_msg', $msg);
         $user = getAuth()->refreshUser(getUser());
-        getView()->render('auth/user_edit', ['user'=>$user]);
+        getView()->render('auth/user_edit', ['user'=>$user, 'title'=>'Edit User', 'msg'=>$msg]);
     }
 } 
