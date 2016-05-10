@@ -105,4 +105,7 @@ return [
     'create successfully'=>'创建成功！',
     'reset successfully'=>'重置成功！',
     'reset failed'=>'重置失败！',
+    'Department Number'=>'单位数量',
+    'User Number'=>'用户数量',
+    'Role Number'=>'角色数量',
 ];

@@ -20,8 +20,10 @@ class AdminController extends BaseController
 
     public static function home()
     {
-        getAssets()->addLibrary(['peity']);
-        getView()->render('admin/home');
+        $dnum = Admin::departmentNum();
+        $unum = Admin::userNum();
+        $rnum = Admin::roleNum();
+        getView()->render('admin/home', ['department_num'=>$dnum, 'user_num'=>$unum, 'role_num'=>$rnum]);
     }
 
     public static function plugins()

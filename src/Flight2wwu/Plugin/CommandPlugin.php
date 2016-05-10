@@ -13,6 +13,11 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Class CommandPlugin
+ * Abstract class to run other commands.
+ * @package Flight2wwu\Plugin
+ */
 abstract class CommandPlugin implements IPlugin
 {
 

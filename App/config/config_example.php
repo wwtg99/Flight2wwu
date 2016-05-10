@@ -14,7 +14,7 @@ return [
     'version'=>'0.1.0',
     'author'=>'wwu',
     'description'=>'',
-    'framework_version'=>'0.1.7',
+    'framework_version'=>'0.1.8',
     //Timezone and language
     'timezone'=>'Asia/Shanghai',
     'language'=>'zh_CN',
@@ -92,14 +92,17 @@ return [
          */
         'rbac'=>[
             'anonymous'=>[
+                '*' => 0,
                 '/' => 3,
                 '/403' => 3,
                 '/auth/login' => 3,
                 '/auth/logout' => 3,
                 '/oauth/login' => 3,
+                '/oauth/redirect_login' => 3,
             ],
             'admin' => [
-                '*' => 3
+                '*' => 3,
+                '/admin/*' => 3,
             ],
             'common_user' => [
                 '*' => 0,
@@ -120,7 +123,7 @@ return [
     'oauth'=>[
         'code_uri'=>'http://192.168.0.21:10000/authorize',
         'token_uri'=>'http://192.168.0.21:10000/token',
-        'redirect_uri'=>'http://localhost:8880',
+        'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
         'app_id'=>'',
         'app_id_key'=>'client_id',

@@ -32,7 +32,7 @@ class OAuthController extends BaseController
         if ($uri) {
             \Flight::redirect($uri);
         } else {
-            throw new Exception('illegal oauth');
+            throw new Exception('illegal oauth', 1);
         }
         return false;
     }
@@ -54,6 +54,6 @@ class OAuthController extends BaseController
                 }
             }
         }
-        throw new Exception('login error');
+        throw new Exception('no code', 5);
     }
 }

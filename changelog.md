@@ -12,6 +12,7 @@
     - Add log_directory, backup_directory to config
     - Add TwigView
     - Add twig views
+    - Use two templates for normal pages and admin pages
     - Add more Message
     - Add maintainence mode
     - Update asserts lib

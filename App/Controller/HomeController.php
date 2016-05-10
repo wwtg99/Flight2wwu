@@ -21,6 +21,7 @@ class HomeController extends BaseController
     public static function home()
     {
         getView()->render('home');
+        return false;
     }
 
     /**
@@ -53,7 +54,7 @@ class HomeController extends BaseController
         $method = self::getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
         // last path
-        $skip = ['/403', '/404', '/auth/login', '/oauth/login'];
+        $skip = ['/403', '/404', '/auth/login', '/oauth/login', '/oauth/redirect_login'];
         if (!in_array($path, $skip)) {
             getOValue()->addOldOnce('last_path', $path);
         }

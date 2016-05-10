@@ -19,7 +19,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/">Brand</a>
+                    <a class="navbar-brand" href="/">{{ getConfig('app') }}</a>
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
@@ -84,6 +84,13 @@
         </div>
         <div class="col-md-8 col-md-offset-1">
             {% block center %}
+                <div class="row">
+                    <ul class="list-group col-md-6">
+                        <li class="list-group-item list-group-item-success"><span class="glyphicon glyphicon-tower"></span> <a href="/admin/departments">{{ 'Department Number'|T }}</a><span class="badge">{{ department_num }}</span></li>
+                        <li class="list-group-item list-group-item-info"><span class="glyphicon glyphicon-user"></span> <a href="/admin/users">{{ 'User Number'|T }}</a><span class="badge">{{ user_num }}</span></li>
+                        <li class="list-group-item list-group-item-warning"><span class="glyphicon glyphicon-certificate"></span> <a href="/admin/roles">{{ 'Role Number'|T }}</a><span class="badge">{{ role_num }}</span></li>
+                    </ul>
+                </div>
                 <script>
                     function init_center() {
 

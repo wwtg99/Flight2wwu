@@ -175,8 +175,15 @@ class TwigView extends AbstractView
             return TAI($val, $param, $domain, $locale);
         });
         $this->twig->addFilter($filter);
+        //json_encode
         $filter = new \Twig_SimpleFilter('J', function($obj, $options = JSON_UNESCAPED_UNICODE) {
             return json_encode($obj, $options);
+        }, ['is_safe'=>['html']]);
+        $this->twig->addFilter($filter);
+        //markdown
+        $filter = new \Twig_SimpleFilter('M', function($text) {
+            $md = new \Parsedown();
+            return $md->text($text);
         }, ['is_safe'=>['html']]);
         $this->twig->addFilter($filter);
     }

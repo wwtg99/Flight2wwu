@@ -307,4 +307,34 @@ class Admin
         }
         return false;
     }
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    public static function departmentNum()
+    {
+        $db = getDB()->getConnection('main');
+        return $db->count('departments');
+    }
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    public static function userNum()
+    {
+        $db = getDB()->getConnection('main');
+        return $db->count('users');
+    }
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    public static function roleNum()
+    {
+        $db = getDB()->getConnection('main');
+        return $db->count('roles');
+    }
 } 
