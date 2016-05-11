@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 0.1.9
+    - Add FWException
+    - Change Message to fit FWException
+    - Skip ajax in last_path
+
 ## 0.1.8
     - Add database pool interface, use MedooPlus instead of medoo, MedooPool instead of MedooDB
     - Split app_config.php into two files, app_config.php and register_config.php

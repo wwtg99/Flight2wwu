@@ -13,6 +13,90 @@ class Message
 {
 
     /**
+     * @var int
+     */
+    private $code;
+
+    /**
+     * @var string
+     */
+    private $msg;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * Message constructor.
+     * @param int $code
+     * @param string $message
+     * @param string $type
+     */
+    public function __construct($code, $message, $type = 'danger')
+    {
+        $this->code = $code;
+        $this->msg = $message;
+        $this->type = $type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param int $code
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMsg()
+    {
+        return $this->msg;
+    }
+
+    /**
+     * @param string $msg
+     */
+    public function setMsg($msg)
+    {
+        $this->msg = $msg;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return ['message'=>$this->msg, 'code'=>$this->code, 'type'=>$this->type];
+    }
+
+    /**
      * @param int $code
      * @param string $message
      * @param string $type
@@ -20,24 +104,35 @@ class Message
      */
     public static function getMessage($code = 0, $message = '', $type = '')
     {
-        switch ($code) {
-            case 1: $err = ['message'=>'illegal id or name', 'code'=>$code, 'type'=>'danger']; break;
-            case 2: $err = ['message'=>'fail to create', 'code'=>$code, 'type'=>'danger']; break;
-            case 3: $err = ['message'=>'fail to update', 'code'=>$code, 'type'=>'danger']; break;
-            case 4: $err = ['message'=>'fail to delete', 'code'=>$code, 'type'=>'danger']; break;
-            case 5: $err = ['message'=>'login failed', $code=>$code, 'type'=>'danger']; break;
-            case 6: $err = ['message'=>'password mismatch', $code=>$code, 'type'=>'danger']; break;
-            case 7: $err = ['message'=>'password changed', $code=>$code, 'type'=>'success']; break;
-            case 8: $err = ['message'=>'password not changed', $code=>$code, 'type'=>'danger']; break;
-            case 9: $err = ['message'=>'empty input', $code=>$code, 'type'=>'danger']; break;
-            default: $err = ['message'=>'', 'code'=>0, 'type'=>'info']; break;
-        }
+        $msg = self::messageList($code);
         if ($message) {
-            $err['message'] = $message;
+            $msg->setMsg($message);
         }
         if ($type) {
-            $err['type'] = $type;
+            $msg->setType($type);
         }
-        return $err;
+        return $msg->toArray();
     }
+
+    /**
+     * @param int $code
+     * @return Message
+     */
+    public static function messageList($code)
+    {
+        switch ($code) {
+            case 1: $msg = ['message'=>'illegal id or name', 'type'=>'danger']; break;
+            case 2: $msg = ['message'=>'fail to create', 'type'=>'danger']; break;
+            case 3: $msg = ['message'=>'fail to update', 'type'=>'danger']; break;
+            case 4: $msg = ['message'=>'fail to delete', 'type'=>'danger']; break;
+            case 5: $msg = ['message'=>'login failed', 'type'=>'danger']; break;
+            case 6: $msg = ['message'=>'password mismatch', 'type'=>'danger']; break;
+            case 7: $msg = ['message'=>'password changed', 'type'=>'success']; break;
+            case 8: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
+            case 9: $msg = ['message'=>'empty input', 'type'=>'danger']; break;
+            default: $msg = ['message'=>'', 'type'=>'info']; $code = 0; break;
+        }
+        return new Message($code, $msg['message'], $msg['type']);
+    }
+
 }

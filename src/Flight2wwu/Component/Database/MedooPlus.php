@@ -332,6 +332,22 @@ class MedooPlus extends \medoo
     }
 
     /**
+     * @return array
+     */
+    public function getLastError()
+    {
+        return $this->lastError;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastSql()
+    {
+        return $this->lastSql;
+    }
+
+    /**
      * @param \PDOStatement $statement
      * @param array $data  [key1=>[value1, type1], key1=>value2, ...]
      */

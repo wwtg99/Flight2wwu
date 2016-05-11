@@ -55,7 +55,7 @@ class HomeController extends BaseController
         $path = parse_url($url, PHP_URL_PATH);
         // last path
         $skip = ['/403', '/404', '/auth/login', '/oauth/login', '/oauth/redirect_login'];
-        if (!in_array($path, $skip)) {
+        if (!in_array($path, $skip) && !self::getRequest()->ajax) {
             getOValue()->addOldOnce('last_path', $path);
         }
         if (getAuth()->isLogin()) {
