@@ -26,7 +26,7 @@ trait TNormalAuth
             if ($u) {
                 $uid = $u[User::KEY_USER_ID];
                 $pwd = $u[User::KEY_USER_PASSWORD];
-                $age = $user['remember'] ? 30 : 1;
+                $age = (isset($user['remember']) && $user['remember']) ? 30 : 1;
                 $u['expires_in'] = $age * 86400 + time();
                 if (is_null($pwd) || $pwd === '' || password_verify($user['password'], $pwd)) {
                     $token = self::generateToken($uid, $age);

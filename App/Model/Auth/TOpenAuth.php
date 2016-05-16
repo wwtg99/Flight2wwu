@@ -19,7 +19,7 @@ trait TOpenAuth
     /**
      * @var string
      */
-    private static $userInfoPath = 'http://192.168.0.21:10000/user/info';
+    private static $userInfoPath = 'http://localhost:9080/user/info';
 
     private static $syncUser = true;
 
@@ -29,8 +29,8 @@ trait TOpenAuth
      */
     public static function verify(array $user)
     {
-        if (isset($user['token'])) {
-            $token = $user['token'];
+        if (isset($user['access_token'])) {
+            $token = $user['access_token'];
             $u = self::getUser($token);
             if ($u && !array_key_exists('error', $u)) {
                 if (self::$syncUser) {

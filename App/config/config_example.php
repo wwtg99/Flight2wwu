@@ -14,7 +14,7 @@ return [
     'version'=>'0.1.0',
     'author'=>'wwu',
     'description'=>'',
-    'framework_version'=>'0.1.8',
+    'framework_version'=>'0.1.10',
     //Timezone and language
     'timezone'=>'Asia/Shanghai',
     'language'=>'zh_CN',

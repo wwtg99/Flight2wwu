@@ -10,7 +10,9 @@ namespace App\Controller;
 
 
 use App\Model\Auth\User;
+use App\Model\Message;
 use Flight2wwu\Common\BaseController;
+use Flight2wwu\Common\FWException;
 use League\Flysystem\Exception;
 
 class OAuthController extends BaseController
@@ -32,7 +34,7 @@ class OAuthController extends BaseController
         if ($uri) {
             \Flight::redirect($uri);
         } else {
-            throw new Exception('illegal oauth', 1);
+            throw new FWException(Message::messageList(1001));
         }
         return false;
     }
@@ -44,16 +46,20 @@ class OAuthController extends BaseController
         if ($code) {
             $token = User::getAccessToken($code, $state);
             if (isset($token['access_token']) && isset($token['expires_in'])) {
-                if (getAuth()->attempt(['token'=>$token['access_token'], 'expires_in'=>$token['expires_in']], false)) {
+                if (getAuth()->attempt(['access_token'=>$token['access_token'], 'expires_in'=>$token['expires_in']], false)) {
                     $path = getOValue()->getOldOnce('last_path');
                     if ($path) {
                         self::$redirectPath = $path;
                     }
                     \Flight::redirect(self::$redirectPath);
                     return false;
+                } else {
+                    throw new FWException(Message::getMessage(5));
                 }
+            } else {
+                throw new FWException(Message::messageList(1003));
             }
         }
-        throw new Exception('no code', 5);
+        throw new FWException(Message::messageList(1002));
     }
 }

@@ -130,6 +130,9 @@ class Message
             case 7: $msg = ['message'=>'password changed', 'type'=>'success']; break;
             case 8: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
             case 9: $msg = ['message'=>'empty input', 'type'=>'danger']; break;
+            case 1001: $msg = ['message'=>'illegal oauth', 'type'=>'danger']; break;
+            case 1002: $msg = ['message'=>'no code', 'type'=>'danger']; break;
+            case 1003: $msg = ['message'=>'fail to get access_token', 'type'=>'danger']; break;
             default: $msg = ['message'=>'', 'type'=>'info']; $code = 0; break;
         }
         return new Message($code, $msg['message'], $msg['type']);

@@ -8,10 +8,7 @@
 
 namespace App\Controller;
 
-use DebugBar\StandardDebugBar;
 use Flight2wwu\Common\BaseController;
-use Flight2wwu\Component\Auth\RoleAuth;
-use Flight2wwu\Component\Log\Monolog;
 
 class HomeController extends BaseController
 {
