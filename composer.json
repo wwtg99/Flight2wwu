@@ -34,8 +34,9 @@
         "catfan/Medoo": "~1.0",
         "jwage/purl": "*",
         "twig/twig": "~1.0",
-        "wwtg99/structure-files": "~0.1",
-        "wwtg99/html_component": "~0.1"
+        "wwtg99/structure-files": "*",
+        "wwtg99/html_component": "*",
+        "wwtg99/data_pool": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.2"
@@ -43,10 +44,17 @@
     "autoload": {
         "psr-4": {"Flight2wwu\\": "src/Flight2wwu"}
     },
-    "repositories": {
-        "packagist": {
+    "repositories": [
+        {
             "type": "composer",
             "url": "https://packagist.phpcomposer.com"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:wwtg99/data_pool.git"
+        },
+        {
+            "packagist": false
         }
-    }
+    ]
 }

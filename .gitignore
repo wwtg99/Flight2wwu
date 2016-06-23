@@ -1,10 +1,10 @@
 .*
 !.gitignore
-vendor
-storage/*
+/vendor
+/storage/*
 composer.lock
-test/*
-!test/*.php
+/test/*
+!/test/*.php
 php_errors.log
-!web/.htaccess
-App/config/app_config.php
+!.htaccess
+/App/config/app_config.php

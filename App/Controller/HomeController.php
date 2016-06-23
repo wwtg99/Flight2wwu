@@ -99,7 +99,7 @@ class HomeController extends BaseController
     {
         self::defaultHeader();
         $md = new \Parsedown();
-        $f = file_get_contents(WEB . 'changelog.txt');
+        $f = file_get_contents(ROOT . DIRECTORY_SEPARATOR . 'changelog.md');
         echo $md->text($f);
     }
 } 

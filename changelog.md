@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 0.1.11
+    - Add DataPool
+
+## 0.1.10
+    - Update BaseController
+    - Fix oauth bugs
+
 ## 0.1.9
     - Add FWException
     - Change Message to fit FWException

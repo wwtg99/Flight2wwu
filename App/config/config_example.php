@@ -14,7 +14,7 @@ return [
     'version'=>'0.1.0',
     'author'=>'wwu',
     'description'=>'',
-    'framework_version'=>'0.1.10',
+    'framework_version'=>'0.1.11',
     //Timezone and language
     'timezone'=>'Asia/Shanghai',
     'language'=>'zh_CN',
@@ -65,6 +65,30 @@ return [
             'port'=>5432
         ],
         'backup_directory'=>STORAGE . 'backup'
+    ],
+    //DataPool
+    'datapool'=>[
+        'log_dir'=>'storage/log',
+        'connections'=>[
+            [
+                'name'=>'main',
+                'class'=>'DataPool\\Connections\\DatabaseConnection',
+                'mapper_path'=>'',
+                'database'=>[
+                    'driver'=>'pgsql',
+                    'dbname'=>'db',
+                    'host'=>'localhost',
+                    'username'=>'user',
+                    'password'=>'1',
+                    'port'=>5432
+                ],
+                'logger'=>[
+                    'level'=>'DEBUG',
+                    'title'=>'dp_main.log',
+                    'max_logfile'=>5
+                ]
+            ],
+        ]
     ],
     //View
     'assets'=>[

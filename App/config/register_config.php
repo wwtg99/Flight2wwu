@@ -21,6 +21,7 @@ return [
 //        'DB' => 'Flight2wwu\Component\Database\MedooDB',
         'DB' => 'Flight2wwu\Component\Database\MedooPool',
         'ORM' => 'Flight2wwu\Component\Database\OrmManager',
+        'DataPool' => 'Flight2wwu\Component\Database\DataPool',
         'Locale' => 'Flight2wwu\Component\Translation\SymTrans',
         'Cache' => 'Flight2wwu\Component\Storage\Cache',
         'Session' => 'Flight2wwu\Component\Storage\SessionUtil',

@@ -9,6 +9,14 @@
 //define global functions here
 
 /**
+ * @return \DataPool\Common\IDataPool
+ */
+function getDataPool()
+{
+    return Flight::Datapool()->getDataPool();
+}
+
+/**
  * @param $name
  * @return \Flight2wwu\Plugin\IPlugin
  * @throws Exception
