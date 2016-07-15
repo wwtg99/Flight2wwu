@@ -35,9 +35,14 @@ class PluginManager {
     /**
      * @param array $plugins
      */
-    private function __construct($plugins)
+    public function __construct($plugins)
     {
         $this->plugins = $plugins;
+        foreach ($this->plugins as $id => $p) {
+            if ($p['enabled']) {
+                $this->enable($id);
+            }
+        }
     }
 
     /**
@@ -57,11 +62,6 @@ class PluginManager {
         self::$conf = $conf;
         $f = file_get_contents($conf);
         self::$instance = new PluginManager(json_decode($f, true));
-        foreach (self::$instance->plugins as $id => $p) {
-            if ($p['enabled']) {
-                self::$instance->enable($id);
-            }
-        }
         return self::$instance;
     }
 

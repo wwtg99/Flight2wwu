@@ -6,6 +6,7 @@
  * Time: 10:55
  */
 
+require '../vendor/autoload.php';
 require '../bootstrap/init.php';
 
 if (Flight::get('maintain')) {

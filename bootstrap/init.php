@@ -17,7 +17,15 @@ define("STORAGE", ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);
 define('WEBROOT', '/');
 
+//config
+$conf_files = ['app_config.php', 'register_config.php', 'plugins.json', 'schedule.json', 'ui_libs.php'];
+$conf = new \Flight2wwu\Component\Config\FileConfig([CONFIG], $conf_files, true);
+Flight::set('config', $conf);
+
 // autoload
+$loader = new \ClassLoader\Loader(ROOT, $conf->getConfig('load_path'));
+$loader->autoload();
+
 require implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
 require 'autoload.php';
 require 'helpfunctions.php';
@@ -27,5 +35,4 @@ $app_conf = CONFIG . 'app_config.php';
 
 // register
 $register = \Flight2wwu\Common\Register::getInstance();
-$register->loadConfig($app_conf);
 $register->registerAll();

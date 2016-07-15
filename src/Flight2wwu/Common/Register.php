@@ -9,6 +9,7 @@
 namespace Flight2wwu\Common;
 
 
+use Flight2wwu\Component\Config\BaseConfig;
 use Flight2wwu\Component\Utils\FormatUtils;
 use Flight2wwu\Plugin\PluginManager;
 
@@ -21,36 +22,29 @@ class Register
     private static $instance = null;
 
     /**
-     * @var array
+     * @var BaseConfig
      */
-    private $config = [];
+    private $conf;
 
     /**
-     * @return Register
+     * Register constructor.
+     * @param BaseConfig $conf
      */
-    public static function getInstance()
+    public function __construct($conf)
     {
-        if (!self::$instance) {
-            self::$instance = new Register();
-        }
-        return self::$instance;
+        $this->conf = $conf;
     }
 
     /**
-     * @param string|array $conf
+     * @param BaseConfig $conf
+     * @return Register
      */
-    public function loadConfig($conf)
+    public static function getInstance($conf = null)
     {
-        if (is_array($conf)) {
-            foreach ($conf as $k => $v) {
-                \Flight::set($k, $v);
-            }
-        } elseif (file_exists($conf)) {
-            $c = require "$conf";
-            foreach ($c as $k => $v) {
-                \Flight::set($k, $v);
-            }
+        if (!self::$instance) {
+            self::$instance = new Register($conf);
         }
+        return self::$instance;
     }
 
     /**
@@ -58,50 +52,34 @@ class Register
      */
     public function registerAll()
     {
-        date_default_timezone_set(\Flight::get('timezone'));
-        $f = CONFIG . 'register_config.php';
-        $this->load($f);
-        // plugin
-        $pc = \Flight::get('plugin');
-        $f = isset($pc['config']) ? FormatUtils::formatPath($pc['config']) : '';
-        $this->registerPlugin($f);
-    }
-
-    /**
-     * load and register from config
-     *
-     * @param string|array $conf
-     * @throws \Exception
-     */
-    public function load($conf)
-    {
-        if (is_array($conf)) {
-            $this->config = $conf;
-        } elseif (file_exists($conf)) {
-            $this->config = require "$conf";
-        }
-        // register class
-        $c = isset($this->config['register_class']) ? $this->config['register_class'] : [];
-        $this->registerClass($c);
+        $tz = $this->conf->getConfig('timezone');
+        date_default_timezone_set($tz);
+        // register service
+        $ser = $this->conf->getConfig('services');
+        $this->registerService($ser);
         // register route
-        $route = $this->config['route'] ? $this->config['route'] : [];
-        $route_path = isset($route['path']) ? $route['path'] : [];
-        $route_controller = isset($route['controller']) ? $route['controller'] : [];
+        $route_path = $this->conf->getConfig('route.path');
+        $route_controller = $this->conf->getConfig('route.controller');
         $this->registerRoute($route_path);
         $this->registerRouteController($route_controller);
         // handler
-        $handler_file = isset($this->config['handler']) ? FormatUtils::formatPath($this->config['handler']) : '';
+        $handler_file = $this->conf->getConfig('handler');
         if ($handler_file && file_exists($handler_file)) {
             require "$handler_file";
         }
+        // plugin
+        $plugins = $this->conf->getConfig('plugin');
+        $this->registerPlugin($plugins);
     }
 
     /**
+     * Register service.
+     *
      * @param array $arr
      */
-    public function registerClass(array $arr)
+    public function registerService($arr)
     {
-        if (!$arr) {
+        if (!$arr || !is_array($arr)) {
             return;
         }
         $boot = [];
@@ -124,10 +102,15 @@ class Register
     }
 
     /**
+     * Register routes.
+     *
      * @param array $arr
      */
-    public function registerRoute(array $arr)
+    public function registerRoute($arr)
     {
+        if (!$arr || !is_array($arr)) {
+            return;
+        }
         foreach ($arr as $i => $v) {
             if (is_array($v) && count($v) > 1) {
                 \Flight::route($v[0], $v[1]);
@@ -136,10 +119,15 @@ class Register
     }
 
     /**
+     * Register route controllers.
+     *
      * @param array $arr
      */
-    public function registerRouteController(array $arr)
+    public function registerRouteController($arr)
     {
+        if (!$arr || !is_array($arr)) {
+            return;
+        }
         foreach ($arr as $k => $v) {
             $classname = $k . 'Controller';
             $ref = new \ReflectionClass($classname);
@@ -157,12 +145,17 @@ class Register
     }
 
     /**
-     * @param string $file
+     * Register plugins.
+     *
+     * @param array $arr
+     * @return PluginManager|null
      */
-    public function registerPlugin($file)
+    public function registerPlugin($arr)
     {
-        if ($file && file_exists($file)) {
-            PluginManager::loadConfig($file);
+        if (!$arr || !is_array($arr)) {
+            return null;
         }
+        $pm = new PluginManager($arr);
+        return $pm;
     }
 }
