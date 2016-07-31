@@ -6,12 +6,13 @@
  * Time: 11:59
  */
 
-namespace Flight2wwu\Component\Log;
+namespace Wwtg99\Flight2wwu\Component\Log;
 
-use Flight2wwu\Common\ServiceProvider;
-use Flight2wwu\Component\Utils\FormatUtils;
+
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class Monolog implements ILog, ServiceProvider
 {
@@ -38,7 +39,7 @@ class Monolog implements ILog, ServiceProvider
      */
     public function register()
     {
-        $configs = \Flight::get('log');
+        $configs = \Flight::get('config')->get('log');
         $this->logDir = FormatUtils::formatPath($configs['directory']);
         if (isset($configs['loggers'])) {
             foreach ($configs['loggers'] as $d => $con) {

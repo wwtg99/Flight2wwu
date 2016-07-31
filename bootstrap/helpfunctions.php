@@ -9,7 +9,15 @@
 //define global functions here
 
 /**
- * @return \DataPool\Common\IDataPool
+ * @return \Wwtg99\Config\Common\IConfig
+ */
+function getConfig()
+{
+    return Flight::get('config');
+}
+
+/**
+ * @return \Wwtg99\DataPool\Common\IDataPool
  */
 function getDataPool()
 {
@@ -18,7 +26,7 @@ function getDataPool()
 
 /**
  * @param $name
- * @return \Flight2wwu\Plugin\IPlugin
+ * @return \Wwtg99\Flight2wwu\Plugin\IPlugin
  * @throws Exception
  */
 function getPlugin($name)
@@ -47,13 +55,13 @@ function getORM()
 }
 
 /**
- * @return \Flight2wwu\Component\Log\ILog
+ * @return \Wwtg99\Flight2wwu\Component\Log\ILog
  */
 function getLog()
 {
     $log = Flight::Log();
     if (!$log) {
-        $log = new \Flight2wwu\Component\Log\SdoutLog();
+        $log = new \Wwtg99\Flight2wwu\Component\Log\SdoutLog();
     }
     return $log;
 }
@@ -161,12 +169,8 @@ function getMailer()
  */
 function isDebug()
 {
-    $d = Flight::get('debug');
-    if ($d) {
-        return true;
-    } else {
-        return false;
-    }
+    $d = getConfig()->get('debug', false);
+    return $d ? true : false;
 }
 
 /**
@@ -181,7 +185,11 @@ function isDebug()
 function T($key, $parameters = [], $domain = 'messages', $locale = null)
 {
     $trans = Flight::Locale();
-    return $trans->trans($key, $parameters, false, $domain, $locale);
+    if ($trans) {
+        return $trans->trans($key, $parameters, false, $domain, $locale);
+    } else {
+        return $key;
+    }
 }
 
 /**

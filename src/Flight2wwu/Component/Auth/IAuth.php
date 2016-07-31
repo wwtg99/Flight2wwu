@@ -6,7 +6,7 @@
  * Time: 10:37
  */
 
-namespace Flight2wwu\Component\Auth;
+namespace Wwtg99\Flight2wwu\Component\Auth;
 
 
 interface IAuth
@@ -14,17 +14,15 @@ interface IAuth
 
     /**
      * @param array $user
-     * @param bool $cookie
      * @return bool
      */
-    public function attempt(array $user, $cookie = true);
+    public function attempt(array $user);
 
     /**
      * @param array $user
-     * @param int|null $expires: expire minutes
      * @return mixed
      */
-    public function login(array $user, $expires = null);
+    public function login(array $user);
 
     /**
      * @return bool
@@ -40,12 +38,6 @@ interface IAuth
      * @return array
      */
     public function getUser();
-
-    /**
-     * @param array $user
-     * @return array
-     */
-    public function refreshUser($user);
 
     /**
      * @param string|array $role

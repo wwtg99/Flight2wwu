@@ -6,7 +6,7 @@
  * Time: 10:47
  */
 
-namespace App\Model\Auth;
+namespace Wwtg99\App\Model\Auth;
 
 /**
  * Class User
@@ -15,7 +15,7 @@ namespace App\Model\Auth;
 class User
 {
 
-    use TNormalAuth;
+//    use TNormalAuth;
 //    use TOpenAuth; //should disable admin departments/users/roles, change password and edit user info
 
     const KEY_USER_ID = 'user_id';

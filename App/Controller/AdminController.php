@@ -6,14 +6,12 @@
  * Time: 15:04
  */
 
-namespace App\Controller;
+namespace Wwtg99\App\Controller;
 
 
 use App\Model\Admin;
 use App\Model\Message;
-use Flight2wwu\Common\BaseController;
-use Flight2wwu\Plugin\PluginManager;
-use Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\Flight2wwu\Common\BaseController;
 
 class AdminController extends BaseController
 {

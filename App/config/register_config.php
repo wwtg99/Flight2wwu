@@ -13,23 +13,23 @@ return [
      * name => full class name
      * Class must implement ServiceProvider
      */
-    'register_class'=>[
-        'Auth' => 'Flight2wwu\Component\Auth\RoleAuth',
+    'services'=>[
+//        'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RoleAuth',
 //        'View' => 'Flight2wwu\Component\View\BorderView',
-        'View' => 'Flight2wwu\Component\View\TwigView',
-        'Log' => 'Flight2wwu\Component\Log\Monolog',
+//        'View' => 'Wwtg99\Flight2wwu\Component\View\TwigView',
+        'Log' => 'Wwtg99\Flight2wwu\Component\Log\Monolog',
 //        'DB' => 'Flight2wwu\Component\Database\MedooDB',
-        'DB' => 'Flight2wwu\Component\Database\MedooPool',
-        'ORM' => 'Flight2wwu\Component\Database\OrmManager',
-        'DataPool' => 'Flight2wwu\Component\Database\DataPool',
-        'Locale' => 'Flight2wwu\Component\Translation\SymTrans',
-        'Cache' => 'Flight2wwu\Component\Storage\Cache',
-        'Session' => 'Flight2wwu\Component\Storage\SessionUtil',
-        'Cookie' => 'Flight2wwu\Component\Storage\CookieUtil',
-        'Value' => 'Flight2wwu\Component\Storage\OldValue',
-        'Assets' => 'Flight2wwu\Component\View\AssetsManager',
-        'Mail' => 'Flight2wwu\Component\Utils\Mail',
-        'Express' => 'Flight2wwu\Component\Utils\Express',
+//        'DB' => 'Wwtg99\Flight2wwu\Component\Database\MedooPool',
+//        'ORM' => 'Wwtg99\Flight2wwu\Component\Database\OrmManager',
+//        'DataPool' => 'Wwtg99\Flight2wwu\Component\Database\DataPool',
+//        'Locale' => 'Wwtg99\Flight2wwu\Component\Translation\SymTrans',
+//        'Cache' => 'Wwtg99\Flight2wwu\Component\Storage\Cache',
+//        'Session' => 'Wwtg99\Flight2wwu\Component\Storage\SessionUtil',
+//        'Cookie' => 'Wwtg99\Flight2wwu\Component\Storage\CookieUtil',
+//        'Value' => 'Wwtg99\Flight2wwu\Component\Storage\OldValue',
+//        'Assets' => 'Wwtg99\Flight2wwu\Component\View\AssetsManager',
+//        'Mail' => 'Wwtg99\Flight2wwu\Component\Utils\Mail',
+//        'Express' => 'Wwtg99\Flight2wwu\Component\Utils\Express',
     ],
     /**
      * Register route here
@@ -38,15 +38,16 @@ return [
     'route'=>[
         /**
          * Route path for functions
-         * [route, array(full class name, function name)]
+         * [route, array(full class name, function name), pre]
+         * pre: path will be registered before controller, post: path will be registered after controller
          */
         'path'=>[
-            ["*", array('\\App\\Controller\\HomeController', 'rbac')],
-            ["*", array('\\App\\Controller\\HomeController', 'language')],
-            ["/", array('\\App\\Controller\\HomeController', 'home')],
-            ["/home", array('\\App\\Controller\\HomeController', 'home')],
-            ["/403", array('\\App\\Controller\\HomeController', 'forbidden')],
-            ["/changelog", array('\\App\\Controller\\HomeController', 'changelog')],
+//            ["*", array('\\App\\Controller\\HomeController', 'rbac'), 'pre'],
+//            ["*", array('\\App\\Controller\\HomeController', 'language'), 'pre'],
+            ["/", array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
+            ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
+            ["/403", array('\\Wwtg99\\App\\Controller\\HomeController', 'forbidden'), 'pre'],
+            ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog'), 'pre'],
         ],
         /**
          * Register whole controller class with static public functions
@@ -55,9 +56,9 @@ return [
          * Controller must extends BaseController
          */
         'controller'=>[
-            'App\Controller\Auth'=>'auth',
-            'App\Controller\OAuth'=>'oauth',
-            'App\Controller\Admin'=>'admin',
+//            'Wwtg99\App\Controller\Auth'=>'auth',
+//            'Wwtg99\App\Controller\OAuth'=>'oauth',
+//            'Wwtg99\App\Controller\Admin'=>'admin',
         ],
     ],
     /**

@@ -6,7 +6,7 @@
  * Time: 17:40
  */
 
-namespace Flight2wwu\Component\Translation;
+namespace Wwtg99\Flight2wwu\Component\Translation;
 
 
 interface ITranslator

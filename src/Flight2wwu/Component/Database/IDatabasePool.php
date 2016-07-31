@@ -15,19 +15,19 @@ interface IDatabasePool
     /**
      * @param array $config
      * @param string $name
-     * @return $this
+     * @return mixed
      */
     public function connect(array $config, $name = 'main');
 
     /**
      * @param string $name
-     * @return $this
+     * @return mixed
      */
     public function reconnect($name = 'main');
 
     /**
      * @param string $name
-     * @return mixed
+     * @return MedooPlus
      */
     public function getConnection($name = null);
 }

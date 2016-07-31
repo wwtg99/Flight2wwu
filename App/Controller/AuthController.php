@@ -6,12 +6,10 @@
  * Time: 15:53
  */
 
-namespace App\Controller;
+namespace Wwtg99\App\Controller;
 
-use App\Model\Auth\User;
-use App\Model\Message;
-use Flight2wwu\Common\BaseController;
-use Flight2wwu\Component\Utils\FormatUtils;
+
+use Wwtg99\Flight2wwu\Common\BaseController;
 
 class AuthController extends BaseController
 {

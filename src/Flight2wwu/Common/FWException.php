@@ -6,10 +6,10 @@
  * Time: 14:55
  */
 
-namespace Flight2wwu\Common;
+namespace Wwtg99\Flight2wwu\Common;
 
 
-use App\Model\Message;
+use Wwtg99\App\Model\Message;
 
 class FWException extends \Exception
 {

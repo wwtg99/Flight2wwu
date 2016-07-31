@@ -6,7 +6,7 @@
  * Time: 18:00
  */
 
-namespace Flight2wwu\Common;
+namespace Wwtg99\Flight2wwu\Common;
 
 /**
  * Interface ServiceProvider

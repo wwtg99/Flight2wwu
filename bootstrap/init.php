@@ -15,24 +15,27 @@ define('CONFIG', APP . 'config' . DIRECTORY_SEPARATOR);
 define('WEB', ROOT . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR);
 define("STORAGE", ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);
-define('WEBROOT', '/');
-
-//config
-$conf_files = ['app_config.php', 'register_config.php', 'plugins.json', 'schedule.json', 'ui_libs.php'];
-$conf = new \Flight2wwu\Component\Config\FileConfig([CONFIG], $conf_files, true);
-Flight::set('config', $conf);
 
 // autoload
-$loader = new \ClassLoader\Loader(ROOT, $conf->getConfig('load_path'));
-$loader->autoload();
-
 require implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
-require 'autoload.php';
-require 'helpfunctions.php';
 
-// config files
-$app_conf = CONFIG . 'app_config.php';
+// config
+$conf_files = ['app_config.php', 'register_config.php', 'plugins.json', 'ui_libs.php'];
+$conf = new \Wwtg99\Config\Common\ConfigPool();
+$source = new \Wwtg99\Config\Source\FileSource(CONFIG, $conf_files);
+$source->addLoader(new \Wwtg99\Config\Source\Loader\JsonLoader())->addLoader(new \Wwtg99\Config\Source\Loader\PHPLoader());
+$conf->addSource($source);
+$conf->load();
+Flight::set('config', $conf);
+
+// class load
+$register_path = [
+    'Wwtg99\\App', 'App', true
+];
+$loader = new \Wwtg99\ClassLoader\Loader(ROOT, $register_path);
+
+require_once 'helpfunctions.php';
 
 // register
-$register = \Flight2wwu\Common\Register::getInstance();
-$register->registerAll();
+$register = \Wwtg99\Flight2wwu\Common\Register::getInstance();
+$register->registerAll($conf);

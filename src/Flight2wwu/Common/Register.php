@@ -6,12 +6,12 @@
  * Time: 下午 6:50
  */
 
-namespace Flight2wwu\Common;
+namespace Wwtg99\Flight2wwu\Common;
 
 
-use Flight2wwu\Component\Config\BaseConfig;
-use Flight2wwu\Component\Utils\FormatUtils;
-use Flight2wwu\Plugin\PluginManager;
+
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\Flight2wwu\Plugin\PluginManager;
 
 class Register
 {
@@ -22,54 +22,44 @@ class Register
     private static $instance = null;
 
     /**
-     * @var BaseConfig
-     */
-    private $conf;
-
-    /**
      * Register constructor.
-     * @param BaseConfig $conf
      */
-    public function __construct($conf)
+    private function __construct()
     {
-        $this->conf = $conf;
+
     }
 
     /**
-     * @param BaseConfig $conf
      * @return Register
      */
-    public static function getInstance($conf = null)
+    public static function getInstance()
     {
         if (!self::$instance) {
-            self::$instance = new Register($conf);
+            self::$instance = new Register();
         }
         return self::$instance;
     }
 
     /**
      * Register all in config/register_config.php.
+     * @param \Wwtg99\Config\Common\IConfig $config
      */
-    public function registerAll()
+    public function registerAll($config)
     {
-        $tz = $this->conf->getConfig('timezone');
+        $tz = $config->get('timezone');
         date_default_timezone_set($tz);
         // register service
-        $ser = $this->conf->getConfig('services');
+        $ser = $config->get('services');
         $this->registerService($ser);
         // register route
-        $route_path = $this->conf->getConfig('route.path');
-        $route_controller = $this->conf->getConfig('route.controller');
-        $this->registerRoute($route_path);
-        $this->registerRouteController($route_controller);
+        $route_path = $config->get('route.path');
+        $route_controller = $config->get('route.controller');
+        $this->registerRoute($route_path, $route_controller);
         // handler
-        $handler_file = $this->conf->getConfig('handler');
+        $handler_file = $config->get('handler');
         if ($handler_file && file_exists($handler_file)) {
-            require "$handler_file";
+            include_once "$handler_file";
         }
-        // plugin
-        $plugins = $this->conf->getConfig('plugin');
-        $this->registerPlugin($plugins);
     }
 
     /**
@@ -104,42 +94,44 @@ class Register
     /**
      * Register routes.
      *
-     * @param array $arr
+     * @param array $path
+     * @param array $controller
      */
-    public function registerRoute($arr)
+    public function registerRoute($path, $controller)
     {
-        if (!$arr || !is_array($arr)) {
-            return;
-        }
-        foreach ($arr as $i => $v) {
-            if (is_array($v) && count($v) > 1) {
-                \Flight::route($v[0], $v[1]);
-            }
-        }
-    }
-
-    /**
-     * Register route controllers.
-     *
-     * @param array $arr
-     */
-    public function registerRouteController($arr)
-    {
-        if (!$arr || !is_array($arr)) {
-            return;
-        }
-        foreach ($arr as $k => $v) {
-            $classname = $k . 'Controller';
-            $ref = new \ReflectionClass($classname);
-            if ($ref->isSubclassOf('Flight2wwu\Common\BaseController')) {
-                $prefix = FormatUtils::formatWebPath($v);
-                $methods = $ref->getMethods(\ReflectionMethod::IS_STATIC);
-                foreach ($methods as $m) {
-                    if ($m->isPublic()) {
-                        $path = $prefix . $m->getName();
-                        \Flight::route($path, [$classname, $m->getName()]);
+        $postPath = [];
+        if ($path && is_array($path)) {
+            foreach ($path as $p) {
+                if (is_array($p) && count($p) > 1) {
+                    $post = isset($p[2]) ? ($p[2] == 'post') : false;
+                    if ($post) {
+                        array_push($postPath, $p);
+                    } else {
+                        getLog()->warning('-------1', $p);
+                        \Flight::route($p[0], $p[1]);
                     }
                 }
+            }
+        }
+        if ($controller && is_array($controller)) {
+            foreach ($controller as $cls => $pref) {
+                $classname = $cls . 'Controller';
+                $ref = new \ReflectionClass($classname);
+                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\BaseController')) {
+                    $prefix = FormatUtils::formatWebPath($pref);
+                    $methods = $ref->getMethods(\ReflectionMethod::IS_STATIC);
+                    foreach ($methods as $m) {
+                        if ($m->isPublic()) {
+                            $path = $prefix . $m->getName();
+                            \Flight::route($path, [$classname, $m->getName()]);
+                        }
+                    }
+                }
+            }
+        }
+        if ($postPath) {
+            foreach ($postPath as $p) {
+                \Flight::route($p[0], $p[1]);
             }
         }
     }
@@ -147,15 +139,15 @@ class Register
     /**
      * Register plugins.
      *
-     * @param array $arr
+     * @param array $plugins
      * @return PluginManager|null
      */
-    public function registerPlugin($arr)
+    public function registerPlugin($plugins)
     {
-        if (!$arr || !is_array($arr)) {
-            return null;
+        if ($plugins && is_array($plugins)) {
+            $pm = new PluginManager($plugins);
+            return $pm;
         }
-        $pm = new PluginManager($arr);
-        return $pm;
+        return null;
     }
 }

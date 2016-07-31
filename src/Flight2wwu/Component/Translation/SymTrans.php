@@ -8,10 +8,12 @@
 
 namespace Flight2wwu\Component\Translation;
 
-use Flight2wwu\Common\ServiceProvider;
-use Flight2wwu\Component\Utils\FormatUtils;
+
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
+use Wwtg99\Flight2wwu\Component\Translation\ITranslator;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class SymTrans implements ServiceProvider, ITranslator
 {

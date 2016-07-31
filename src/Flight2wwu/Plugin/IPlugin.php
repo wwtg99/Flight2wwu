@@ -6,12 +6,10 @@
  * Time: 10:42
  */
 
-namespace Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Plugin;
 
 
-use Flight2wwu\Common\ServiceProvider;
-
-interface IPlugin extends ServiceProvider
+interface IPlugin
 {
     /**
      * @return string

@@ -6,20 +6,18 @@
  * Time: 9:40
  */
 
-namespace Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Plugin;
 
 
-class PluginManager {
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
+
+class PluginManager implements ServiceProvider
+{
 
     /**
      * @var PluginManager
      */
     private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $conf;
 
     /**
      * @var array
@@ -31,16 +29,36 @@ class PluginManager {
      */
     private $enables = [];
 
+    /**
+     * @var array
+     */
+    private $conf = [];
+
 
     /**
-     * @param array $plugins
+     * Called after register.
+     *
+     * @return void
      */
-    public function __construct($plugins)
+    public function register()
     {
-        $this->plugins = $plugins;
-        foreach ($this->plugins as $id => $p) {
-            if ($p['enabled']) {
-                $this->enable($id);
+
+    }
+
+    /**
+     * Called after all class is registered.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $plugins = \Flight::get('config')->get('plugin');
+        if ($plugins) {
+            $this->plugins = $plugins;
+            foreach ($this->plugins as $id => $p) {
+                if ($p['enabled']) {
+                    $this->enable($id);
+                }
             }
         }
     }
@@ -50,18 +68,6 @@ class PluginManager {
      */
     public static function getInstance()
     {
-        return self::$instance;
-    }
-
-    /**
-     * @param string $conf
-     * @return PluginManager
-     */
-    public static function loadConfig($conf)
-    {
-        self::$conf = $conf;
-        $f = file_get_contents($conf);
-        self::$instance = new PluginManager(json_decode($f, true));
         return self::$instance;
     }
 
@@ -173,8 +179,8 @@ class PluginManager {
      */
     public function writeConfig()
     {
-        if (self::$conf) {
-            file_put_contents(self::$conf, json_encode($this->plugins, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+        if ($this->$conf) {
+            file_put_contents($this->$conf, json_encode($this->plugins, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
         }
     }
 } 

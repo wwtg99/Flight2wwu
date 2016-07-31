@@ -6,8 +6,9 @@
  * Time: 15:58
  */
 
-namespace Flight2wwu\Common;
-use App\Model\Message;
+namespace Wwtg99\Flight2wwu\Common;
+
+use Wwtg99\App\Model\Message;
 
 /**
  * Class BaseController
@@ -111,7 +112,7 @@ abstract class BaseController
      * @param string $type
      * @param bool $throws
      * @return bool
-     * @throws \Exception
+     * @throws FWException
      */
     public static function checkExists($val, $type = null, $throws = true)
     {
@@ -128,7 +129,7 @@ abstract class BaseController
         }
         if ($throws) {
             if (!$pass) {
-                throw new \Exception($msg);
+                throw new FWException($msg, 1);
             }
         }
         return $pass;

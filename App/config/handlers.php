@@ -14,7 +14,7 @@ $logger = getLog();
 // debug bar
 if (isDebug()) {
     $debugbar = new \DebugBar\StandardDebugBar();
-    if ($logger instanceof \Flight2wwu\Component\Log\Monolog) {
+    if ($logger instanceof \Wwtg99\Flight2wwu\Component\Log\Monolog) {
         $collector = new \DebugBar\Bridge\MonologCollector($logger->getLogger('main'));
         foreach ($logger->getLogger(null) as $name => $l) {
             if ($name != 'main') {
@@ -40,9 +40,15 @@ if (isDebug()) {
         if (Flight::request()->ajax) {
             \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
         } else {
-            getView()->render('error/500', ['message'=>$m, 'code'=>$ex->getCode(), 'title'=>'Error']);
+            $v = getView();
+//            if ($v) {
+//                $v->render('error/500', ['message' => $m, 'code' => $ex->getCode(), 'title' => 'Error']);
+//            } else {
+//                \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
+//            }
         }
     } catch (\Exception $e) {
+        echo '===';
         exit($msg);
     }
 });
@@ -50,9 +56,14 @@ if (isDebug()) {
 // not found
 \Flight::map('notFound', function() {
     if (Flight::request()->ajax) {
-        Flight::json(['error'=>['message'=>'page not found', 'code'=>404]]);
+        Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]]);
     } else {
-        getView()->render('error/404', ['title'=>'page not found']);
+        $v = getView();
+        if ($v) {
+            $v->render('error/404', ['title' => 'page not found']);
+        } else {
+            Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]]);
+        }
     }
 });
 
@@ -63,18 +74,3 @@ if (isDebug()) {
 Flight::route('/error', function() {
     throw new Exception('error test', 1);
 });
-
-Flight::route('/comp', function() {
-    getAssets()->addLibrary(['icheck', 'bootstrap-switch', 'buttons', 'fa']);
-    $steps = new \Components\Comp\StepView([['title'=>'step 1', 'descr'=>'step 1 descr'], ['title'=>'step 2', 'descr'=>'step 2 descr'], ['title'=>'step 3'], ['title'=>'step 4']]);
-    $data['steps'] = $steps;
-    $listview1 = new \Components\Comp\ListView();
-    $data['listview1'] = $listview1;
-    $listview2 = new \Components\Comp\ListView(2, 'right');
-    $data['listview2'] = $listview2;
-    $listview3 = new \Components\Comp\ListView(3, 'center');
-    $data['listview3'] = $listview3;
-    $v = getView();
-    $v->render('components', $data);
-});
-

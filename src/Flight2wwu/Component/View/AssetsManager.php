@@ -8,8 +8,8 @@
 
 namespace Flight2wwu\Component\View;
 
-use Flight2wwu\Common\ServiceProvider;
-use Flight2wwu\Component\Utils\FormatUtils;
+
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
 
 class AssetsManager implements ServiceProvider
 {

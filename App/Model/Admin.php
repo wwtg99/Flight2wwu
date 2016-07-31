@@ -6,7 +6,7 @@
  * Time: 15:05
  */
 
-namespace App\Model;
+namespace Wwtg99\App\Model;
 
 
 class Admin

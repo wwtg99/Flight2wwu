@@ -6,7 +6,7 @@
  * Time: 18:17
  */
 
-namespace App\Model;
+namespace Wwtg99\App\Model;
 
 
 class Message

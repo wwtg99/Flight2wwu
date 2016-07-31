@@ -6,10 +6,10 @@
  * Time: 10:37
  */
 
-namespace Flight2wwu\Component\Auth;
+namespace Wwtg99\Flight2wwu\Component\Auth;
 
 use App\Model\Auth\User;
-use Flight2wwu\Common\ServiceProvider;
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
 
 class RoleAuth implements ServiceProvider, IAuth
 {

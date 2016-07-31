@@ -15,6 +15,11 @@ abstract class ADatabasePool implements IDatabasePool
     /**
      * @var array
      */
+    protected $configs = [];
+
+    /**
+     * @var array
+     */
     protected $connections = [];
 
     /**
@@ -24,13 +29,21 @@ abstract class ADatabasePool implements IDatabasePool
 
     /**
      * @param string $name
-     * @return mixed
+     * @return MedooPlus
      * @throws \Exception
      */
     public function getConnection($name = null)
     {
         if (is_null($name)) {
             $name = $this->current;
+        }
+        if (array_key_exists($name, $this->connections)) {
+            return $this->connections[$name];
+        }
+        if (isset($this->configs[$name])) {
+            $c = $this->configs[$name];
+            $this->connections[$name] = $this->connect($c, $name);
+            return $this->connections[$name];
         }
         if (count($this->connections) <= 0) {
             throw new \Exception('no connections yet');

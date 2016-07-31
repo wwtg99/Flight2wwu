@@ -12,21 +12,33 @@ class DataBaseTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         require '../bootstrap/init.php';
+        date_default_timezone_set('Asia/Shanghai');
     }
 
     public function testMedooPool()
     {
         $conn = new \Flight2wwu\Component\Database\MedooPool();
-        $conn->reconnect();
-        $db = $conn->getConnection();
+        $db = $conn->connect([
+            'driver'=>'pgsql',
+            'dbname'=>'test1',
+            'host'=>'192.168.6.131',
+            'user'=>'wwu',
+            'password'=>'1',
+            'port'=>5432
+        ], 'main');
+//        $db = $conn->getConnection();
         $db->debug = true;
-        $re = $db->execute("create table t1 (id int, name text)");
-        $this->assertEquals(0, $re);
+//        $re = $db->execute("create table t1 (id int, name text)");
+//        $this->assertEquals(0, $re);
         $data = [
             ['id'=>1, 'name'=>'name1'],
             ['id'=>2, 'name'=>'name2'],
             ['id'=>3, 'name'=>'name3'],
+            ['id'=>4, '#name'=>'NOW()'],
         ];
+        $re = $db->insert('t1', ['id'=>11, '#name'=>'NOW()']);
+        var_dump($re);
+        return;
         $re = $db->insert('t1', $data);
         $this->assertEquals(3, $re);
         $re = $db->select('t1', '*');

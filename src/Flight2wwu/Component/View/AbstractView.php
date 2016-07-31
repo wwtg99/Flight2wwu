@@ -6,9 +6,10 @@
  * Time: 10:43
  */
 
-namespace Flight2wwu\Component\View;
+namespace Wwtg99\Flight2wwu\Component\View;
 
-use Flight2wwu\Common\ServiceProvider;
+
+use Wwtg99\Flight2wwu\Common\ServiceProvider;
 
 abstract class AbstractView implements ServiceProvider
 {

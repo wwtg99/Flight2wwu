@@ -6,12 +6,15 @@
  * Time: 10:53
  */
 
-namespace Flight2wwu\Component\Auth;
+namespace Wwtg99\Flight2wwu\Component\Auth;
 
 
 class AuthKey
 {
 
+    /**
+     * @var int
+     */
     private $auth;
 
     /**

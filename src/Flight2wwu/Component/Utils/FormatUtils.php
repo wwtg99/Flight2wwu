@@ -6,7 +6,7 @@
  * Time: 13:26
  */
 
-namespace Flight2wwu\Component\Utils;
+namespace Wwtg99\Flight2wwu\Component\Utils;
 
 class FormatUtils
 {

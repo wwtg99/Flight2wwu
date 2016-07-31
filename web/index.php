@@ -6,10 +6,9 @@
  * Time: 10:55
  */
 
-require '../vendor/autoload.php';
 require '../bootstrap/init.php';
 
-if (Flight::get('maintain')) {
+if (Flight::get('config')->get('maintain', false)) {
     Flight::halt(503, 'Maintenance');
 } else {
     Flight::start();

@@ -6,7 +6,7 @@
  * Time: 16:10
  */
 
-namespace Flight2wwu\Component\Log;
+namespace Wwtg99\Flight2wwu\Component\Log;
 
 class SdoutLog implements ILog
 {

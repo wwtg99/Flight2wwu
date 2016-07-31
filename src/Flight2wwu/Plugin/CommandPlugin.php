@@ -6,7 +6,7 @@
  * Time: 13:12
  */
 
-namespace Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Plugin;
 
 
 use Symfony\Component\Process\Exception\ProcessFailedException;

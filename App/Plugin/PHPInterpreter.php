@@ -6,7 +6,7 @@
  * Time: 11:22
  */
 
-namespace App\Plugin;
+namespace Wwtg99\App\Plugin;
 
 
 use Flight2wwu\Plugin\CommandPlugin;
