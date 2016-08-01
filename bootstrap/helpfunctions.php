@@ -67,7 +67,7 @@ function getLog()
 }
 
 /**
- * @return \Flight2wwu\Component\View\AbstractView
+ * @return \Wwtg99\Flight2wwu\Component\View\IView
  */
 function getView()
 {
@@ -99,7 +99,7 @@ function getOld($name, $def = '')
 }
 
 /**
- * @return \Flight2wwu\Component\View\AssetsManager
+ * @return \Wwtg99\Flight2wwu\Component\View\AssetsManager
  */
 function getAssets()
 {

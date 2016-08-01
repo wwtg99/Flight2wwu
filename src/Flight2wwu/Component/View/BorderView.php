@@ -6,71 +6,56 @@
  * Time: 下午 8:55
  */
 
-namespace Flight2wwu\Component\View;
+namespace Wwtg99\Flight2wwu\Component\View;
 
 
-use Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class BorderView extends AbstractView
 {
     /**
      * @var string
      */
-    private $head = '';
+    private $head = 'border_head';
 
     /**
      * @var string
      */
-    private $foot = '';
+    private $foot = 'border_foot';
 
     /**
      * @var string
      */
-    private $left = '';
+    private $left = 'border_left';
 
     /**
      * @var string
      */
-    private $right = '';
+    private $right = 'border_right';
 
     /**
      * @var string
      */
-    private $center = '';
+    private $center = 'border_center';
 
     /**
      * @var string
      */
-    private $layoutTemplate = '';
+    private $layoutTemplate = 'border_layout';
 
     /**
      * @var string
      */
-    private $view_root;
+    private $view_root = '';
 
     /**
-     * Called after all class is registered.
-     *
-     * @return void
+     * @param array $config
+     * @return IView
      */
-    public function boot()
+    protected function loadConfig($config)
     {
-        $view = \Flight::get('view');
-        $this->loadConfig($view);
-        $this->head = 'border_head';
-        $this->foot = 'border_foot';
-        $this->left = 'border_left';
-        $this->right = 'border_right';
-        $this->center = 'border_center';
-        $this->layoutTemplate = 'border_layout';
-    }
-
-    /**
-     * @param array $conf
-     */
-    public function loadConfig($conf)
-    {
-        $dir = isset($conf['view_dir']) ? FormatUtils::formatPath($conf['view_dir']) : '';
+        parent::loadConfig($config);
+        $dir = isset($config['view_dir']) ? FormatUtils::formatPath($config['view_dir']) : '';
         if ($dir && file_exists($dir)) {
             $this->view_root = $dir;
             \Flight::set('flight.views.path', $dir);
@@ -80,6 +65,7 @@ class BorderView extends AbstractView
     /**
      * @param array|string $template
      * @param array $data
+     * @return $this
      */
     public function render($template, array $data = null)
     {
@@ -111,6 +97,7 @@ class BorderView extends AbstractView
         $this->renderTemplate($this->left, $data, 'left');
         $this->renderTemplate($this->center, $data, 'center');
         $this->renderTemplate($this->layoutTemplate, $data);
+        return $this;
     }
 
     /**

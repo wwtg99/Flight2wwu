@@ -9,9 +9,7 @@
 namespace Flight2wwu\Component\Storage;
 
 
-use Flight2wwu\Common\ServiceProvider;
-
-class OldValue implements ServiceProvider
+class OldValue
 {
 
     const OLD_KEY = 'OLD_VALUE';
@@ -21,6 +19,19 @@ class OldValue implements ServiceProvider
      * @var IAttribute
      */
     private $storage;
+
+    /**
+     * OldValue constructor.
+     * @param array $conf
+     */
+    public function __construct($conf = [])
+    {
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('storage');
+        }
+        $this->loadConfig($conf);
+    }
+
 
     /**
      * @return mixed

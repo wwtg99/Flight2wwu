@@ -20,7 +20,7 @@ define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);
 require implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
 
 // config
-$conf_files = ['app_config.php', 'register_config.php', 'plugins.json', 'ui_libs.php'];
+$conf_files = ['app_config.php', 'register_config.php', 'auth.php', 'plugins.json', 'ui_libs.json'];
 $conf = new \Wwtg99\Config\Common\ConfigPool();
 $source = new \Wwtg99\Config\Source\FileSource(CONFIG, $conf_files);
 $source->addLoader(new \Wwtg99\Config\Source\Loader\JsonLoader())->addLoader(new \Wwtg99\Config\Source\Loader\PHPLoader());
@@ -28,11 +28,13 @@ $conf->addSource($source);
 $conf->load();
 Flight::set('config', $conf);
 
-// class load
+// load class
 $register_path = [
-    'Wwtg99\\App', 'App', true
+    ['Wwtg99\\App', 'App', true],
+    ['Wwtg99', 'src', true],
 ];
 $loader = new \Wwtg99\ClassLoader\Loader(ROOT, $register_path);
+$loader->autoload();
 
 require_once 'helpfunctions.php';
 

@@ -6,7 +6,7 @@
  * Time: 13:41
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 
 interface IAttribute

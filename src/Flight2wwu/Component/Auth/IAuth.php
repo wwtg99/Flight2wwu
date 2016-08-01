@@ -19,8 +19,9 @@ interface IAuth
     public function attempt(array $user);
 
     /**
+     * Login user to storage (session or cookies).
+     *
      * @param array $user
-     * @return mixed
      */
     public function login(array $user);
 
@@ -30,6 +31,8 @@ interface IAuth
     public function isLogin();
 
     /**
+     * Logout User in storage (session or cookies).
+     *
      * @return mixed
      */
     public function logout();

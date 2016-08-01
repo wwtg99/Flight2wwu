@@ -6,7 +6,7 @@
  * Time: 10:47
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 
 class Collection implements IAttribute, \Iterator

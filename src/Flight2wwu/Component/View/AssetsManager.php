@@ -6,57 +6,42 @@
  * Time: 下午 9:13
  */
 
-namespace Flight2wwu\Component\View;
+namespace Wwtg99\Flight2wwu\Component\View;
 
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
-
-class AssetsManager implements ServiceProvider
+class AssetsManager
 {
     /**
      * @var array
      */
-    private $libs = [];
+    protected $libs = [];
 
     /**
      * @var array
      */
-    private $css = [];
+    protected $enabledLibs = [];
 
     /**
      * @var array
      */
-    private $js = [];
+    protected $libsAfter = [];
 
     /**
      * @var string
      */
-    private $default_resource = '';
-
-
-    /**
-     * Called after register.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
-    }
+    protected $resourceDir = '';
 
     /**
-     * Called after all class is registered.
-     *
-     * @return void
+     * AssetsManager constructor.
+     * @param array $conf
      */
-    public function boot()
+    public function __construct($conf = [])
     {
-        $conf = \Flight::get('assets');
-        if (isset($conf['lib_conf'])) {
-            $conf = $conf['lib_conf'];
-            $conf = include "$conf";
-            $this->loadConfig($conf);
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('assets');
         }
+        $this->loadConfig($conf);
     }
 
     /**
@@ -65,76 +50,25 @@ class AssetsManager implements ServiceProvider
     public function loadConfig($conf)
     {
         if (is_array($conf)) {
-            $this->libs = $conf;
-            if (array_key_exists('global_pre', $this->libs)) {
-                $this->addLibrary($this->libs['global_pre']);
+            $this->libs = isset($conf['libs']) ? $conf['libs'] : [];
+            if (array_key_exists('global_before', $conf)) {
+                $this->addLibrary($conf['global_before']);
             }
-            if (array_key_exists('default_resource', $this->libs)) {
-                $this->default_resource = $this->libs['default_resource'];
+            $this->libsAfter = isset($conf['global_after']) ? $conf['global_after'] : [];
+            if (isset($conf['resource_dir'])) {
+                $this->resourceDir = $conf['resource_dir'];
             }
         }
     }
 
     /**
      * @param string|array $lib
+     * @return AssetsManager
      */
     public function addLibrary($lib)
     {
-        if (is_array($lib)) {
-            $prefix = array_key_exists('prefix', $lib) ? $lib['prefix'] : '';
-            foreach ($lib as $k => $v) {
-                if ($k === 'prefix') {
-                    continue;
-                }
-                if ($k === 'css') {
-                    $this->addCss($v, $prefix);
-                } elseif ($k === 'js') {
-                    $this->addJs($v, $prefix);
-                } elseif ($v != $lib) {
-                    $this->addLibrary($v);
-                }
-            }
-        } else {
-            if (array_key_exists($lib, $this->libs)) {
-                $this->addLibrary($this->libs[$lib]);
-            }
-        }
-    }
-
-    /**
-     * @param string|array $css
-     * @param string $prefix
-     */
-    public function addCss($css, $prefix = '')
-    {
-        if (is_array($css)) {
-            foreach ($css as $c) {
-                $this->addCss($c, $prefix);
-            }
-        } else {
-            $f = FormatUtils::formatPath($prefix) . DIRECTORY_SEPARATOR . $css;
-            if (!in_array($f, $this->css)) {
-                array_push($this->css, $f);
-            }
-        }
-    }
-
-    /**
-     * @param string|array $js
-     * @param string $prefix
-     */
-    public function addJs($js, $prefix = '')
-    {
-        if (is_array($js)) {
-            foreach ($js as $c) {
-                $this->addJs($c, $prefix);
-            }
-        } else {
-            $f = FormatUtils::formatPath($prefix) . DIRECTORY_SEPARATOR . $js;
-            if (!in_array($f, $this->js)) {
-                array_push($this->js, $f);
-            }
-        }
+        $this->enabledLibs = $this->addLib($this->enabledLibs, $lib);
+        return $this;
     }
 
     /**
@@ -142,13 +76,28 @@ class AssetsManager implements ServiceProvider
      */
     public function renderCss()
     {
-        if (array_key_exists('global_post', $this->libs)) {
-            $this->addLibrary('global_post');
-        }
+        $libs = $this->getLibs();
         $out = [];
-        foreach ($this->css as $css) {
-            $f = "<link rel='stylesheet' href='$css'>";
-            array_push($out, $f);
+        foreach ($libs as $name) {
+            if (isset($this->libs[$name])) {
+                $l = $this->libs[$name];
+                $prefix = isset($l['prefix']) ? $l['prefix'] : '';
+                $css = isset($l['css']) ? $l['css'] : [];
+                foreach ($css as $c) {
+                    if (is_array($c)) {
+                        if (isset($c['file'])) {
+                            $attr = [];
+                            if (isset($c['attr'])) {
+                                $attr = $c['attr'];
+                            }
+                            $st = $this->formatStyle($c['file'], $prefix, $attr);
+                        }
+                    } else {
+                        $st = $this->formatStyle($c, $prefix);
+                    }
+                    array_push($out, $st);
+                }
+            }
         }
         return implode("\n", $out) . "\n";
     }
@@ -166,13 +115,28 @@ class AssetsManager implements ServiceProvider
      */
     public function renderJs()
     {
-        if (array_key_exists('global_post', $this->libs)) {
-            $this->addLibrary('global_post');
-        }
+        $libs = $this->getLibs();
         $out = [];
-        foreach ($this->js as $js) {
-            $f = "<script type='text/javascript' src='$js'></script>";
-            array_push($out, $f);
+        foreach ($libs as $name) {
+            if (isset($this->libs[$name])) {
+                $l = $this->libs[$name];
+                $prefix = isset($l['prefix']) ? $l['prefix'] : '';
+                $js = isset($l['js']) ? $l['js'] : [];
+                foreach ($js as $c) {
+                    if (is_array($c)) {
+                        if (isset($c['file'])) {
+                            $attr = [];
+                            if (isset($c['attr'])) {
+                                $attr = $c['attr'];
+                            }
+                            $st = $this->formatScript($c['file'], $prefix, $attr);
+                        }
+                    } else {
+                        $st = $this->formatScript($c, $prefix);
+                    }
+                    array_push($out, $st);
+                }
+            }
         }
         return implode("\n", $out) . "\n";
     }
@@ -193,9 +157,87 @@ class AssetsManager implements ServiceProvider
     public function getResource($name, $prefix = '')
     {
         if (!$prefix) {
-            $prefix = $this->default_resource;
+            $prefix = $this->resourceDir;
         }
-        return FormatUtils::formatPath($prefix) . DIRECTORY_SEPARATOR . $name;
+        return $prefix ? $prefix . '/' . $name : $name;
     }
 
+    /**
+     * @param array $arr
+     * @param string|array $name
+     * @return array
+     */
+    private function addLib(array $arr, $name)
+    {
+        if (is_array($name)) {
+            foreach ($name as $item) {
+                $arr = $this->addLib($arr, $item);
+            }
+        } else {
+            if (isset($this->libs[$name])) {
+                $l = $this->libs[$name];
+                $depends = isset($l['depends']) ? $l['depends'] : [];
+                $arr = $this->addLib($arr, $depends);
+                if (!in_array($name, $arr)) {
+                    array_push($arr, $name);
+                }
+            }
+        }
+        return $arr;
+    }
+
+    /**
+     * @return array
+     */
+    private function getLibs()
+    {
+        $libs = $this->enabledLibs;
+        if ($this->libsAfter) {
+            $libs = $this->addLib($libs, $this->libsAfter);
+        }
+        return $libs;
+    }
+
+    /**
+     * @param $file
+     * @param string $prefix
+     * @param array $attr
+     * @return string
+     */
+    private function formatStyle($file, $prefix = '', $attr = [])
+    {
+        if (!isset($attr['rel'])) {
+            $attr['rel'] = 'stylesheet';
+        }
+        $attr['href'] = $prefix ? $prefix . '/' . $file : $file;
+        if (!isset($attr['type'])) {
+            $attr['type'] = 'text/css';
+        }
+        $ele = ['<link'];
+        foreach ($attr as $name => $val) {
+            array_push($ele, "$name=\"$val\"");
+        }
+        array_push($ele, '/>');
+        return implode(' ', $ele);
+    }
+
+    /**
+     * @param $file
+     * @param string $prefix
+     * @param array $attr
+     * @return string
+     */
+    private function formatScript($file, $prefix = '', $attr = [])
+    {
+        $attr['src'] = $prefix ? $prefix . '/' . $file : $file;
+        if (!isset($attr['type'])) {
+            $attr['type'] = 'text/javascript';
+        }
+        $ele = ['<script'];
+        foreach ($attr as $name => $val) {
+            array_push($ele, "$name=\"$val\"");
+        }
+        array_push($ele, '></script>');
+        return implode(' ', $ele);
+    }
 }

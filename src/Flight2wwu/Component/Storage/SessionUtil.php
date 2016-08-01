@@ -6,12 +6,10 @@
  * Time: 11:20
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 
-use Flight2wwu\Common\ServiceProvider;
-
-class SessionUtil implements ServiceProvider, IAttribute
+class SessionUtil implements IAttribute
 {
 
     /**
@@ -30,21 +28,16 @@ class SessionUtil implements ServiceProvider, IAttribute
     private $prefix;
 
     /**
-     * @return mixed
+     * SessionUtil constructor.
+     * @param array $conf
      */
-    public function register()
+    public function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * @return mixed
-     */
-    public function boot()
-    {
-        $st = \Flight::get('storage');
-        $this->prefix = array_key_exists('prefix', $st) ? $st['prefix'] . '_' : '';
-        $enabled = array_key_exists('session', $st) ? $st['session'] : '';
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('storage');
+        }
+        $this->prefix = isset($conf['prefix']) ? $conf['prefix'] . '_' : '';
+        $enabled = isset($conf['session']) ? $conf['session'] : '';
         if ($enabled) {
             $this->enabled = true;
             $this->start();

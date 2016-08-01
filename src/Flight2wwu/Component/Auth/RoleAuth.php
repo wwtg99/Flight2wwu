@@ -8,10 +8,10 @@
 
 namespace Wwtg99\Flight2wwu\Component\Auth;
 
-use App\Model\Auth\User;
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
 
-class RoleAuth implements ServiceProvider, IAuth
+use Wwtg99\App\Model\Auth\User;
+
+class RoleAuth implements IAuth
 {
 
     const SESSION_KEY = 'user';
@@ -39,50 +39,70 @@ class RoleAuth implements ServiceProvider, IAuth
     protected $rbac = [];
 
     /**
-     * @param array $user
-     * @param bool $cookie: load from cookie first
-     * @return bool
+     * @var bool
      */
-    public function attempt(array $user, $cookie = true)
+    protected $first = true;
+
+    /**
+     * @var int
+     */
+    protected $sessionExpires = 60;
+
+    /**
+     * @var int
+     */
+    protected $cookieExpires = 600;
+
+    /**
+     * RoleAuth constructor.
+     */
+    public function __construct()
     {
-        if ($cookie && $this->use_cookie) {
+        $auth = \Flight::get('config')->get('auth');
+        $this->loadConfig($auth);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attempt(array $user = [])
+    {
+        if (!$user && $this->use_cookie) {
             //get from cookies
             $cookie_token = getCookie()->get(self::COOKIE_TOKEN_KEY);
             $cookie_user = getCookie()->get(self::COOKIE_USER_KEY);
             if ($cookie_user && $cookie_token) {
-                $user['token'] = $cookie_token;
-                $user['username'] = $cookie_user;
+                $user[User::KEY_USER_TOKEN] = $cookie_token;
+                $user[User::KEY_USER_NAME] = $cookie_user;
             }
         }
-        $u = User::verify($user);
-        if ($u !== false) {
-            $expires = array_key_exists('expires_in', $u) ? ($u['expires_in'] - time()) : null;
-            $this->login($u, $expires, !$cookie);
+        $u = new User();
+        $re = $u->verify($user);
+        if ($re === true) {
+            if ($this->first) {
+                $this->login($u->getUser());
+                $this->first = false;
+            }
             return true;
         }
         return false;
     }
 
     /**
-     * @param array $user
-     * @param int|null $expires: expire minutes
-     * @param bool $update_cookie
-     * @return mixed
+     * @inheritdoc
      */
-    public function login(array $user, $expires = null, $update_cookie = false)
+    public function login(array $user)
     {
         $this->user = $user;
         if ($this->use_session) {
-            getSession()->set(self::SESSION_KEY, $user, $expires);
+            getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
         }
         if ($this->use_cookie) {
             if (isset($user[User::KEY_USER_TOKEN]) && isset($user[User::KEY_USER_NAME])) {
                 $cookie_token = $user[User::KEY_USER_TOKEN];
                 $cookie_user = $user[User::KEY_USER_NAME];
-                if ($update_cookie) {
-                    getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $expires);
-                    getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $expires);
-                }
+                getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $this->cookieExpires);
+                getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $this->cookieExpires);
             }
         }
     }
@@ -114,7 +134,7 @@ class RoleAuth implements ServiceProvider, IAuth
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getUser()
     {
@@ -122,44 +142,11 @@ class RoleAuth implements ServiceProvider, IAuth
             if ($this->use_session) {
                 $this->user = getSession()->get(self::SESSION_KEY);
             }
-            if (!$this->user && $this->use_cookie) {
-                $token = getCookie()->get(self::COOKIE_TOKEN_KEY);
-                $user = getCookie()->get(self::COOKIE_USER_KEY);
-                $this->user = User::verify(['token'=>$token, 'username'=>$user]);
+            if (!$this->user) {
+                $re = $this->attempt();
             }
         }
         return $this->user;
-    }
-
-    /**
-     * @param array $user
-     * @return array
-     */
-    public function refreshUser($user)
-    {
-        $u = User::refreshUser($this->user);
-        if ($u) {
-            $expires_in = isset($this->user['expires_in']) ? ($this->user['expires_in'] - time()) : null;
-            $this->login($u, $expires_in, false);
-        }
-        return $this->user;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function register()
-    {
-
-    }
-
-    /**
-     * @return mixed
-     */
-    public function boot()
-    {
-        $auth = \Flight::get('auth');
-        $this->loadConfig($auth);
     }
 
     /**
@@ -167,9 +154,9 @@ class RoleAuth implements ServiceProvider, IAuth
      */
     public function loadConfig(array $arr)
     {
-        $this->use_session = isset($arr['session']) ? $arr['session'] : false;
-        $this->use_cookie = isset($arr['cookie']) ? $arr['cookie'] : false;
-        if ($arr && array_key_exists('rbac', $arr)) {
+        $this->use_session = isset($arr['session']) ? boolval($arr['session']) : false;
+        $this->use_cookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
+        if (isset($arr['rbac']) && is_array($arr['rbac'])) {
             $this->rbac = $arr['rbac'];
         }
     }
@@ -220,8 +207,8 @@ class RoleAuth implements ServiceProvider, IAuth
     public function isSuperuser()
     {
         if ($this->isLogin()) {
-            if (isset($this->user['superuser'])) {
-                return $this->user['superuser'];
+            if (isset($this->user[User::KEY_SUPERUSER])) {
+                return boolval($this->user[User::KEY_SUPERUSER]);
             }
         }
         return false;
@@ -291,12 +278,14 @@ class RoleAuth implements ServiceProvider, IAuth
     }
 
     /**
+     * Add common_user to any login user
+     *
      * @return array|string
      */
     private function getRoles()
     {
         if ($this->isLogin()) {
-            $roles = $this->user['roles'];
+            $roles = isset($this->user[User::KEY_ROLES]) ? $this->user[User::KEY_ROLES] : [];
             if (is_array($roles)) {
                 array_push($roles, 'common_user');
                 return $roles;

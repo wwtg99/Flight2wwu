@@ -6,16 +6,14 @@
  * Time: 19:19
  */
 
-namespace Flight2wwu\Component\Translation;
+namespace Wwtg99\Flight2wwu\Component\Translation;
 
 
-use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
-use Wwtg99\Flight2wwu\Component\Translation\ITranslator;
+use Symfony\Component\Translation\Translator;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
-class SymTrans implements ServiceProvider, ITranslator
+class SymTrans implements ITranslator
 {
 
     /**
@@ -29,42 +27,33 @@ class SymTrans implements ServiceProvider, ITranslator
     private $path;
 
     /**
-     * Called after register.
-     *
-     * @return void
+     * SymTrans constructor.
+     * @param array $conf
      */
-    public function register()
+    function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('locale');
+        }
+        $path = isset($conf['directory']) ? $conf['directory'] : CONFIG . 'lang';
+        $this->setPath($path);
         $locale = getOValue()->getOld('language');
         if (!$locale) {
-            $locale = \Flight::get('language');
+            $locale = $conf['language'];
         }
         $this->translator = new Translator($locale);
         $this->translator->addLoader('array', new ArrayLoader());
         $this->setLocale($locale);
     }
 
-    function __construct()
-    {
-        $this->path = CONFIG . 'lang';
-    }
-
     /**
      * @param string $path
+     * @return $this
      */
     public function setPath($path)
     {
         $this->path = FormatUtils::formatPath($path);
+        return $this;
     }
 
     /**

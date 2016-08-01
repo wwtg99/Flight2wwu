@@ -41,14 +41,13 @@ if (isDebug()) {
             \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
         } else {
             $v = getView();
-//            if ($v) {
-//                $v->render('error/500', ['message' => $m, 'code' => $ex->getCode(), 'title' => 'Error']);
-//            } else {
-//                \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
-//            }
+            if ($v) {
+                $v->render('error/500', ['message' => $m, 'code' => $ex->getCode(), 'title' => 'Error']);
+            } else {
+                echo T($msg);
+            }
         }
     } catch (\Exception $e) {
-        echo '===';
         exit($msg);
     }
 });
@@ -62,7 +61,7 @@ if (isDebug()) {
         if ($v) {
             $v->render('error/404', ['title' => 'page not found']);
         } else {
-            Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]]);
+            echo T('page not found');
         }
     }
 });

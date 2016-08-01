@@ -1,6 +1,8 @@
-<div class="center_align">
-    <h1><?php echo Flight::get('app'); ?><?php if (isDebug()) echo ' &lt;' . T('Debug Mode') . '&gt;'; ?></h1>
-    <div>
+<div class="container">
+    <div class="row text-center">
+        <h1><?php echo getConfig()->get('app'); ?><?php if (isDebug()) echo ' &lt;' . T('Debug Mode') . '&gt;'; ?></h1>
+    </div>
+    <div class="row">
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="glyphicon glyphicon-globe"></span> <?php TP('Language'); ?>

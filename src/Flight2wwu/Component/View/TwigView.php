@@ -6,13 +6,8 @@
  * Time: 下午 8:44
  */
 
-namespace Flight2wwu\Component\View;
+namespace Wwtg99\Flight2wwu\Component\View;
 
-
-use Components\Comp\AlertView;
-use Components\Comp\ListView;
-use Components\Comp\StepView;
-use Flight2wwu\Component\Utils\FormatUtils;
 
 class TwigView extends AbstractView
 {

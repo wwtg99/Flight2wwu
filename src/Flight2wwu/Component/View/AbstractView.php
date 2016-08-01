@@ -9,35 +9,30 @@
 namespace Wwtg99\Flight2wwu\Component\View;
 
 
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
 
-abstract class AbstractView implements ServiceProvider
+abstract class AbstractView implements IView
 {
 
-    /**
-     * Called after register.
-     *
-     * @return void
-     */
-    public function register()
-    {
+    protected $config = [];
 
+    /**
+     * AbstractView constructor.
+     */
+    public function __construct()
+    {
+        $conf = \Flight::get('config')->get('view');
+        $this->loadConfig($conf);
     }
 
     /**
-     * Called after all class is registered.
-     *
-     * @return void
+     * @param array $config
+     * @return IView
      */
-    public function boot()
+    protected function loadConfig($config)
     {
-
+        if (is_array($config)) {
+            $this->config = $config;
+        }
+        return $this;
     }
-
-    /**
-     * @param $template
-     * @param array $data
-     */
-    abstract public function render($template, array $data = null);
-
 } 

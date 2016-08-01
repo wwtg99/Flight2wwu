@@ -21,7 +21,8 @@ return [
     'global_post'=>[
         'custom'
     ],
-    'default_resource'=>'/asserts/images',
+    'resource_dir'=>'/asserts/images',
+    'libs'=>[],
     'custom'=>[
         'css'=>['common.css'],
         'js'=>['utils.js'],

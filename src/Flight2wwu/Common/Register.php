@@ -65,28 +65,13 @@ class Register
     /**
      * Register service.
      *
-     * @param array $arr
+     * @param array $services
      */
-    public function registerService($arr)
+    public function registerService($services)
     {
-        if (!$arr || !is_array($arr)) {
-            return;
-        }
-        $boot = [];
-        //register
-        foreach ($arr as $k => $v) {
-            \Flight::register($k, $v);
-            $ins = \Flight::$k();
-            if ($ins instanceof ServiceProvider) {
-                $ins->register();
-                array_push($boot, $k);
-            }
-        }
-        //boot
-        foreach ($boot as $k) {
-            $ins = \Flight::$k();
-            if ($ins instanceof ServiceProvider) {
-                $ins->boot();;
+        if (is_array($services)) {
+            foreach ($services as $k => $v) {
+                \Flight::register($k, $v);
             }
         }
     }
@@ -107,7 +92,6 @@ class Register
                     if ($post) {
                         array_push($postPath, $p);
                     } else {
-                        getLog()->warning('-------1', $p);
                         \Flight::route($p[0], $p[1]);
                     }
                 }

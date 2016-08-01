@@ -11,10 +11,10 @@ namespace Wwtg99\Flight2wwu\Component\Log;
 
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
-class Monolog implements ILog, ServiceProvider
+class Monolog implements ILog
 {
 
     /**
@@ -33,54 +33,41 @@ class Monolog implements ILog, ServiceProvider
     private $logDir = '';
 
     /**
-     * Called after register.
-     *
-     * @return void
+     * Monolog constructor.
+     * @param array $conf
      */
-    public function register()
+    function __construct($conf = [])
     {
-        $configs = \Flight::get('config')->get('log');
-        $this->logDir = FormatUtils::formatPath($configs['directory']);
-        if (isset($configs['loggers'])) {
-            foreach ($configs['loggers'] as $d => $con) {
-                $this->registerLogger($d, $con);
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('log');
+        }
+        if (is_array($conf)) {
+            $this->logDir = isset($conf['directory']) ? FormatUtils::formatPath($conf['directory']) : STORAGE . 'log';
+            if (!file_exists($this->logDir)) {
+                mkdir($this->logDir, 0777, true);
+            }
+            if (isset($conf['loggers'])) {
+                foreach ($conf['loggers'] as $d => $con) {
+                    $this->registerLogger($d, $con);
+                }
             }
         }
     }
 
     /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-
-    }
-
-    function __construct()
-    {
-
-    }
-
-    /**
-     * @param $domain
+     * @param string $domain
      * @param array $config
-     * @return mixed
+     * @return Logger
      */
     public function registerLogger($domain, array $config)
     {
-        if (!array_key_exists($domain, $this->loggers)) {
-            $logger = new Logger($domain);
-            $level = array_key_exists('level', $config) ? $config['level'] : '';
-            $level = self::getLevel($level);
-            $name = array_key_exists('title', $config) ? $config['title'] : "$domain.log";
-            $max = array_key_exists('max_logfile', $config) ? $config['max_logfile'] : 10;
-            $handler = new RotatingFileHandler($this->logDir . DIRECTORY_SEPARATOR . $name, $max, $level, true, 0777);
-            $logger->pushHandler($handler);
-            $this->loggers[$domain] = $logger;
-            $this->current = $domain;
-        }
+        $logger = new Logger($domain);
+        $level = isset($config['level']) ? self::getLevel($config['level']) : '';
+        $name = isset($config['title']) ? $config['title'] : "$domain.log";
+        $max = isset($config['max_logfile']) ? intval($config['max_logfile']) : 10;
+        $handler = new RotatingFileHandler(FormatUtils::formatPathArray([$this->logDir, $name]), $max, $level, true, 0777);
+        $logger->pushHandler($handler);
+        $this->loggers[$domain] = $logger;
         return $this->loggers[$domain];
     }
 
@@ -110,19 +97,6 @@ class Monolog implements ILog, ServiceProvider
             $this->current = 'main';
         }
         return $this;
-    }
-
-    /**
-     * @param string $domain
-     * @return string
-     */
-    public function setCurrentLogger($domain = 'main')
-    {
-        $this->current = $domain;
-        if (!array_key_exists($this->current, $this->loggers)) {
-            $this->current = 'main';
-        }
-        return $this->current;
     }
 
     /**
