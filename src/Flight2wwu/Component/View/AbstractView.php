@@ -17,10 +17,13 @@ abstract class AbstractView implements IView
 
     /**
      * AbstractView constructor.
+     * @param array $conf
      */
-    public function __construct()
+    public function __construct($conf = [])
     {
-        $conf = \Flight::get('config')->get('view');
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('view');
+        }
         $this->loadConfig($conf);
     }
 

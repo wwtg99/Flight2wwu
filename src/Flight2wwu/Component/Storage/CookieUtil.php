@@ -6,12 +6,10 @@
  * Time: 11:36
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 
-use Flight2wwu\Common\ServiceProvider;
-
-class CookieUtil implements ServiceProvider, IAttribute
+class CookieUtil implements IAttribute
 {
 
     /**
@@ -40,23 +38,18 @@ class CookieUtil implements ServiceProvider, IAttribute
     private $domain = null;
 
     /**
-     * @return mixed
+     * CookieUtil constructor.
+     * @param array $conf
      */
-    public function register()
+    public function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * @return mixed
-     */
-    public function boot()
-    {
-        $st = \Flight::get('storage');
-        $this->prefix = array_key_exists('prefix', $st) ? $st['prefix'] . '_' : '';
-        $this->path = array_key_exists('cookie_path', $st) ? $st['cookie_path'] : '/';
-        $this->domain = array_key_exists('domain', $st) ? $st['domain'] : null;
-        $enabled = array_key_exists('cookie', $st) ? $st['cookie'] : '';
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('storage');
+        }
+        $this->prefix = isset($conf['prefix']) ? $conf['prefix'] . '_' : '';
+        $this->path = isset($conf['cookie_path']) ? $conf['cookie_path'] : '/';
+        $this->domain = isset($conf['domain']) ? $conf['domain'] : null;
+        $enabled = isset($conf['cookie']) ? $conf['cookie'] : false;
         if ($enabled) {
             $this->enabled = true;
             $this->cookies = & $_COOKIE;
@@ -78,7 +71,7 @@ class CookieUtil implements ServiceProvider, IAttribute
     /**
      * @param string $name
      * @param $val
-     * @param int $expire
+     * @param int $expire expire seconds
      * @return $this
      */
     public function set($name, $val, $expire = 0)

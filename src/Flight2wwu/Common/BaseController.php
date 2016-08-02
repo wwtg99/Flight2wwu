@@ -20,7 +20,7 @@ abstract class BaseController
     /**
      * @return \flight\net\Request
      */
-    public static function getRequest()
+    protected static function getRequest()
     {
         return $req = \Flight::request();
     }
@@ -30,7 +30,7 @@ abstract class BaseController
      * @param $default
      * @return mixed
      */
-    public static function getInput($name, $default = null)
+    protected static function getInput($name, $default = null)
     {
         $req = self::getRequest();
         if (isset($req->data[$name])) {
@@ -47,7 +47,7 @@ abstract class BaseController
      * @param $default
      * @return mixed
      */
-    public static function getGet($name, $default = null)
+    protected static function getGet($name, $default = null)
     {
         $req = self::getRequest();
         if (isset($req->query[$name])) {
@@ -61,7 +61,7 @@ abstract class BaseController
      * @param $default
      * @return mixed
      */
-    public static function getPost($name, $default = null)
+    protected static function getPost($name, $default = null)
     {
         $req = self::getRequest();
         if (isset($req->data[$name])) {
@@ -77,7 +77,7 @@ abstract class BaseController
      * @param $default
      * @return array
      */
-    public static function getArrayInput(array $namelist, $default = null)
+    protected static function getArrayInput(array $namelist, $default = null)
     {
         $out = [];
         foreach ($namelist as $n) {
@@ -93,7 +93,7 @@ abstract class BaseController
      * @param array $namelist
      * @return array
      */
-    public static function getArrayInputN(array $namelist)
+    protected static function getArrayInputN(array $namelist)
     {
         $out = [];
         foreach ($namelist as $n) {
@@ -114,7 +114,7 @@ abstract class BaseController
      * @return bool
      * @throws FWException
      */
-    public static function checkExists($val, $type = null, $throws = true)
+    protected static function checkExists($val, $type = null, $throws = true)
     {
         $pass = true;
         $msg = '';
@@ -143,7 +143,7 @@ abstract class BaseController
      * @param int $code
      * @return Message|string
      */
-    public static function checkInput($name, $message = '', $code = 1)
+    protected static function checkInput($name, $message = '', $code = 1)
     {
         $req = self::getRequest();
         if (isset($req->data[$name])) {
@@ -165,7 +165,7 @@ abstract class BaseController
      * @param array $message: ['name'=>['message'=>'', 'code'=>''], ...]
      * @return Message|bool
      */
-    public static function checkInputs(array $namelist, array $message)
+    protected static function checkInputs(array $namelist, array $message)
     {
         foreach ($namelist as $item) {
             if (array_key_exists($item, $message)) {
@@ -185,7 +185,7 @@ abstract class BaseController
      * params method1, method2, ...
      * @return bool
      */
-    public static function checkMethod()
+    protected static function checkMethod()
     {
         $md = self::getRequest()->method;
         $methods = func_get_args();
@@ -200,7 +200,7 @@ abstract class BaseController
     /**
      * default header
      */
-    public static function defaultHeader()
+    protected static function defaultHeader()
     {
         header('Cache-Control: no-cache');
         header('Pragma: no-cache');

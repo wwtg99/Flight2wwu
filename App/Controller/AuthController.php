@@ -9,39 +9,22 @@
 namespace Wwtg99\App\Controller;
 
 
+use Wwtg99\App\Model\Auth\User;
+use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class AuthController extends BaseController
 {
 
-    /**
-     * Path to login.
-     *
-     * @var string
-     */
-    public static $loginPath = '/auth/login';
-
-    /**
-     * Path to logout.
-     *
-     * @var string
-     */
-    public static $logoutPath = '/auth/logout';
-
-    /**
-     * Path to redirect after login.
-     *
-     * @var string
-     */
-    public static $redirectPath = '/';
-
     public static function login()
     {
         if (self::checkMethod('POST')) {
-            AuthController::postLogin();
+            self::postLogin();
         } else {
-            AuthController::getLogin();
+            self::getLogin();
         }
+        return false;
     }
 
     public static function logout()
@@ -60,6 +43,7 @@ class AuthController extends BaseController
         } else {
             AuthController::getChangePwd();
         }
+        return false;
     }
 
     public static function info()
@@ -69,6 +53,7 @@ class AuthController extends BaseController
         } else {
             AuthController::getInfo();
         }
+        return false;
     }
 
     public static function signup()
@@ -89,10 +74,10 @@ class AuthController extends BaseController
         }
     }
 
-    private static function getlogin()
+    private static function getLogin()
     {
         if (getAuth()->isLogin()) {
-            \Flight::redirect(self::$logoutPath);
+            \Flight::redirect(getConfig()->get('defined_routes.logout'));
         } else {
             getView()->render('auth/login', ['title'=>'Login']);
         }
@@ -104,14 +89,15 @@ class AuthController extends BaseController
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
         getOValue()->addOld('username', $name);
-        if (getAuth()->attempt(['username'=>$name, 'password'=>$pwd, 'remember'=>$rem], false)) {
+        $redirectPath = getConfig()->get('base_url');
+        if (getAuth()->attempt([User::KEY_USER_NAME=>$name, User::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
             $path = getOValue()->getOldOnce('last_path');
             if ($path) {
-                self::$redirectPath = $path;
+                $redirectPath = $path;
             }
-            \Flight::redirect(self::$redirectPath);
+            \Flight::redirect($redirectPath);
         } else {
-            $msg = Message::getMessage(5);
+            $msg = Message::getMessage(21);
             getView()->render('auth/login', ['msg'=>$msg, 'title'=>'Login']);
         }
     }
@@ -123,7 +109,9 @@ class AuthController extends BaseController
 
     private static function postLogout() {
         getAuth()->logout();
-        \Flight::redirect(self::$redirectPath);
+        $c = getConfig();
+        $path = U($c->get('defined_routes.login'));
+        \Flight::redirect($path);
     }
 
     private static function getChangePwd()
@@ -131,7 +119,7 @@ class AuthController extends BaseController
         if (getAuth()->isLogin()) {
             getView()->render('auth/change_pwd', ['title'=>'Change Password']);
         } else {
-            \Flight::redirect(self::$loginPath);
+            \Flight::redirect(getConfig()->get('defined_routes.login'));
         }
     }
 
@@ -140,19 +128,19 @@ class AuthController extends BaseController
         $old = self::getPost('old');
         $new1 = self::getPost('new1');
         $new2 = self::getPost('new2');
-        if (!self::checkExists($new1, null, false) || !self::checkExists($new2, null, false)){
-            $msg = Message::getMessage(9);
+        if (!$new1 || !$new2){
+            $msg = Message::getMessage(15);
         } elseif ($new1 != $new2) {
-            $msg = Message::getMessage(6);
+            $msg = Message::getMessage(22);
         } else {
-            if (User::changePassword($old, $new1)) {
-                $msg = Message::getMessage(7);
+            $user = getAuth()->getUserObject();
+            if ($user && $user->changePassword($old, $new1)) {
+                $msg = Message::getMessage(23);
             } else {
-                $msg = Message::getMessage(8);
+                $msg = Message::getMessage(24);
             }
         }
         getView()->render('auth/change_pwd', ['msg'=>$msg, 'title'=>'Change Password']);
-        return false;
     }
 
     private static function getInfo()
@@ -171,7 +159,7 @@ class AuthController extends BaseController
 
     }
 
-    public static function postSignup()
+    private static function postSignup()
     {
 
     }

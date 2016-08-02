@@ -8,10 +8,14 @@
 
 namespace Wwtg99\Flight2wwu\Component\Utils;
 
+use Wwtg99\StructureFile\Utils\FileHelper;
+
 class FormatUtils
 {
 
     /**
+     * Create random string.
+     *
      * @param int $length
      * @return string
      */
@@ -21,7 +25,7 @@ class FormatUtils
         $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
         $max = strlen($strPol) - 1;
         for($i = 0; $i < $length; $i++){
-            $str .= $strPol[rand(0,$max)];
+            $str .= $strPol[rand(0, $max)];
         }
         return $str;
     }
@@ -34,10 +38,7 @@ class FormatUtils
      */
     public static function formatPath($path)
     {
-        if ($path == DIRECTORY_SEPARATOR) {
-            return $path;
-        }
-        return trim($path) ? rtrim(trim($path), DIRECTORY_SEPARATOR) : '';
+        return FileHelper::formatPath($path);
     }
 
     /**
@@ -46,41 +47,47 @@ class FormatUtils
      */
     public static function formatPathArray(array $paths)
     {
-        $arr = [];
-        for ($i = 0; $i < count($paths); $i++) {
-            $p = self::formatPath($paths[$i]);
-            if ($i == 0 && $p == DIRECTORY_SEPARATOR) {
-                array_push($arr, '');
-            } elseif ($p === '') {
-                continue;
-            } else {
-                array_push($arr, $p);
-            }
-        }
-        return implode(DIRECTORY_SEPARATOR, $arr);
+        return FileHelper::joinPathArray($paths);
     }
 
     /**
-     * Format path with last separator.
+     * Format web path.
      *
      * @param string $path
      * @return string
      */
     public static function formatWebPath($path)
     {
-        return (trim($path) && $path != '/') ? '/' . (trim(trim($path), '/') . '/') : '/';
+        return (trim($path) && $path != '/') ? '/' . (trim(trim($path), '/')) : '/';
     }
 
     /**
-     * Format extension with first dot.
+     * @param array $paths
+     * @return string
+     */
+    public static function formatWebPathArray(array $paths)
+    {
+        $arr = [];
+        for ($i = 0; $i < count($paths); $i++) {
+            $p = self::formatWebPath($paths[$i]);
+            if ($p == '/') {
+                continue;
+            } else {
+                array_push($arr, $p);
+            }
+        }
+        return implode('', $arr);
+    }
+
+    /**
+     * Format extension without first dot.
      *
      * @param string $extension
      * @return string
      */
     public static function formatExtension($extension)
     {
-        $extension = preg_replace('/[^\w\.]/', '', trim(trim($extension), '.'));
-        return '.' . $extension;
+        return FileHelper::formatExtension($extension);
     }
 
     /**
@@ -138,59 +145,22 @@ class FormatUtils
         }
         return $dt->format($format);
     }
-
-    /**
-     * @param $val
-     * @return string
-     */
-    public static function getExcelDate($val)
-    {
-        if (!$val) {
-            return null;
-        }
-        $jd = GregorianToJD(1, 1, 1970);
-        $gregorian = JDToGregorian($jd + intval($val) - 25569);
-        $darr = date_parse_from_format('m/d/Y', $gregorian);
-        $d = $darr['year'] . '/' . $darr['month'] . '/' . $darr['day'];
-        return $d;
-    }
-
-    /**
-     * Format time and translate in array by fields
-     *
-     * @param array $data
-     * @param array $transFields
-     * @param array|string $dateFields
-     * @param string $dateFormat
-     * @return array
-     */
-    public static function formatTransArray(array &$data, $transFields = [], $dateFields = '/^\w+_at$/', $dateFormat = 'Y-m-d H:i:s')
-    {
-        $re = array_walk_recursive($data, function(&$item, $key) use ($transFields, $dateFields, $dateFormat) {
-            if (is_null($item)) {
-                return;
-            }
-            //format date
-            if (is_array($dateFields)) {
-                if (in_array($key, $dateFields)) {
-                    $item = FormatUtils::formatTime($item, $dateFormat);
-                }
-            } else {
-                if (preg_match($dateFields, $key)) {
-                    $item = FormatUtils::formatTime($item, $dateFormat);
-                }
-            }
-            //trans
-            if ($transFields) {
-                if (in_array($key, $transFields)) {
-                    $item = T($item);
-                }
-            } else {
-                $item = T($item);
-            }
-        });
-        return $data;
-    }
+//
+//    /**
+//     * @param $val
+//     * @return string
+//     */
+//    public static function getExcelDate($val)
+//    {
+//        if (!$val) {
+//            return null;
+//        }
+//        $jd = GregorianToJD(1, 1, 1970);
+//        $gregorian = JDToGregorian($jd + intval($val) - 25569);
+//        $darr = date_parse_from_format('m/d/Y', $gregorian);
+//        $d = $darr['year'] . '/' . $darr['month'] . '/' . $darr['day'];
+//        return $d;
+//    }
 
     /**
      * Format head array to format header

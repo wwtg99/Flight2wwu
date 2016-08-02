@@ -109,6 +109,17 @@ class SdoutLog implements ILog
     }
 
     /**
+     * @param $level
+     * @param string $msg
+     * @param array $context
+     * @return bool
+     */
+    public function log($level, $msg, array $context = array())
+    {
+        $this->formatLog(strtoupper($level), $msg, $context);
+    }
+
+    /**
      * @param string $level
      * @param string $msg
      * @param array $context

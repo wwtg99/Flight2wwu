@@ -121,15 +121,20 @@ class Message
     public static function messageList($code)
     {
         switch ($code) {
-            case 1: $msg = ['message'=>'illegal id or name', 'type'=>'danger']; break;
-            case 2: $msg = ['message'=>'fail to create', 'type'=>'danger']; break;
-            case 3: $msg = ['message'=>'fail to update', 'type'=>'danger']; break;
-            case 4: $msg = ['message'=>'fail to delete', 'type'=>'danger']; break;
-            case 5: $msg = ['message'=>'login failed', 'type'=>'danger']; break;
-            case 6: $msg = ['message'=>'password mismatch', 'type'=>'danger']; break;
-            case 7: $msg = ['message'=>'password changed', 'type'=>'success']; break;
-            case 8: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
-            case 9: $msg = ['message'=>'empty input', 'type'=>'danger']; break;
+            // fatal error
+            case 1: $msg = ['message'=>'server error', 'type'=>'danger']; break;
+            // common error
+            case 11: $msg = ['message'=>'invalid id or name', 'type'=>'danger']; break;
+            case 12: $msg = ['message'=>'fail to create', 'type'=>'danger']; break;
+            case 13: $msg = ['message'=>'fail to update', 'type'=>'danger']; break;
+            case 14: $msg = ['message'=>'fail to delete', 'type'=>'danger']; break;
+            case 15: $msg = ['message'=>'empty input', 'type'=>'danger']; break;
+            // auth error
+            case 21: $msg = ['message'=>'login failed', 'type'=>'danger']; break;
+            case 22: $msg = ['message'=>'password mismatch', 'type'=>'danger']; break;
+            case 23: $msg = ['message'=>'password changed', 'type'=>'success']; break;
+            case 24: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
+            // oauth error
             case 1001: $msg = ['message'=>'illegal oauth', 'type'=>'danger']; break;
             case 1002: $msg = ['message'=>'no code', 'type'=>'danger']; break;
             case 1003: $msg = ['message'=>'fail to get access_token', 'type'=>'danger']; break;

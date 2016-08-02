@@ -19,12 +19,7 @@ class HomeController extends BaseController
     public static function home()
     {
         getView()->render('home');
-        getLog()->warning('----');
-//        echo 'aaaa';
-//        return false;
-//        $s = getAssets()->renderCss();
-//        getLog()->warning($s);
-
+        return false;
     }
 
     /**

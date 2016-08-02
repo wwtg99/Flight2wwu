@@ -15,14 +15,14 @@ function getConfig()
 {
     return Flight::get('config');
 }
-
-/**
- * @return \Wwtg99\DataPool\Common\IDataPool
- */
-function getDataPool()
-{
-    return Flight::Datapool()->getDataPool();
-}
+//
+///**
+// * @return \Wwtg99\DataPool\Common\IDataPool
+// */
+//function getDataPool()
+//{
+//    return Flight::Datapool()->getDataPool();
+//}
 
 /**
  * @param $name
@@ -31,28 +31,28 @@ function getDataPool()
  */
 function getPlugin($name)
 {
-    $p = \Flight2wwu\Plugin\PluginManager::getInstance()->getPlugin($name);
-    if (is_null($p) || !($p instanceof \Flight2wwu\Plugin\IPlugin)) {
-        throw new Exception("plugin $name not exists");
+    $p = Flight::Plugin()->getPlugin($name);
+    if (is_null($p) || !($p instanceof \Wwtg99\Flight2wwu\Plugin\IPlugin)) {
+        throw new \Wwtg99\Flight2wwu\Common\FWException("plugin $name not exists", 1);
     }
     return $p;
 }
-
-/**
- * @return \Flight2wwu\Component\Database\MedooPool
- */
-function getDB()
-{
-    return Flight::DB();
-}
-
-/**
- * @return \Flight2wwu\Component\Database\OrmManager
- */
-function getORM()
-{
-    return Flight::ORM();
-}
+//
+///**
+// * @return \Flight2wwu\Component\Database\MedooPool
+// */
+//function getDB()
+//{
+//    return Flight::DB();
+//}
+//
+///**
+// * @return \Flight2wwu\Component\Database\OrmManager
+// */
+//function getORM()
+//{
+//    return Flight::ORM();
+//}
 
 /**
  * @return \Wwtg99\Flight2wwu\Component\Log\ILog
@@ -75,7 +75,7 @@ function getView()
 }
 
 /**
- * @return \Flight2wwu\Component\Storage\OldValue
+ * @return \Wwtg99\Flight2wwu\Component\Storage\OldValue
  */
 function getOValue()
 {
@@ -90,7 +90,7 @@ function getOValue()
 function getOld($name, $def = '')
 {
     $v = getOValue();
-    $c = new \Flight2wwu\Component\Storage\Collection($v->getOlds());
+    $c = new \Wwtg99\Flight2wwu\Component\Storage\Collection($v->getOlds());
     if ($c->has($name)) {
         return $v->getOld($name, $def);
     } else {
@@ -107,7 +107,7 @@ function getAssets()
 }
 
 /**
- * @return \Flight2wwu\Component\Auth\IAuth
+ * @return \Wwtg99\Flight2wwu\Component\Auth\IAuth
  */
 function getAuth()
 {
@@ -133,7 +133,7 @@ function getUser($key = '')
 }
 
 /**
- * @return \Flight2wwu\Component\Storage\Cache
+ * @return \Wwtg99\Flight2wwu\Component\Storage\Cache
  */
 function getCache()
 {
@@ -141,7 +141,7 @@ function getCache()
 }
 
 /**
- * @return \Flight2wwu\Component\Storage\SessionUtil
+ * @return \Wwtg99\Flight2wwu\Component\Storage\SessionUtil
  */
 function getSession()
 {
@@ -149,20 +149,20 @@ function getSession()
 }
 
 /**
- * @return \Flight2wwu\Component\Storage\CookieUtil
+ * @return \Wwtg99\Flight2wwu\Component\Storage\CookieUtil
  */
 function getCookie()
 {
     return Flight::Cookie();
 }
 
-/**
- * @return \Flight2wwu\Component\Utils\Mail
- */
-function getMailer()
-{
-    return Flight::Mail();
-}
+///**
+// * @return \Flight2wwu\Component\Utils\Mail
+// */
+//function getMailer()
+//{
+//    return Flight::Mail();
+//}
 
 /**
  * @return bool
@@ -262,4 +262,19 @@ function TAI(array $array, $parameters = [], $domain = 'messages', $locale = nul
 {
     $trans = Flight::Locale();
     return $trans->transArray($array, $parameters, true, $domain, $locale);
+}
+
+/**
+ * Format URL.
+ *
+ * @param string $url
+ * @param string $base
+ * @return string
+ */
+function U($url, $base = '')
+{
+    if (!$base) {
+        $base = Flight::get('config')->get('base_url', '');
+    }
+    return \Wwtg99\Flight2wwu\Component\Utils\FormatUtils::formatWebPathArray([$base, $url]);
 }

@@ -9,7 +9,7 @@
 namespace Wwtg99\App\Plugin;
 
 
-use Flight2wwu\Plugin\CommandPlugin;
+use Wwtg99\Flight2wwu\Component\Plugin\CommandPlugin;
 
 class PHPInterpreter extends CommandPlugin
 {
@@ -35,27 +35,10 @@ class PHPInterpreter extends CommandPlugin
      */
     public function run()
     {
-
+        $args = func_get_args();
+        if (count($args) > 0) {
+            $code = $args[0];
+        }
+        return $this->exec('-r', $code);
     }
-
-    /**
-     * Called after register.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-
-    }
-
 } 

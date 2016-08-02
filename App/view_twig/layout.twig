@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% block head %}
-        {{ renderAsserts() }}
+        {{ renderAssets() }}
         {{ debugbarHead() }}
     {% endblock %}
     <title>{% block title %}{{ title|T }} {% endblock %}</title>
@@ -20,7 +20,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/">{{ getConfig('app') }}</a>
+                    <a class="navbar-brand" href="{{ getConfig('base_url') }}">{{ getConfig('app') }}</a>
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
@@ -43,7 +43,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="{{ 'Search'|T }}">
                         </div>
-                        <button type="submit" class="btn btn-default">{{ 'Search'|T }}</button>
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
                         {% if isLogin() %}
@@ -51,15 +51,15 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 {% if isSuperuser() and hasRole('admin') %}
-                                <li><a href="/admin/home"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
+                                <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
                                 {% endif %}
-                                <li><a href="/auth/info"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
-                                <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
+                                <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                <li><a href="{{ getConfig('defined_routes.change_password')|U }}"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
                             </ul>
                         </li>
-                        <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
+                        <li><a href="{{ getConfig('defined_routes.logout')|U }}"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
                         {% else %}
-                        <li><a href="/auth/login">{{ 'Login'|T }}</a></li>
+                        <li><a href="{{ getConfig('defined_routes.login')|U }}">{{ 'Login'|T }}</a></li>
                         {% endif %}
                     </ul>
                 </div>

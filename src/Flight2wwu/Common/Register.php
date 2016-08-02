@@ -22,6 +22,11 @@ class Register
     private static $instance = null;
 
     /**
+     * @var string
+     */
+    private $baseUrl = '/';
+
+    /**
      * Register constructor.
      */
     private function __construct()
@@ -48,6 +53,7 @@ class Register
     {
         $tz = $config->get('timezone');
         date_default_timezone_set($tz);
+        $this->baseUrl = $config->get('base_url');
         // register service
         $ser = $config->get('services');
         $this->registerService($ser);
@@ -102,11 +108,10 @@ class Register
                 $classname = $cls . 'Controller';
                 $ref = new \ReflectionClass($classname);
                 if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\BaseController')) {
-                    $prefix = FormatUtils::formatWebPath($pref);
                     $methods = $ref->getMethods(\ReflectionMethod::IS_STATIC);
                     foreach ($methods as $m) {
                         if ($m->isPublic()) {
-                            $path = $prefix . $m->getName();
+                            $path = FormatUtils::formatWebPathArray([$this->baseUrl, $pref, $m->getName()]);
                             \Flight::route($path, [$classname, $m->getName()]);
                         }
                     }

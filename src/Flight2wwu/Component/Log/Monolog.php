@@ -106,7 +106,7 @@ class Monolog implements ILog
      */
     public function debug($msg, array $context = array())
     {
-        return $this->getLogger($this->current)->addDebug($msg, $context);
+        return $this->getLogger($this->current)->log()->addDebug($msg, $context);
     }
 
     /**
@@ -177,6 +177,18 @@ class Monolog implements ILog
     public function emergency($msg, array $context = array())
     {
         return $this->getLogger($this->current)->addEmergency($msg, $context);
+    }
+
+    /**
+     * @param $level
+     * @param string $msg
+     * @param array $context
+     * @return bool
+     */
+    public function log($level, $msg, array $context = array())
+    {
+        $l = self::getLevel($level);
+        return $this->getLogger($this->current)->log($l, $msg, $context);
     }
 
     /**

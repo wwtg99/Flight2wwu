@@ -67,6 +67,14 @@ interface ILog
     public function emergency($msg, array $context = array());
 
     /**
+     * @param $level
+     * @param string $msg
+     * @param array $context
+     * @return bool
+     */
+    public function log($level, $msg, array $context = array());
+
+    /**
      * @param $name
      * @return mixed
      */

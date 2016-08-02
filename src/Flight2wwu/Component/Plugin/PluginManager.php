@@ -6,18 +6,11 @@
  * Time: 9:40
  */
 
-namespace Wwtg99\Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Component\Plugin;
 
 
-use Wwtg99\Flight2wwu\Common\ServiceProvider;
-
-class PluginManager implements ServiceProvider
+class PluginManager
 {
-
-    /**
-     * @var PluginManager
-     */
-    private static $instance = null;
 
     /**
      * @var array
@@ -30,45 +23,32 @@ class PluginManager implements ServiceProvider
     private $enables = [];
 
     /**
-     * @var array
+     * PluginManager constructor.
+     * @param array $conf
      */
-    private $conf = [];
-
-
-    /**
-     * Called after register.
-     *
-     * @return void
-     */
-    public function register()
+    public function __construct($conf = [])
     {
-
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('plugin');
+        }
+        $this->loadConfig($conf);
     }
 
     /**
-     * Called after all class is registered.
-     *
-     * @return void
+     * @param array $conf
+     * @return $this
      */
-    public function boot()
+    public function loadConfig($conf)
     {
-        $plugins = \Flight::get('config')->get('plugin');
-        if ($plugins) {
-            $this->plugins = $plugins;
+        if (is_array($conf)) {
+            $this->plugins = $conf;
             foreach ($this->plugins as $id => $p) {
                 if ($p['enabled']) {
                     $this->enable($id);
                 }
             }
         }
-    }
-
-    /**
-     * @return PluginManager
-     */
-    public static function getInstance()
-    {
-        return self::$instance;
+        return $this;
     }
 
     /**
@@ -179,8 +159,8 @@ class PluginManager implements ServiceProvider
      */
     public function writeConfig()
     {
-        if ($this->$conf) {
-            file_put_contents($this->$conf, json_encode($this->plugins, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+        if ($this->plugins) {
+            \Flight::get('config')->set('plugin', $this->plugins);
         }
     }
 } 

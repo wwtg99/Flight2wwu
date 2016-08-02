@@ -4,7 +4,7 @@
         <h1>{{ 'page not found'|T }}</h1>
         <br><br><br><br><br><br><br>
         <div>
-            <button class="btn btn-default" onclick="toHome();">{{ 'Return'|T }}</button>
+            <a class="btn btn-default" href="{{ getConfig('base_url') }}">{{ 'Return'|T }}</a>
         </div>
     </div>
 {% endblock %}

@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 0.2.0
+    - Use Config to manager config files
+    - Use ClassLoader to load classes
+    - Change framework start workflow
+    - Remove ServiceProvider and change services
+    - Change all components and remove unused components
+
 ## 0.1.11
     - Add DataPool
 

@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Brand</a>
+            <a class="navbar-brand" href="<?php echo getConfig()->get('base_url') ?>"><?php echo getConfig()->get('app') ?></a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
@@ -28,9 +28,9 @@
             </ul>
             <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="<?php TP('Search') ?>">
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <?php if (getAuth()->isLogin()): ?>
@@ -38,15 +38,15 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php TIP('Hello'); ?>, <?php echo getUser('name'); ?> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <?php if(getAuth()->isSuperuser() || getAuth()->hasRole('admin')): ?>
-                                <li><a href="/admin/home"><span class="glyphicon glyphicon-cog"></span> <?php TP('Admin'); ?></a></li>
+                                <li><a href="<?php echo U(getConfig()->get('defined_routes.admin')) ?>"><span class="glyphicon glyphicon-cog"></span> <?php TP('Admin'); ?></a></li>
                             <?php endif; ?>
-                            <li><a href="/auth/info"><span class="glyphicon glyphicon-user"></span> <?php TP('User Center'); ?></a></li>
-                            <li><a href="/auth/password"><span class="glyphicon glyphicon-lock"></span> <?php TP('Change Password'); ?></a></li>
+                            <li><a href="<?php echo U(getConfig()->get('defined_routes.user_home')) ?>"><span class="glyphicon glyphicon-user"></span> <?php TP('User Center'); ?></a></li>
+                            <li><a href="<?php echo U(getConfig()->get('defined_routes.change_password')) ?>"><span class="glyphicon glyphicon-lock"></span> <?php TP('Change Password'); ?></a></li>
                         </ul>
                     </li>
-                    <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-out"></span> <?php TP('Logout'); ?></a></li>
+                    <li><a href="<?php echo U(getConfig()->get('defined_routes.logout')) ?>"><span class="glyphicon glyphicon-log-out"></span> <?php TP('Logout'); ?></a></li>
                 <?php else: ?>
-                    <li><a href="/auth/login"><?php TP('Login'); ?></a></li>
+                    <li><a href="<?php echo U(getConfig()->get('defined_routes.login')) ?>"><?php TP('Login'); ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>

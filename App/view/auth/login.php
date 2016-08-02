@@ -4,7 +4,7 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <form class="form-horizontal" role="form" id="form_login" action="/auth/login" method="post">
+            <form class="form-horizontal" role="form" id="form_login" action="<?php echo U(getConfig()->get('defined_routes.login')); ?>" method="post">
                 <div class="form-group">
                     <label class="control-label col-md-2"><span class="glyphicon glyphicon-user"></span></label>
                     <div class="col-md-10">
@@ -24,10 +24,9 @@
                     <button class="btn btn-primary" type="submit" id="submit" tabindex="3"><?php TIP('Login'); ?></button>
                 </div>
                 <?php if(isset($msg)): ?>
-                    <?php
-                    $ac = new \Components\Comp\AlertView($msg['type']);
-                    echo $ac->view(['message'=>TI($msg['message'])]);
-                    ?>
+                    <div class="alert alert-danger text-center">
+                        <?php TP($msg['message']); ?>
+                    </div>
                 <?php endif; ?>
             </form>
         </div>

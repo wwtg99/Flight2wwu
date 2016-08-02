@@ -37,7 +37,11 @@ class SymTrans implements ITranslator
         }
         $path = isset($conf['directory']) ? $conf['directory'] : CONFIG . 'lang';
         $this->setPath($path);
-        $locale = getOValue()->getOld('language');
+        $locale = null;
+        if (function_exists('getOValue')) {
+            $ov = getOValue();
+            $locale = $ov ? $ov->getOld('language') : '';
+        }
         if (!$locale) {
             $locale = $conf['language'];
         }

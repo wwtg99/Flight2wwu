@@ -42,7 +42,7 @@ class User
     }
 
     /**
-     * //TODO
+     * TODO
      * The function to verify user.
      *
      * @param array $user
@@ -50,8 +50,38 @@ class User
      */
     public function verify($user)
     {
-        //TODO
-        $this->user = $user;
+        if (isset($user['name']) && $user['name'] == 'admin') {
+            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>false, 'roles'=>[], 'remember_token'=>'aaa'];
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * TODO
+     * Change Password
+     *
+     * @param $old
+     * @param $new
+     * @return bool
+     */
+    public function changePassword($old, $new)
+    {
+        if ($old == '1') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * TODO
+     * Change user info
+     *
+     * @param array $user
+     * @return bool
+     */
+    public function changeInfo($user)
+    {
         return true;
     }
 

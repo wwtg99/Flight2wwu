@@ -6,12 +6,13 @@
  * Time: 13:12
  */
 
-namespace Wwtg99\Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Component\Plugin;
 
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
+use Wwtg99\Flight2wwu\Common\FWException;
 
 /**
  * Class CommandPlugin
@@ -50,7 +51,7 @@ abstract class CommandPlugin implements IPlugin
     {
         $args = func_get_args();
         if (!$this->cmd) {
-            throw new \Exception('no cmd provided');
+            throw new FWException('no cmd provided', 1);
         }
         $build = new ProcessBuilder();
         $pro = $build->setPrefix($this->cmd)->setArguments($args)->getProcess();

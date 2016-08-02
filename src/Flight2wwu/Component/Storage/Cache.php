@@ -6,15 +6,14 @@
  * Time: 16:05
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 use Desarrolla2\Cache\Adapter\AbstractAdapter;
 use Desarrolla2\Cache\Adapter\Apcu;
 use Desarrolla2\Cache\Adapter\File;
-use Flight2wwu\Common\ServiceProvider;
-use League\Flysystem\Exception;
+use Wwtg99\Flight2wwu\Common\FWException;
 
-class Cache implements ServiceProvider, IAttribute
+class Cache implements IAttribute
 {
 
     /**
@@ -23,39 +22,27 @@ class Cache implements ServiceProvider, IAttribute
     private $cache;
 
     /**
-     * Called after register.
-     *
-     * @return void
+     * Cache constructor.
+     * @param array $conf
      */
-    public function register()
+    public function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $conf = \Flight::get('storage');
-        if (isset($conf['cache'])) {
-            $conf = $conf['cache'];
-            $this->loadConfig($conf);
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('storage');
         }
+        $this->loadConfig($conf);
     }
 
     /**
      * @param array $conf
-     * @throws Exception
      */
     public function loadConfig(array $conf)
     {
-        if ($conf && is_array($conf)) {
-            if (isset($conf['adapter']) && isset($conf['params'])) {
-                $adapter = $conf['adapter'];
-                $params = $conf['params'];
+        if (isset($conf['cache'])) {
+            $c = $conf['cache'];
+            if (isset($c['adapter']) && isset($c['params'])) {
+                $adapter = $c['adapter'];
+                $params = $c['params'];
                 $this->initAdapter($adapter, $params);
             }
         }
@@ -122,7 +109,7 @@ class Cache implements ServiceProvider, IAttribute
     /**
      * @param string $adapter
      * @param array $params
-     * @throws Exception
+     * @throws FWException
      */
     private function initAdapter($adapter, array $params)
     {
@@ -130,7 +117,7 @@ class Cache implements ServiceProvider, IAttribute
             case 'Apcu': $adapter = $this->initApcu($params); break;
             case 'File': $adapter = $this->initFile($params); break;
             default:
-                throw new Exception("Adapter $adapter is not supported");
+                throw new FWException("Adapter $adapter is not supported", 1);
         }
         $this->cache = new \Desarrolla2\Cache\Cache($adapter);
     }
@@ -152,9 +139,9 @@ class Cache implements ServiceProvider, IAttribute
      */
     private function initFile(array $params)
     {
-        if (array_key_exists('cacheDir', $params)) {
-            $cd = $params['cacheDir'];
-            unset($params['cacheDir']);
+        if (array_key_exists('cache_dir', $params)) {
+            $cd = $params['cache_dir'];
+            unset($params['cache_dir']);
         } else {
             $cd = null;
         }

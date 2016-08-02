@@ -60,7 +60,7 @@ class SessionUtil implements IAttribute
     /**
      * @param string $name
      * @param $val
-     * @param int $expire
+     * @param int $expire expire seconds
      * @return $this
      */
     public function set($name, $val, $expire = 0)

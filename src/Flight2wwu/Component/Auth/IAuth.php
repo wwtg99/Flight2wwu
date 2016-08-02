@@ -13,17 +13,12 @@ interface IAuth
 {
 
     /**
+     * Attempt to login.
+     *
      * @param array $user
      * @return bool
      */
     public function attempt(array $user);
-
-    /**
-     * Login user to storage (session or cookies).
-     *
-     * @param array $user
-     */
-    public function login(array $user);
 
     /**
      * @return bool

@@ -38,12 +38,12 @@ return [
                 '/admin/*' => 0,
                 '/auth/*' => 3,
                 '/oauth/*' => 3,
-                '/view' => 1,
-                '/comp' => 1,
                 '/changelog' => 1,
             ],
         ],
-        'session'=>false, //use session to store user info
-        'cookie'=>false, //use cookie to store token
+        'session'=>true, //use session to store user info
+        'session_expires'=>60, // seconds for auth session expires
+        'cookie'=>true, //use cookie to store token
+        'cookie_expires'=>600, // seconds for auth cookies expires
     ],
 ];

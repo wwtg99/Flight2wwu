@@ -19,9 +19,9 @@ class RoleAuth implements IAuth
     const COOKIE_USER_KEY = 'user_name';
 
     /**
-     * @var array
+     * @var User
      */
-    protected $user = [];
+    protected $user = null;
 
     /**
      * @var bool
@@ -55,11 +55,14 @@ class RoleAuth implements IAuth
 
     /**
      * RoleAuth constructor.
+     * @param array $conf
      */
-    public function __construct()
+    public function __construct($conf = [])
     {
-        $auth = \Flight::get('config')->get('auth');
-        $this->loadConfig($auth);
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('auth');
+        }
+        $this->loadConfig($conf);
     }
 
     /**
@@ -67,6 +70,7 @@ class RoleAuth implements IAuth
      */
     public function attempt(array $user = [])
     {
+        $writeCookies = true;
         if (!$user && $this->use_cookie) {
             //get from cookies
             $cookie_token = getCookie()->get(self::COOKIE_TOKEN_KEY);
@@ -74,37 +78,52 @@ class RoleAuth implements IAuth
             if ($cookie_user && $cookie_token) {
                 $user[User::KEY_USER_TOKEN] = $cookie_token;
                 $user[User::KEY_USER_NAME] = $cookie_user;
+                $writeCookies = false;
             }
         }
         $u = new User();
         $re = $u->verify($user);
         if ($re === true) {
-            if ($this->first) {
-                $this->login($u->getUser());
-                $this->first = false;
-            }
+            $this->login($u, $writeCookies);
             return true;
         }
         return false;
     }
 
     /**
-     * @inheritdoc
+     * Login user to storage (session or cookies).
+     *
+     * @param User $user
+     * @param bool $writeCookies
+     * @return $this
      */
-    public function login(array $user)
+    public function login($user, $writeCookies = true)
     {
         $this->user = $user;
+        $u = $user->getUser();
         if ($this->use_session) {
-            getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
+            getSession()->set(self::SESSION_KEY, $u, $this->sessionExpires);
         }
-        if ($this->use_cookie) {
-            if (isset($user[User::KEY_USER_TOKEN]) && isset($user[User::KEY_USER_NAME])) {
-                $cookie_token = $user[User::KEY_USER_TOKEN];
-                $cookie_user = $user[User::KEY_USER_NAME];
+        if ($this->use_cookie && $writeCookies) {
+            if (isset($u[User::KEY_USER_TOKEN]) && isset($u[User::KEY_USER_NAME])) {
+                $cookie_token = $u[User::KEY_USER_TOKEN];
+                $cookie_user = $u[User::KEY_USER_NAME];
                 getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $this->cookieExpires);
                 getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $this->cookieExpires);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUserObject()
+    {
+        if ($this->isLogin()) {
+            return $this->user;
+        }
+        return null;
     }
 
     /**
@@ -140,13 +159,19 @@ class RoleAuth implements IAuth
     {
         if (!$this->user) {
             if ($this->use_session) {
-                $this->user = getSession()->get(self::SESSION_KEY);
+                $user = getSession()->get(self::SESSION_KEY);
+                if ($user) {
+                    $this->user = new User($user);
+                }
             }
             if (!$this->user) {
-                $re = $this->attempt();
+                $this->attempt();
             }
         }
-        return $this->user;
+        if ($this->user) {
+            return $this->user->getUser();
+        }
+        return [];
     }
 
     /**
@@ -158,6 +183,12 @@ class RoleAuth implements IAuth
         $this->use_cookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
         if (isset($arr['rbac']) && is_array($arr['rbac'])) {
             $this->rbac = $arr['rbac'];
+        }
+        if (isset($arr['session_expires'])) {
+            $this->sessionExpires = intval($arr['session_expires']);
+        }
+        if (isset($arr['cookie_expires'])) {
+            $this->cookieExpires = intval($arr['cookie_expires']);
         }
     }
 
@@ -207,8 +238,9 @@ class RoleAuth implements IAuth
     public function isSuperuser()
     {
         if ($this->isLogin()) {
-            if (isset($this->user[User::KEY_SUPERUSER])) {
-                return boolval($this->user[User::KEY_SUPERUSER]);
+            $u = $this->getUser();
+            if (isset($u[User::KEY_SUPERUSER])) {
+                return boolval($u[User::KEY_SUPERUSER]);
             }
         }
         return false;
@@ -285,7 +317,8 @@ class RoleAuth implements IAuth
     private function getRoles()
     {
         if ($this->isLogin()) {
-            $roles = isset($this->user[User::KEY_ROLES]) ? $this->user[User::KEY_ROLES] : [];
+            $u = $this->user->getUser();
+            $roles = isset($u[User::KEY_ROLES]) ? $u[User::KEY_ROLES] : [];
             if (is_array($roles)) {
                 array_push($roles, 'common_user');
                 return $roles;

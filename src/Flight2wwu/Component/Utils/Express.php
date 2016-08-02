@@ -8,7 +8,7 @@
 
 namespace Flight2wwu\Component\Utils;
 
-use Flight2wwu\Common\ServiceProvider;
+
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -17,7 +17,7 @@ use Symfony\Component\DomCrawler\Crawler;
  * Get express package info from http://www.kiees.cn/
  * @package Flight2wwu\Component\Utils
  */
-class Express implements ServiceProvider
+class Express
 {
 
     /**
@@ -26,23 +26,15 @@ class Express implements ServiceProvider
     private $request_url = [];
 
     /**
-     * Called after register.
-     *
-     * @return void
+     * Express constructor.
+     * @param array $conf
      */
-    public function register()
+    public function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->loadConfig(\Flight::get('express'));
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('express');
+        }
+        $this->loadConfig($conf);
     }
 
     /**

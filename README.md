@@ -11,12 +11,8 @@
     - Controller: controller class
     - Model: model class
     - view: view templates
+    - view_twig: twig view templates
     - Plugin: plugin class
-    - Schedule: schedule class
- - bin: executable scripts
  - bootstrap: bootstrap scripts
- - src: source code directory
  - storage: storage directory, write access
- - test: unit tests
- - vendor: vendor directory
  - web: web document directory

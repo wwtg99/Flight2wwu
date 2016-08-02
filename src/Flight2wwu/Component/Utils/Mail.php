@@ -7,7 +7,6 @@
  */
 
 namespace Flight2wwu\Component\Utils;
-use Flight2wwu\Common\ServiceProvider;
 
 
 /**
@@ -15,7 +14,7 @@ use Flight2wwu\Common\ServiceProvider;
  * Send mail depends on SwiftMail
  * @package Flight2wwu\Component\Utils
  */
-class Mail implements ServiceProvider
+class Mail
 {
 
     /**
@@ -45,30 +44,13 @@ class Mail implements ServiceProvider
 
     /**
      * Mail constructor.
+     * @param array $conf
      */
-    function __construct()
+    function __construct($conf = [])
     {
-        $this->loadConfig([]);
-    }
-
-    /**
-     * Called after register.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $conf = \Flight::get('mail');
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('mail');
+        }
         $this->loadConfig($conf);
     }
 
@@ -79,7 +61,7 @@ class Mail implements ServiceProvider
     {
         $method = 'mail';
         $params = [];
-        if ($conf && is_array($conf)) {
+        if (is_array($conf)) {
             $method = isset($conf['method']) ? $conf['method'] : 'mail';
             $params = isset($conf['params']) ? $conf['params'] : [];
         }
@@ -214,7 +196,7 @@ class Mail implements ServiceProvider
     }
 
     /**
-     * @param string $type
+     * @param string $type : mail, sendmail, smtp
      * @param array $param
      * @return \Swift_Mailer
      */
@@ -222,9 +204,9 @@ class Mail implements ServiceProvider
     {
         switch($type) {
             case 'smtp':
-                $host = array_key_exists('host', $param) ? $param['host'] : 'localhost';
-                $port = array_key_exists('port', $param) ? $param['port'] : 25;
-                $security = array_key_exists('security', $param) ? $param['security'] : null;
+                $host = isset($param['host']) ? $param['host'] : 'localhost';
+                $port = isset($param['port']) ? $param['port'] : 25;
+                $security = isset($param['security']) ? $param['security'] : null;
                 $tran = \Swift_SmtpTransport::newInstance($host, $port, $security)->setUsername($param['username'])->setPassword($param['password']);
                 break;
             case 'sendmail':

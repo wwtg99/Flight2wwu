@@ -17,11 +17,11 @@ define("STORAGE", ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);
 
 // autoload
-require implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
+require_once implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
 
 // config
-$conf_files = ['app_config.php', 'register_config.php', 'auth.php', 'plugins.json', 'ui_libs.json'];
-$conf = new \Wwtg99\Config\Common\ConfigPool();
+$conf_files = ['register_config.php', 'auth.php', 'plugins.json', 'ui_libs.php', 'utils_conf.json', 'app_config.php'];
+$conf = new \Wwtg99\Config\Common\ConfigPool(TMP . 'config.cache');
 $source = new \Wwtg99\Config\Source\FileSource(CONFIG, $conf_files);
 $source->addLoader(new \Wwtg99\Config\Source\Loader\JsonLoader())->addLoader(new \Wwtg99\Config\Source\Loader\PHPLoader());
 $conf->addSource($source);

@@ -6,7 +6,7 @@
  * Time: 15:45
  */
 
-namespace Wwtg99\Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Component\Plugin;
 
 /**
  * Class ARunPlugin

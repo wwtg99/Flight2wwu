@@ -7,6 +7,6 @@
     </p>
     <br><br><br>
     <div>
-        <button class="btn btn-default" onclick="toHome();"><?php TP('Return'); ?></button>
+        <a class="btn btn-default" href="<?php echo getConfig()->get('base_url') ?>"><?php TP('Return'); ?></a>
     </div>
 </div>

@@ -6,7 +6,7 @@
         <p>{{ message|T }}</p>
         <br><br><br>
         <div>
-            <button class="btn btn-default" onclick="toHome();">{{ 'Return'|T }}</button>
+            <a class="btn btn-default" href="{{ getConfig('base_url') }}">{{ 'Return'|T }}</a>
         </div>
     </div>
 {% endblock %}

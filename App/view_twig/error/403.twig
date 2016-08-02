@@ -8,8 +8,8 @@
         </div>
         <br><br><br>
         <div>
-            <button class="btn btn-primary" onclick="location.href='/auth/login';">{{ 'Login'|T }}</button>
-            <button class="btn btn-default" onclick="toHome();">{{ 'Return'|T }}</button>
+            <a class="btn btn-primary" href="{{ getConfig('defined_routes.login') }}">{{ 'Login'|T }}</a>
+            <a class="btn btn-default" href="{{ getConfig('base_url') }}">{{ 'Return'|T }}</a>
         </div>
     </div>
 {% endblock %}

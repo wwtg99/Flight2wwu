@@ -6,16 +6,20 @@
  * Time: 13:29
  */
 
-use Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class FormatUtilsTest extends PHPUnit_Framework_TestCase {
+
     public static function setUpBeforeClass()
     {
-        require '../bootstrap/init.php';
+        require '../vendor/autoload.php';
+        require '../src/Flight2wwu/Component/Utils/FormatUtils.php';
+//        require '../bootstrap/init.php';
+        date_default_timezone_set('Asia/Shanghai');
     }
 
     public function testFormat() {
-        # path
+        // path
         $paths = ['', DIRECTORY_SEPARATOR, 'aa', 'aa' . DIRECTORY_SEPARATOR, 'aa/bb', DIRECTORY_SEPARATOR . 'cc', '/cc/dd' . DIRECTORY_SEPARATOR];
         $expes = ['', DIRECTORY_SEPARATOR, 'aa', 'aa', 'aa/bb', DIRECTORY_SEPARATOR . 'cc', '/cc/dd'];
         for ($i = 0; $i < count($paths); $i++) {
@@ -42,19 +46,47 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
         for ($i = 0; $i < count($paths); $i++) {
             $this->assertEquals($expes[$i], FormatUtils::formatPathArray($paths[$i]));
         }
-        # web path
-        $paths = ['', 'aa', '/aa', 'aa/', '/aa/', 'aa/bb', '/aa/bb/'];
-        $expes = ['/', '/aa/', '/aa/', '/aa/', '/aa/', '/aa/bb/', '/aa/bb/'];
+        // web path
+        $paths = ['', 'aa', '/aa', 'aa/', '/aa/', 'aa/bb', '/aa/bb/', '/aa/c.html'];
+        $expes = ['/', '/aa', '/aa', '/aa', '/aa', '/aa/bb', '/aa/bb', '/aa/c.html'];
         for ($i = 0; $i < count($paths); $i++) {
-            $this->assertEquals($expes[$i], FormatUtils::formatWebPath($paths[$i]));
+            $this->assertEquals($expes[$i], FormatUtils::formatWebPath($paths[$i]), $paths[$i]);
         }
-        # extension
+        // web path array
+        $paths = [
+            ['a', 'b', 'c'],
+            ['a', 'b', 'c/'],
+            ['/b', 'c'],
+            ['/a', 'b/', 'c/'],
+            ['', 'b', 'c'],
+            ['a', '', 'c'],
+            ['a', 'b', ''],
+            ['a', 'b', 'c.html'],
+            ['/', 'b', 'c'],
+            ['/', 'b/c'],
+        ];
+        $expes = [
+            '/a/b/c',
+            '/a/b/c',
+            '/b/c',
+            '/a/b/c',
+            '/b/c',
+            '/a/c',
+            '/a/b',
+            '/a/b/c.html',
+            '/b/c',
+            '/b/c',
+        ];
+        for ($i = 0; $i < count($paths); $i++) {
+            $this->assertEquals($expes[$i], FormatUtils::formatWebPathArray($paths[$i]), print_r($paths[$i], true));
+        }
+        // extension
         $ext = ['xlsx', '.xlsx', 'txt', '.txt', 'as.txt', 'gg.', 'a$g', 'b,e/y'];
-        $exp = ['.xlsx', '.xlsx', '.txt', '.txt', '.as.txt', '.gg', '.ag', '.bey'];
+        $exp = ['xlsx', 'xlsx', 'txt', 'txt', 'as.txt', 'gg', 'ag', 'bey'];
         for ($i = 0 ; $i < count($ext); $i++) {
             $this->assertEquals($exp[$i], FormatUtils::formatExtension($ext[$i]));
         }
-        # format array
+        // format array
         $arr1 = ['a', 'b', 1];
         $exp1 = ['a', 'b', 1];
         $this->assertEquals($exp1, FormatUtils::formatArray($arr1));
@@ -64,7 +96,7 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
         $arr3 = ['a'=>1, 'b'=>'aa', 'c'=>null, 'd'=>'null'];
         $exp3 = ['d'=>'null'];
         $this->assertEquals($exp3, FormatUtils::formatArray($arr3, ['a', 'b']));
-        # array to string
+        // array to string
         $test_a2s = [
             'a = 1'=>['a'=>1],
             'a = 1,b = a'=>['a'=>1, 'b'=>'a'],
@@ -72,7 +104,7 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
         foreach ($test_a2s as $exp => $t) {
             $this->assertEquals($exp, FormatUtils::arrayToString($t));
         }
-        # format time
+        // format time
         $time1 = '2015/01/01 10:12:10';
         $exp1 = '2015-01-01 10:12:10';
         $this->assertEquals($exp1, FormatUtils::formatTime($time1));
@@ -82,12 +114,16 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
         $time3 = '2015-01-10 10:12:20';
         $exp3 = '2015-01-10';
         $this->assertEquals($exp3, FormatUtils::formatTime($time3, 'Y-m-d'));
-        # format trans array
+    }
+
+    public function atestTrans()
+    {
+        // format trans array
         $data = ['a'=>'aa', 'b'=>'Return', 'c'=>['ca'=>'OK', 'cb'=>'2015/1/9 10:10:10.666666'], 'created_at'=>'2016-1-8 12:12:12.666666', 'd'=>['deleted_at'=>'2016/1/7 9:9:9']];
         $data = FormatUtils::formatTransArray($data);
         $exp4 = ['a'=>'aa', 'b'=>'返回', 'c'=>['ca'=>'确定', 'cb'=>'2015/1/9 10:10:10.666666'], 'created_at'=>'2016-01-08 12:12:12', 'd'=>['deleted_at'=>'2016-01-07 09:09:09']];
         $this->assertEquals($exp4, $data);
-        # format head
+        // format head
         $head = ['a', 'Return', 'b'];
         $exp5 = [['field'=>'a', 'title'=>'a'], ['field'=>'Return', 'title'=>'返回'], ['field'=>'b', 'title'=>'b']];
         $head = FormatUtils::formatHead($head);
@@ -110,7 +146,6 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
             $pi = FormatUtils::pathInfo($t);
             $this->assertEquals($e, $pi);
         }
-
     }
 
 }

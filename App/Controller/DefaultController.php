@@ -43,21 +43,22 @@ class DefaultController extends BaseController
         $url = self::getRequest()->url;
         $method = self::getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
+        // skip /403
+        if ($path == U('403')) {
+            return true;
+        }
         // last path
-        $skip = ['/403', '/404', '/auth/login', '/oauth/login', '/oauth/redirect_login'];
+        $skip = [U('404'), U(getConfig()->get('defined_routes.login')), U(getConfig()->get('defined_routes.logout'))];
         if (!in_array($path, $skip) && !self::getRequest()->ajax) {
             getOValue()->addOldOnce('last_path', $path);
         }
+        // get user
         if (getAuth()->isLogin()) {
             $user = getUser()['user_id'];
         } else {
             $user = 'anonymous';
         }
         $logger = getLog();
-        // skip /403
-        if ($path == '/403') {
-            return true;
-        }
         // log access
         if (!getAuth()->accessPath($path)->access(self::getRequest()->method)) {
             $logger->changeLogger('access')->info("forbidden for $path by $user");

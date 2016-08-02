@@ -9,11 +9,10 @@
 namespace Flight2wwu\Component\Database;
 
 
-use DataPool\Common\DefaultDataPool;
-use DataPool\Common\IDataPool;
-use Flight2wwu\Common\ServiceProvider;
+use Wwtg99\DataPool\Common\DefaultDataPool;
+use Wwtg99\DataPool\Common\IDataPool;
 
-class DataPool implements ServiceProvider
+class DataPool
 {
     /**
      * @var IDataPool
@@ -21,24 +20,15 @@ class DataPool implements ServiceProvider
     private $dataPool;
 
     /**
-     * Called after register.
-     *
-     * @return void
+     * DataPool constructor.
+     * @param array $conf
      */
-    public function register()
+    public function __construct($conf = [])
     {
-
-    }
-
-    /**
-     * Called after all class is registered.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $conf = \Flight::get('datapool');
-        $conf['debug'] = isDebug();
+        if (!$conf) {
+            $conf = \Flight::get('config')->get('datapool');
+            $conf['debug'] = isDebug();
+        }
         $this->dataPool = new DefaultDataPool($conf, ROOT);
     }
 

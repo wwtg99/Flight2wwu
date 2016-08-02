@@ -6,7 +6,7 @@
  * Time: 13:25
  */
 
-namespace Flight2wwu\Component\Storage;
+namespace Wwtg99\Flight2wwu\Component\Storage;
 
 
 class OldValue
@@ -29,24 +29,6 @@ class OldValue
         if (!$conf) {
             $conf = \Flight::get('config')->get('storage');
         }
-        $this->loadConfig($conf);
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function register()
-    {
-
-    }
-
-    /**
-     * @return mixed
-     */
-    public function boot()
-    {
-        $conf = \Flight::get('storage');
         $this->loadConfig($conf);
     }
 

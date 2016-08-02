@@ -6,7 +6,7 @@
     </div>
     <br><br><br>
     <div>
-        <button class="btn btn-primary" onclick="location.href='/auth/login';"><?php TP('Login'); ?></button>
-        <button class="btn btn-default" onclick="toHome();"><?php TP('Return'); ?></button>
+        <a class="btn btn-primary" href="<?php echo U(getConfig()->get('defined_routes.login')) ?>"><?php TP('Login'); ?></a>
+        <a class="btn btn-default" href="<?php echo getConfig()->get('base_url') ?>"><?php TP('Return'); ?></a>
     </div>
 </div>

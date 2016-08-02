@@ -6,7 +6,7 @@
  * Time: 10:42
  */
 
-namespace Wwtg99\Flight2wwu\Plugin;
+namespace Wwtg99\Flight2wwu\Component\Plugin;
 
 
 interface IPlugin
