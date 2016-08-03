@@ -41,9 +41,9 @@ return [
     //Database
     'database'=>[
         'database_type'=>'pgsql',
-        'server'=>'192.168.0.21',
-        'database_name'=>'test1',
-        'username'=>'lims_gw',
+        'server'=>'localhost',
+        'database_name'=>'db',
+        'username'=>'user',
         'password'=>'1',
         'port'=>5432
     ],
@@ -52,20 +52,20 @@ return [
         'log_dir'=>'storage/log',
         'connections'=>[
             [
-                'name'=>'specimen_front',
+                'name'=>'dbconn',
                 'class'=>'Wwtg99\\DataPool\\Connections\\DatabaseConnection',
                 'mapper_path'=>'',
                 'database'=>[
                     'driver'=>'pgsql',
-                    'dbname'=>'specimen_front',
-                    'host'=>'192.168.0.21',
-                    'username'=>'genobase',
-                    'password'=>'genobase',
+                    'dbname'=>'db',
+                    'host'=>'localhost',
+                    'username'=>'user',
+                    'password'=>'1',
                     'port'=>5432
                 ],
                 'logger'=>[
                     'level'=>'DEBUG',
-                    'title'=>'specimen_front.log',
+                    'title'=>'dbconn.log',
                     'max_logfile'=>5
                 ]
             ],

@@ -17,7 +17,8 @@ function parseOption()
         'version',
         'dir:',
         'clean',
-        'clear-cache::'
+        'clear-cache::',
+        'm-core::'
     ];
     $p = getopt($opt, $lopt);
     return $p;
@@ -28,7 +29,7 @@ function parseOption()
  */
 function getHelp()
 {
-    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n-v  --version    Show version\n-h  --help    Show Help\n";
+    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n--m-core=False    Whether to install module core (default False, True if not specified)\n-v  --version    Show version\n-h  --help    Show Help\n";
 }
 
 /**
@@ -296,7 +297,17 @@ if (isset($opt['clear-cache'])) {
     $re = clearCache($dir, $f);
 } else {
     // install modules
-    $modules = ['core'];
+    $modules = [];
+    // core
+    $m_core = 'core';
+    if (isset($opt['m-core'])) {
+        if (!boolval($opt['m-core'])) {
+            $m_core = '';
+        }
+    }
+    if ($m_core) {
+        array_push($modules, $m_core);
+    }
     //TODO
     $re = installModules($modules, $dir);
     if ($re === 0) {

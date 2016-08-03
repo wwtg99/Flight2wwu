@@ -9,9 +9,7 @@
 namespace Wwtg99\Flight2wwu\Common;
 
 
-
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
-use Wwtg99\Flight2wwu\Plugin\PluginManager;
 
 class Register
 {
@@ -60,7 +58,8 @@ class Register
         // register route
         $route_path = $config->get('route.path');
         $route_controller = $config->get('route.controller');
-        $this->registerRoute($route_path, $route_controller);
+        $route_restful = $config->get('route.restful');
+        $this->registerRoute($route_path, $route_controller, $route_restful);
         // handler
         $handler_file = $config->get('handler');
         if ($handler_file && file_exists($handler_file)) {
@@ -87,8 +86,9 @@ class Register
      *
      * @param array $path
      * @param array $controller
+     * @param array $restful
      */
-    public function registerRoute($path, $controller)
+    public function registerRoute($path, $controller, $restful)
     {
         $postPath = [];
         if ($path && is_array($path)) {
@@ -118,25 +118,27 @@ class Register
                 }
             }
         }
+        // restful
+        if ($restful && is_array($restful)) {
+            foreach ($restful as $cls => $pref) {
+                $classname = $cls . 'Controller';
+                $ref = new \ReflectionClass($classname);
+                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\RestfulController')) {
+                    $path = FormatUtils::formatWebPathArray([$this->baseUrl, $pref]);
+                    \Flight::route('GET ' . $path, [$classname, 'index']);
+                    \Flight::route('GET ' . $path . '/create', [$classname, 'create']);
+                    \Flight::route('POST ' . $path, [$classname, 'store']);
+                    \Flight::route('GET ' . $path . '/@id', [$classname, 'show']);
+                    \Flight::route('GET ' . $path . '/edit/@id', [$classname, 'edit']);
+                    \Flight::route('POST ' . $path . '/@id', [$classname, 'update']);
+                    \Flight::route('POST ' . $path . '/destroy/@id', [$classname, 'destroy']);
+                }
+            }
+        }
         if ($postPath) {
             foreach ($postPath as $p) {
                 \Flight::route($p[0], $p[1]);
             }
         }
-    }
-
-    /**
-     * Register plugins.
-     *
-     * @param array $plugins
-     * @return PluginManager|null
-     */
-    public function registerPlugin($plugins)
-    {
-        if ($plugins && is_array($plugins)) {
-            $pm = new PluginManager($plugins);
-            return $pm;
-        }
-        return null;
     }
 }

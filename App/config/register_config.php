@@ -38,7 +38,9 @@ return [
         /**
          * Route path for functions
          * [route, array(full class name, function name), pre]
-         * pre: path will be registered before controller, post: path will be registered after controller
+         * First param: route / or specify method: GET / or GET|POST /
+         * Second param: array should be class name and static public function name
+         * Third param: pre specify this route will be registered before controller, post: this route will be registered after controller
          */
         'path'=>[
             ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac'), 'pre'],
@@ -55,13 +57,26 @@ return [
          * Controller must extends BaseController
          */
         'controller'=>[
-//            '\Wwtg99\App\Controller\Home'=>'h',
             'Wwtg99\App\Controller\Auth'=>'auth',
 //            'Wwtg99\App\Controller\OAuth'=>'oauth',
 //            'Wwtg99\App\Controller\Admin'=>'admin',
         ],
         'restful'=>[
-
+            /**
+             * Register restful controller class
+             * full class name (without Controller) => prefix
+             * Class must extend Wwtg99\Flight2wwu\Common\RestfulController and overrides its methods.
+             * Register 7 routes:
+             * Method    Route                Action    Method name
+             * Get       /prefix              index     index
+             * Get       /prefix/create       create    create
+             * Post      /prefix              store     store
+             * Get       /prefix/id           show      show
+             * Get       /prefix/edit/id      edit      edit
+             * Post      /prefix/id           update    update
+             * Post      /prefix/destroy/id   destroy   destroy
+             */
+            'Wwtg99\App\Controller\User'=>'user',
         ]
     ],
     /**

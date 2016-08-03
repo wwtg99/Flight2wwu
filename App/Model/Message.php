@@ -8,7 +8,11 @@
 
 namespace Wwtg99\App\Model;
 
-
+/**
+ * Class Message
+ * Error code list.
+ * @package Wwtg99\App\Model
+ */
 class Message
 {
 

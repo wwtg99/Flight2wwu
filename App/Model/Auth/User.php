@@ -51,7 +51,7 @@ class User
     public function verify($user)
     {
         if (isset($user['name']) && $user['name'] == 'admin') {
-            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>false, 'roles'=>[], 'remember_token'=>'aaa'];
+            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'roles'=>['admin'], 'remember_token'=>'aaa'];
             return true;
         }
         return false;

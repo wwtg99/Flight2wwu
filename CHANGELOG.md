@@ -10,6 +10,7 @@
     - Remove some libs
     - Change session_start
     - Clear composer packages
+    - Add RestfulController
 
 ## 0.1.11
     - Add DataPool
