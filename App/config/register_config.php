@@ -28,7 +28,7 @@ return [
         'Assets' => 'Wwtg99\Flight2wwu\Component\View\AssetsManager',
         'Mail' => 'Wwtg99\Flight2wwu\Component\Utils\Mail',
         'Express' => 'Wwtg99\Flight2wwu\Component\Utils\Express',
-        'Plugin' => 'Wwtg99\Flight2wwu\Plugin\PluginManager',
+        'Plugin' => 'Wwtg99\Flight2wwu\Component\Plugin\PluginManager',
     ],
     /**
      * Register route here

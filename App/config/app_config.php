@@ -41,10 +41,10 @@ return [
     //Database
     'database'=>[
         'database_type'=>'pgsql',
-        'server'=>'localhost',
-        'database_name'=>'db',
-        'username'=>'user',
-        'password'=>'pwd',
+        'server'=>'192.168.0.21',
+        'database_name'=>'test1',
+        'username'=>'lims_gw',
+        'password'=>'1',
         'port'=>5432
     ],
     //DataPool
@@ -53,7 +53,7 @@ return [
         'connections'=>[
             [
                 'name'=>'specimen_front',
-                'class'=>'DataPool\\Connections\\DatabaseConnection',
+                'class'=>'Wwtg99\\DataPool\\Connections\\DatabaseConnection',
                 'mapper_path'=>'',
                 'database'=>[
                     'driver'=>'pgsql',

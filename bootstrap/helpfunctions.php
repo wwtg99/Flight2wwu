@@ -6,7 +6,7 @@
  * Time: 16:10
  */
 
-//define global functions here
+//Define global functions here
 
 /**
  * @return \Wwtg99\Config\Common\IConfig
@@ -15,44 +15,43 @@ function getConfig()
 {
     return Flight::get('config');
 }
-//
-///**
-// * @return \Wwtg99\DataPool\Common\IDataPool
-// */
-//function getDataPool()
-//{
-//    return Flight::Datapool()->getDataPool();
-//}
+
+/**
+ * @return \Wwtg99\DataPool\Common\IDataPool
+ */
+function getDataPool()
+{
+    $d = Flight::DataPool();
+    if ($d instanceof \Wwtg99\Flight2wwu\Component\Database\DataPool) {
+        return $d->getDataPool();
+    }
+    return null;
+}
 
 /**
  * @param $name
- * @return \Wwtg99\Flight2wwu\Plugin\IPlugin
+ * @return \Wwtg99\Flight2wwu\Component\Plugin\IPlugin
  * @throws Exception
  */
 function getPlugin($name)
 {
-    $p = Flight::Plugin()->getPlugin($name);
-    if (is_null($p) || !($p instanceof \Wwtg99\Flight2wwu\Plugin\IPlugin)) {
-        throw new \Wwtg99\Flight2wwu\Common\FWException("plugin $name not exists", 1);
+    $pm = Flight::Plugin();
+    if ($pm) {
+        $p = $pm->getPlugin($name);
+        if ($p instanceof \Wwtg99\Flight2wwu\Component\Plugin\IPlugin) {
+            return $p;
+        }
     }
-    return $p;
+    throw new \Wwtg99\Flight2wwu\Common\FWException("plugin $name not exists", 1);
 }
-//
-///**
-// * @return \Flight2wwu\Component\Database\MedooPool
-// */
-//function getDB()
-//{
-//    return Flight::DB();
-//}
-//
-///**
-// * @return \Flight2wwu\Component\Database\OrmManager
-// */
-//function getORM()
-//{
-//    return Flight::ORM();
-//}
+
+/**
+ * @return \Wwtg99\Flight2wwu\Component\Database\MedooDB
+ */
+function getDB()
+{
+    return Flight::DB();
+}
 
 /**
  * @return \Wwtg99\Flight2wwu\Component\Log\ILog
@@ -156,13 +155,13 @@ function getCookie()
     return Flight::Cookie();
 }
 
-///**
-// * @return \Flight2wwu\Component\Utils\Mail
-// */
-//function getMailer()
-//{
-//    return Flight::Mail();
-//}
+/**
+ * @return \Wwtg99\Flight2wwu\Component\Utils\Mail
+ */
+function getMailer()
+{
+    return Flight::Mail();
+}
 
 /**
  * @return bool

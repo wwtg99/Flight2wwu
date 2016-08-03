@@ -37,85 +37,19 @@ return [
                 'prefix'=>'/assets/custom'
             ],
             'jquery'=>[
-                'js'=>['jquery-1.12.3.min.js'],
+                'js'=>['jquery-2.2.3.min.js'],
                 'prefix'=>'/assets/jquery'
             ],
-//        'uploader'=>[
-//            'js'=>['dmuploader.min.js'],
-//            'prefix'=>'/asserts/uploader'
-//        ],
-//        'underscore'=>[
-//            'js'=>['underscore-min.js'],
-//            'prefix'=>'/asserts/underscore'
-//        ],
-//        'semantic'=>[
-//            'css'=>'semantic.min.css',
-//            'js'=>'semantic.min.js',
-//            'prefix'=>'/asserts/semantic'
-//        ],
             'bootstrap'=>[
                 'depends'=>['jquery'],
                 'css'=>['bootstrap.min.css'],
                 'js'=>['bootstrap.min.js'],
                 'prefix'=>'/assets/bootstrap'
             ],
-            'bootstrap-table'=>[
-                'depends'=>['bootstrap'],
-                'css'=>['bootstrap-table.min.css'],
-                'js'=>['bootstrap-table.min.js', 'bootstrap-table-zh-CN.min.js', 'table_utils.js'],
-                'prefix'=>'/assets/bootstrap-table'
+            'fa'=>[
+                'css'=>['font-awesome.min.css'],
+                'prefix'=>'/assets/fa'
             ],
-            'bootstrap-dialog'=>[
-                'depends'=>['bootstrap'],
-                'css'=>['bootstrap-dialog.css'],
-                'js'=>['bootstrap-dialog.js'],
-                'prefix'=>'/assets/bootstrap-dialog'
-            ],
-//        'bootstrap-select'=>[
-//            'css'=>'bootstrap-select.min.css',
-//            'js'=>'bootstrap-select.min.js',
-//            'prefix'=>'/asserts/bootstrap-select'
-//        ],
-//        'bootstrap-switch'=>[
-//            'css'=>'bootstrap-switch.min.css',
-//            'js'=>'bootstrap-switch.min.js',
-//            'prefix'=>'/asserts/bootstrap-switch'
-//        ],
-//        'colors'=>[
-//            'css'=>'colors.min.css',
-//            'prefix'=>'/asserts/colors'
-//        ],
-//        'fa'=>[
-//            'css'=>'font-awesome.min.css',
-//            'prefix'=>'/asserts/fa'
-//        ],
-//        'lodash'=>[
-//            'js'=>'lodash.min.js',
-//            'prefix'=>'/asserts/lodash'
-//        ],
-//        'icheck'=>[
-//            'css'=>'skins/all.css',
-//            'js'=>'icheck.min.js',
-//            'prefix'=>'/asserts/icheck'
-//        ],
-//        'buttons'=>[
-//            'css'=>'buttons.min.css',
-//            'js'=>'button.js',
-//            'prefix'=>'/asserts/buttons'
-//        ],
-//        'qtip'=>[
-//            'css'=>'jquery.qtip.min.css',
-//            'js'=>'jquery.qtip.min.js',
-//            'prefix'=>'/asserts/qtip'
-//        ],
-//        'peity'=>[
-//            'js'=>'jquery.peity.min.js',
-//            'prefix'=>'/asserts/peity'
-//        ],
-//        'echarts'=>[
-//            'js'=>'echarts.min.js',
-//            'prefix'=>'/asserts/echarts'
-//        ],
         ]
     ]
 ];

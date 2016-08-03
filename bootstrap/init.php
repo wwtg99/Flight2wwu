@@ -31,7 +31,6 @@ Flight::set('config', $conf);
 // load class
 $register_path = [
     ['Wwtg99\\App', 'App', true],
-    ['Wwtg99', 'src', true],
 ];
 $loader = new \Wwtg99\ClassLoader\Loader(ROOT, $register_path);
 $loader->autoload();
@@ -41,3 +40,6 @@ require_once 'helpfunctions.php';
 // register
 $register = \Wwtg99\Flight2wwu\Common\Register::getInstance();
 $register->registerAll($conf);
+
+// session
+getSession()->start();

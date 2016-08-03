@@ -6,7 +6,7 @@
  * Time: 15:09
  */
 
-namespace Flight2wwu\Component\Utils;
+namespace Wwtg99\Flight2wwu\Component\Utils;
 
 
 use GuzzleHttp\Client;

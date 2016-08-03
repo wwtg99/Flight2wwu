@@ -6,7 +6,7 @@
  * Time: 16:34
  */
 
-namespace Flight2wwu\Component\Database;
+namespace Wwtg99\Flight2wwu\Component\Database;
 
 
 use Wwtg99\DataPool\Common\DefaultDataPool;

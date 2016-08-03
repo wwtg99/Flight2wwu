@@ -5,7 +5,7 @@
             "server_name": "php",
             "category": "interpreter",
             "description": "PHP interpreter plugin",
-            "class_name": "App\\Plugin\\PHPInterpreter",
+            "class_name": "Wwtg99\\App\\Plugin\\PHPInterpreter",
             "enabled": true
         }
     }

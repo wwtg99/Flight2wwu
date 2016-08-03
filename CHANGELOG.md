@@ -6,6 +6,10 @@
     - Change framework start workflow
     - Remove ServiceProvider and change services
     - Change all components and remove unused components
+    - Add bin/wwtinit.php to initialize project
+    - Remove some libs
+    - Change session_start
+    - Clear composer packages
 
 ## 0.1.11
     - Add DataPool

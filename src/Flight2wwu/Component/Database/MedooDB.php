@@ -12,7 +12,6 @@ namespace Wwtg99\Flight2wwu\Component\Database;
 /**
  * Class MedooDB
  * @package Flight2wwu\Component\Database
- * @deprecated will be removed later
  */
 class MedooDB extends \medoo
 {

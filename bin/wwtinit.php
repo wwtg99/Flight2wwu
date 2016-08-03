@@ -15,7 +15,9 @@ function parseOption()
     $lopt = [
         'help',
         'version',
-        'dir:'
+        'dir:',
+        'clean',
+        'clear-cache::'
     ];
     $p = getopt($opt, $lopt);
     return $p;
@@ -26,7 +28,7 @@ function parseOption()
  */
 function getHelp()
 {
-    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n-v  --version    Show version\n-h  --help    Show Help\n";
+    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n-v  --version    Show version\n-h  --help    Show Help\n";
 }
 
 /**
@@ -35,6 +37,56 @@ function getHelp()
 function getVersion()
 {
     return 'wwtinit 0.1.0';
+}
+
+/**
+ * @param string $dir
+ */
+function clean($dir)
+{
+    $rd = ['App', 'bootstrap', 'web', 'storage'];
+    foreach ($rd as $item) {
+        $re = removeDirectory($dir . DIRECTORY_SEPARATOR . $item);
+        if (!$re) {
+            echo "Remove directory $item failed!\n";
+        }
+    }
+    echo "Clean directory $dir\n";
+}
+
+/**
+ * @param string $dir
+ * @return bool
+ */
+function removeDirectory($dir)
+{
+    foreach (new DirectoryIterator($dir) as $fi) {
+        if ($fi->isDot()) {
+            continue;
+        } elseif ($fi->isFile()) {
+            unlink($fi->getRealPath());
+        } elseif ($fi->isDir()) {
+            removeDirectory($fi->getRealPath());
+        }
+    }
+    return rmdir($dir);
+}
+
+/**
+ * @param string $dir
+ * @param $cache
+ * @return int
+ */
+function clearCache($dir, $cache = null)
+{
+    if (!$cache) {
+        $cache = implode(DIRECTORY_SEPARATOR, [$dir, 'storage', 'tmp', 'config.cache']);
+    }
+    if (file_exists($cache)) {
+        unlink($cache);
+        echo "Clear cache file $cache\n";
+    }
+    return 0;
 }
 
 /**
@@ -54,7 +106,6 @@ function addModule(&$modules, $name)
  */
 function installModules($modules, $dir)
 {
-    $dir = realpath(rtrim($dir, DIRECTORY_SEPARATOR));
     if (!file_exists($dir) || !is_dir($dir)) {
         echo "Invalid directory $dir\n";
         return 1;
@@ -64,6 +115,7 @@ function installModules($modules, $dir)
         echo "No packages found in vendor, please install wwtg99/flight2wwu first!\n";
         return 1;
     }
+    echo "Install into $dir...\n";
     foreach ($modules as $module) {
         switch ($module) {
             case 'core': $re = installCore($dir, $pkg); break;
@@ -84,29 +136,134 @@ function installModules($modules, $dir)
  */
 function installCore($dir, $package_dir)
 {
-    $d = DIRECTORY_SEPARATOR;
-    // bootstrap
-    $bt_dir = $dir . $d . 'bootstrap';
-    if (!file_exists($bt_dir)) {
-        mkdir($bt_dir);
+    echo "Install core module...\n";
+    // storage
+    $st_dir = $dir . DIRECTORY_SEPARATOR . 'storage';
+    if (!file_exists($st_dir)) {
+        mkdir($st_dir);
     }
-    $bfiles = ['init.php', 'helpfunctions.php'];
-    foreach ($bfiles as $bfile) {
-        $b = copy($package_dir . $d . 'bootstrap' . $d . $bfile, $bt_dir . $d . $bfile);
-        if (!$b) {
-            return 1;
+    $tm_dir = $st_dir . DIRECTORY_SEPARATOR . 'tmp';
+    if (!file_exists($tm_dir)) {
+        mkdir($tm_dir);
+    }
+    // copy files
+    $mfiles = [
+        'bootstrap'=>['init.php', 'helpfunctions.php'],
+        'App'=>[
+            'config'=>[
+                'app_config.php',
+                'auth.php',
+                'handlers.php',
+                'plugins.json',
+                'register_config.php',
+                'ui_libs.php',
+                'utils_conf.json',
+                'lang'=>['zh_CN'=>['messages.php'], 'en_AM'=>['messages.php']]
+            ],
+            'Controller'=>[
+                'DefaultController.php',
+                'HomeController.php',
+                'AuthController.php'
+            ],
+            'Model'=>[
+                'Message.php',
+                'Auth'=>['User.php']
+            ],
+            'Plugin'=>['PHPInterpreter.php'],
+            'view_twig'=>[
+                'layout.twig',
+                'home.twig',
+                'error'=>['403.twig', '404.twig', '500.twig'],
+                'auth'=>['login.twig', 'logout.twig', 'change_pwd.twig']
+            ],
+            'view'=>[
+                'border_layout.php',
+                'border_head.php',
+                'border_foot.php',
+                'border_left.php',
+                'border_right.php',
+                'home.php',
+                'error'=>['403.php', '404.php', '500.php'],
+                'auth'=>['login.php', 'logout.php', 'change_pwd.php']
+            ]
+        ],
+    ];
+    $re = copyFiles($mfiles, $package_dir, $dir);
+    // copy web
+    if ($re === 0) {
+        $re = copyDir($package_dir . DIRECTORY_SEPARATOR . 'web', $dir);
+    }
+    return $re;
+}
+
+/**
+ * Copy specified files.
+ *
+ * @param array $files
+ * @param string $src_dir
+ * @param string $des_dir
+ * @return int
+ */
+function copyFiles(array $files, $src_dir, $des_dir)
+{
+    foreach ($files as $i => $file) {
+        if (is_array($file)) {
+            $dir = $des_dir . DIRECTORY_SEPARATOR . $i;
+            if (!file_exists($dir)) {
+                mkdir($dir);
+            }
+            $b = copyFiles($file, $src_dir . DIRECTORY_SEPARATOR . $i, $dir);
+            if ($b !== 0) {
+                return 1;
+            }
+        } else {
+            if (file_exists($src_dir . DIRECTORY_SEPARATOR . $file)) {
+                $b = copy($src_dir . DIRECTORY_SEPARATOR . $file, $des_dir . DIRECTORY_SEPARATOR . $file);
+                if (!$b) {
+                    echo "Copy $file failed!\n";
+                    return 1;
+                }
+            } else {
+                echo "$file does not exists!\n";
+                return 1;
+            }
         }
     }
-    // App
-    $app_dir = $dir . $d . 'App';
-    if (!file_exists($app_dir)) {
-        mkdir($app_dir);
+    return 0;
+}
+
+/**
+ * Copy all files in directory.
+ *
+ * @param string $src
+ * @param string $des
+ * @return int
+ */
+function copyDir($src, $des)
+{
+    if (!file_exists($src)) {
+        echo "Directory $src does not exists!\n";
+        return 1;
     }
-    $mfiles = ['config' . $d . 'app_config.php', 'config' . $d . 'auth.php', 'config' . $d . 'handlers.php', 'config' . $d . 'plugins.json', 'config' . $d . 'register_config.php', 'config' . $d . 'ui_libs.php', 'config' . $d . 'utils_conf.json', implode($d, ['config', 'lang', 'zh_CN', 'messages.php']), implode($d, ['config', 'lang', 'en_AM', 'messages.php']), 'Controller' . $d . 'DefaultController.php', 'Controller' . $d . 'HomeController.php', 'Controller' . $d . 'AuthController.php', implode($d, ['Model', 'Auth', 'User.php']), 'Model' . $d . 'Message.php', 'Plugin' . $d . 'PHPInterpreter.php', 'view_twig' . $d . 'layout.twig', 'view_twig' . $d . 'home.twig', implode($d, ['view_twig', 'error', '403.twig']), implode($d, ['view_twig', 'error', '404.twig']), implode($d, ['view_twig', 'error', '500.twig']), implode($d, ['view_twig', 'auth', 'login.twig']), implode($d, ['view_twig', 'auth', 'logout.twig']), implode($d, ['view_twig', 'auth', 'change_pwd.twig']), 'view' . $d . 'border_layout.php', 'view' . $d . 'border_head.php', 'view' . $d . 'border_foot.php', 'view' . $d . 'border_left.php', 'view' . $d . 'border_right.php', 'view' . $d . 'home.php', implode($d, ['view', 'error', '403.php']), implode($d, ['view', 'error', '404.php']), implode($d, ['view', 'error', '500.php']), implode($d, ['view', 'auth', 'login.php']), implode($d, ['view', 'auth', 'logout.php']), implode($d, ['view', 'auth', 'change_pwd.php'])];
-    foreach ($mfiles as $mfile) {
-        $b = copy($package_dir . $d . 'App' . $d . $mfile, $app_dir . $d . $mfile);
-        if (!$b) {
-            return 1;
+    $d = basename($src);
+    if (!file_exists($des . DIRECTORY_SEPARATOR . $d)) {
+        mkdir($des . DIRECTORY_SEPARATOR . $d);
+    }
+    foreach (new DirectoryIterator($src) as $f) {
+        if ($f->isDot()) {
+            continue;
+        } elseif ($f->isFile()) {
+            $sf = $f->getRealPath();
+            $b = copy($sf, $des . DIRECTORY_SEPARATOR . $d . DIRECTORY_SEPARATOR . $f->getFilename());
+            if (!$b) {
+                echo "Copy file $sf failed\n";
+                return 1;
+            }
+        } elseif ($f->isDir()) {
+            $b = copyDir($f->getRealPath(), $des . DIRECTORY_SEPARATOR . $d);
+            if ($b !== 0) {
+                return $b;
+            }
         }
     }
     return 0;
@@ -128,8 +285,22 @@ if (isset($opt['d'])) {
 } elseif (isset($opt['dir'])) {
     $dir = $opt['dir'];
 }
-// install modules
-$modules = ['core'];
-//TODO
-$re = installModules($modules, $dir);
+$dir = realpath(rtrim($dir, DIRECTORY_SEPARATOR));
+// clean dir
+if (isset($opt['clean'])) {
+    clean($dir);
+}
+if (isset($opt['clear-cache'])) {
+    // clear cache
+    $f = $opt['clear-cache'];
+    $re = clearCache($dir, $f);
+} else {
+    // install modules
+    $modules = ['core'];
+    //TODO
+    $re = installModules($modules, $dir);
+    if ($re === 0) {
+        echo "Install successfully!\n";
+    }
+}
 exit($re);

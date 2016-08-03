@@ -28,8 +28,12 @@ class HomeController extends BaseController
     public static function changelog()
     {
         self::defaultHeader();
-        $md = new \Parsedown();
-        $f = file_get_contents(ROOT . DIRECTORY_SEPARATOR . 'CHANGELOG.md');
-        echo $md->text($f);
+        $f = ROOT . DIRECTORY_SEPARATOR . 'CHANGELOG.md';
+        if (file_exists($f)) {
+            $md = new \Parsedown();
+            $f = file_get_contents($f);
+            echo $md->text($f);
+        }
+        return false;
     }
 } 

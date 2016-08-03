@@ -40,7 +40,6 @@ class SessionUtil implements IAttribute
         $enabled = isset($conf['session']) ? $conf['session'] : '';
         if ($enabled) {
             $this->enabled = true;
-            $this->start();
             $this->session = & $_SESSION;
         }
     }
@@ -105,7 +104,9 @@ class SessionUtil implements IAttribute
      */
     public function start()
     {
-        session_start();
+        if ($this->enabled) {
+            session_start();
+        }
         return $this;
     }
 

@@ -6,7 +6,7 @@
  * Time: 14:33
  */
 
-namespace Flight2wwu\Component\Utils;
+namespace Wwtg99\Flight2wwu\Component\Utils;
 
 
 /**

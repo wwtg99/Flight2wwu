@@ -63,5 +63,35 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $this->assertEquals(3, $a);
     }
 
+    public function testServices()
+    {
+        $ins = getAuth();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Auth\IAuth::class, $ins);
+        $ins = getView();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\View\IView::class, $ins);
+        $ins = getLog();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Log\ILog::class, $ins);
+        $ins = getDB();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Database\MedooDB::class, $ins);
+        $ins = getDataPool();
+        $this->assertInstanceOf(\Wwtg99\DataPool\Common\IDataPool::class, $ins);
+        $ins = getCache();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Storage\Cache::class, $ins);
+        $ins = getSession();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Storage\SessionUtil::class, $ins);
+        $ins = getCookie();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Storage\CookieUtil::class, $ins);
+        $ins = getOValue();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Storage\OldValue::class, $ins);
+        $ins = getAssets();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\View\AssetsManager::class, $ins);
+        $ins = getMailer();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Utils\Mail::class, $ins);
+        $ins = Flight::Express();
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Utils\Express::class, $ins);
+        $ins = getPlugin('php');
+        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Plugin\IPlugin::class, $ins);
+    }
+
 }
  
