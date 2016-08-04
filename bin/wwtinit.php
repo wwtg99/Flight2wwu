@@ -312,6 +312,12 @@ if (isset($opt['clear-cache'])) {
     $re = installModules($modules, $dir);
     if ($re === 0) {
         echo "Install successfully!\n";
+        // unmask
+        $out = [];
+        exec('php ' . __DIR__ . DIRECTORY_SEPARATOR . 'maskphp.php' . " -d $dir --unmask", $out);
+        foreach ($out as $l) {
+            echo "$l\n";
+        }
     }
 }
 exit($re);
