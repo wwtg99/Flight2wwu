@@ -10,6 +10,7 @@ namespace Wwtg99\App\Controller;
 
 
 use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class DefaultController extends BaseController
 {
@@ -44,11 +45,15 @@ class DefaultController extends BaseController
         $method = self::getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
         // skip /403
-        if ($path == U('403')) {
+        if ($path == '/403') {
             return true;
         }
         // last path
-        $skip = [U('404'), U(getConfig()->get('defined_routes.login')), U(getConfig()->get('defined_routes.logout'))];
+        $skip = [
+            '/404',
+            FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
+            FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout'))
+        ];
         if (!in_array($path, $skip) && !self::getRequest()->ajax) {
             getOValue()->addOldOnce('last_path', $path);
         }

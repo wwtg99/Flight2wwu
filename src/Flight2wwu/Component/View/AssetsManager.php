@@ -159,7 +159,7 @@ class AssetsManager
         if (!$prefix) {
             $prefix = $this->resourceDir;
         }
-        return $prefix ? $prefix . '/' . $name : $name;
+        return $this->formatPath($prefix, $name);
     }
 
     /**
@@ -209,7 +209,7 @@ class AssetsManager
         if (!isset($attr['rel'])) {
             $attr['rel'] = 'stylesheet';
         }
-        $attr['href'] = $prefix ? $prefix . '/' . $file : $file;
+        $attr['href'] = $this->formatPath($prefix, $file);
         if (!isset($attr['type'])) {
             $attr['type'] = 'text/css';
         }
@@ -229,7 +229,7 @@ class AssetsManager
      */
     private function formatScript($file, $prefix = '', $attr = [])
     {
-        $attr['src'] = $prefix ? $prefix . '/' . $file : $file;
+        $attr['src'] = $this->formatPath($prefix, $file);
         if (!isset($attr['type'])) {
             $attr['type'] = 'text/javascript';
         }
@@ -239,5 +239,15 @@ class AssetsManager
         }
         array_push($ele, '></script>');
         return implode(' ', $ele);
+    }
+
+    /**
+     * @param $prefix
+     * @param $file
+     * @return string
+     */
+    private function formatPath($prefix, $file)
+    {
+        return $prefix ? FormatUtils::formatWebPathArray([getConfig()->get('base_url'), $prefix, $file]) : $file;
     }
 }

@@ -13,7 +13,7 @@ namespace Wwtg99\Flight2wwu\Common;
  * Restful controller should extend this class and override all these methods.
  * @package Wwtg99\Flight2wwu\Common
  */
-class RestfulController extends BaseController
+abstract class RestfulController extends BaseController
 {
 
     /**

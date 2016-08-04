@@ -150,6 +150,11 @@ class TwigView extends AbstractView
             return $ass->renderCss() . $ass->renderJs();
         }, ['is_safe'=>['html']]);
         $this->twig->addFunction($func);
+        // get resource
+        $func = new \Twig_SimpleFunction('resource', function($name, $prefix = '') {
+            return getAssets()->getResource($name, $prefix);
+        });
+        $this->twig->addFunction($func);
         // isLogin
         $func = new \Twig_SimpleFunction('isLogin', function() {
             return getAuth()->isLogin();

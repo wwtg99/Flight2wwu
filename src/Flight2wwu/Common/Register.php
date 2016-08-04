@@ -111,7 +111,7 @@ class Register
                     $methods = $ref->getMethods(\ReflectionMethod::IS_STATIC);
                     foreach ($methods as $m) {
                         if ($m->isPublic()) {
-                            $path = FormatUtils::formatWebPathArray([$this->baseUrl, $pref, $m->getName()]);
+                            $path = FormatUtils::formatWebPathArray([$pref, $m->getName()]);
                             \Flight::route($path, [$classname, $m->getName()]);
                         }
                     }
@@ -124,7 +124,7 @@ class Register
                 $classname = $cls . 'Controller';
                 $ref = new \ReflectionClass($classname);
                 if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\RestfulController')) {
-                    $path = FormatUtils::formatWebPathArray([$this->baseUrl, $pref]);
+                    $path = FormatUtils::formatWebPath($pref);
                     \Flight::route('GET ' . $path, [$classname, 'index']);
                     \Flight::route('GET ' . $path . '/create', [$classname, 'create']);
                     \Flight::route('POST ' . $path, [$classname, 'store']);

@@ -57,9 +57,9 @@ return [
          * Controller must extends BaseController
          */
         'controller'=>[
-            'Wwtg99\App\Controller\Auth'=>'auth',
-//            'Wwtg99\App\Controller\OAuth'=>'oauth',
-//            'Wwtg99\App\Controller\Admin'=>'admin',
+            'Wwtg99\App\Controller\Auth'=>'/auth',
+//            'Wwtg99\App\Controller\OAuth'=>'/oauth',
+//            'Wwtg99\App\Controller\Admin'=>'/admin',
         ],
         'restful'=>[
             /**
@@ -76,7 +76,7 @@ return [
              * Post      /prefix/id           update    update
              * Post      /prefix/destroy/id   destroy   destroy
              */
-            'Wwtg99\App\Controller\User'=>'user',
+//            'Wwtg99\App\Controller\User'=>'/user',
         ]
     ],
     /**

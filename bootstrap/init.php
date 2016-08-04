@@ -21,7 +21,11 @@ require_once implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
 
 // config
 $conf_files = ['register_config.php', 'auth.php', 'plugins.json', 'ui_libs.php', 'utils_conf.json', 'app_config.php'];
-$conf = new \Wwtg99\Config\Common\ConfigPool(TMP . 'config.cache');
+// no config cache, can be used for debug
+$conf = new \Wwtg99\Config\Common\ConfigPool();
+// use config cache, merge config at first time
+//$conf = new \Wwtg99\Config\Common\ConfigPool(TMP . 'config.cache');
+// config source
 $source = new \Wwtg99\Config\Source\FileSource(CONFIG, $conf_files);
 $source->addLoader(new \Wwtg99\Config\Source\Loader\JsonLoader())->addLoader(new \Wwtg99\Config\Source\Loader\PHPLoader());
 $conf->addSource($source);

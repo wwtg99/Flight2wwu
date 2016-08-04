@@ -16,6 +16,10 @@
  *
  * "name"=>["depends"=>[], "prefix"=>"", "css"=>[], "js"=>["1.js", ["file"=>"2.js", "attr"=>["async"=>true]]]]
  *
+ * The path specified in prefix and resource_dir is relative to web.
+ * If specified prefix, base_url/prefix will prepend to file.
+ * If use CDN please specify the whole path in file and leave prefix empty.
+ *
  * Use Flight()::Assets()->addLibrary($name) to add library.
  * Use Flight()::Assets()->getResource($name, $prefix) to get resource uri
  *
@@ -26,7 +30,7 @@
 
 return [
     'assets'=>[
-        'resource_dir'=>'/assets/images',
+        'resource_dir'=>'assets/images',
         'global_before'=>['bootstrap'],
         'global_after'=>['custom'],
         'libs'=>[
@@ -34,21 +38,21 @@ return [
                 'depends'=>[],
                 'css'=>['common.css'],
                 'js'=>['utils.js'],
-                'prefix'=>'/assets/custom'
+                'prefix'=>'assets/custom'
             ],
             'jquery'=>[
                 'js'=>['jquery-2.2.3.min.js'],
-                'prefix'=>'/assets/jquery'
+                'prefix'=>'assets/jquery'
             ],
             'bootstrap'=>[
                 'depends'=>['jquery'],
                 'css'=>['bootstrap.min.css'],
                 'js'=>['bootstrap.min.js'],
-                'prefix'=>'/assets/bootstrap'
+                'prefix'=>'assets/bootstrap'
             ],
             'fa'=>[
                 'css'=>['font-awesome.min.css'],
-                'prefix'=>'/assets/fa'
+                'prefix'=>'assets/fa'
             ],
         ]
     ]
