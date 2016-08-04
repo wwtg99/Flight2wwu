@@ -50,6 +50,7 @@ class DefaultController extends BaseController
         }
         // last path
         $skip = [
+            '/',
             '/404',
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout'))

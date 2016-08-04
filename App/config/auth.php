@@ -44,6 +44,6 @@ return [
         'session'=>true, //use session to store user info
         'session_expires'=>60, // seconds for auth session expires
         'cookie'=>true, //use cookie to store token
-        'cookie_expires'=>600, // seconds for auth cookies expires
+        'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
 ];

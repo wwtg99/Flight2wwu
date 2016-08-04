@@ -40,7 +40,7 @@ class SessionUtil implements IAttribute
         $enabled = isset($conf['session']) ? $conf['session'] : '';
         if ($enabled) {
             $this->enabled = true;
-            $this->session = & $_SESSION;
+            $this->session = &$_SESSION;
         }
     }
 
@@ -79,7 +79,9 @@ class SessionUtil implements IAttribute
         if ($this->enabled) {
             $name = $this->prefix . $name;
             if (isset($this->session[$name])) {
-                if (!$this->session[$name][1] || time() <= $this->session[$name][1]) {
+                if (isset($this->session[$name][1]) && $this->session[$name][1] && $this->session[$name][1] < time()) {
+                    unset($this->session[$name]);
+                } else {
                     return true;
                 }
             }
@@ -95,17 +97,6 @@ class SessionUtil implements IAttribute
     {
         if ($this->has($name)) {
             unset($this->session[$this->prefix . $name]);
-        }
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function start()
-    {
-        if ($this->enabled) {
-            session_start();
         }
         return $this;
     }

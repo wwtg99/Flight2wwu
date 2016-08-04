@@ -67,6 +67,11 @@ if (isDebug()) {
 });
 
 /**
+ * Start session
+ */
+session_start();
+
+/**
  * Other routes
  */
 // test

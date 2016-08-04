@@ -7,6 +7,7 @@
     - Remove ServiceProvider and change services
     - Change all components and remove unused components
     - Add bin/wwtinit.php to initialize project
+    - Add bin/maskphp.php to mask and unmask App and bootstrap scripts
     - Remove some libs
     - Change session_start
     - Clear composer packages

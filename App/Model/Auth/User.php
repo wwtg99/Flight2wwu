@@ -15,9 +15,6 @@ namespace Wwtg99\App\Model\Auth;
 class User
 {
 
-//    use TNormalAuth;
-//    use TOpenAuth; //should disable admin departments/users/roles, change password and edit user info
-
     const KEY_USER_ID = 'user_id';
     const KEY_USER_NAME = 'name';
     const KEY_USER_PASSWORD = 'password';

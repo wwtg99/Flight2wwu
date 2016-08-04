@@ -89,7 +89,7 @@ class AuthController extends BaseController
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
         getOValue()->addOld('username', $name);
-        $redirectPath = getConfig()->get('base_url');
+        $redirectPath = '/';
         if (getAuth()->attempt([User::KEY_USER_NAME=>$name, User::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
             $path = getOValue()->getOldOnce('last_path');
             if ($path) {
@@ -110,7 +110,7 @@ class AuthController extends BaseController
     private static function postLogout() {
         getAuth()->logout();
         $c = getConfig();
-        $path = U($c->get('defined_routes.login'));
+        $path = $c->get('defined_routes.login');
         \Flight::redirect($path);
     }
 
@@ -145,8 +145,7 @@ class AuthController extends BaseController
 
     private static function getInfo()
     {
-        $user = getUser();
-        getView()->render('auth/user_info', ['user'=>FormatUtils::formatTransArray($user), 'title'=>'User Info']);
+
     }
 
     private static function postInfo()
@@ -166,22 +165,11 @@ class AuthController extends BaseController
 
     private static function getEdit()
     {
-        $user = getUser();
-        getView()->render('auth/user_edit', ['user'=>$user, 'title'=>'Edit User']);
+
     }
 
     private static function postEdit()
     {
-        $user = self::getArrayInput(['name', 'label', 'email', 'descr']);
-        $u = getORM()->getModel('Users');
-        $re = $u->update($user, ['user_id'=>getUser('user_id')]);
-        if ($re) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
-        } else {
-            $msg = Message::getMessage(3);
-        }
-        getOValue()->addOldOnce('user_msg', $msg);
-        $user = getAuth()->refreshUser(getUser());
-        getView()->render('auth/user_edit', ['user'=>$user, 'title'=>'Edit User', 'msg'=>$msg]);
+
     }
 } 

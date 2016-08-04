@@ -44,6 +44,3 @@ require_once 'helpfunctions.php';
 // register
 $register = \Wwtg99\Flight2wwu\Common\Register::getInstance();
 $register->registerAll($conf);
-
-// session
-getSession()->start();
