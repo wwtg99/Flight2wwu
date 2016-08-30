@@ -107,7 +107,16 @@ class Register
             foreach ($controller as $cls => $pref) {
                 $classname = $cls . 'Controller';
                 $ref = new \ReflectionClass($classname);
-                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\BaseController')) {
+                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\InstanceController')) {
+                    $ins = $ref->newInstance();
+                    $methods = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+                    foreach ($methods as $method) {
+                        if (!$method->isStatic()) {
+                            $path = FormatUtils::formatWebPathArray([$pref, $method->getName()]);
+                            \Flight::route($path, [$ins, $method->getName()]);
+                        }
+                    }
+                } elseif ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\BaseController')) {
                     $methods = $ref->getMethods(\ReflectionMethod::IS_STATIC);
                     foreach ($methods as $m) {
                         if ($m->isPublic()) {
@@ -123,15 +132,25 @@ class Register
             foreach ($restful as $cls => $pref) {
                 $classname = $cls . 'Controller';
                 $ref = new \ReflectionClass($classname);
-                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\RestfulController')) {
+                if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\RestfulInstanceController')) {
+                    $path = FormatUtils::formatWebPath($pref);
+                    $ins = $ref->newInstance();
+                    \Flight::route('GET ' . $path, [$ins, 'index']);
+                    \Flight::route('GET ' . $path . '/create', [$ins, 'create']);
+                    \Flight::route('POST ' . $path, [$ins, 'store']);
+                    \Flight::route('GET ' . $path . '/@id', [$ins, 'show']);
+                    \Flight::route('GET ' . $path . '/@id/edit', [$ins, 'edit']);
+                    \Flight::route('POST ' . $path . '/@id', [$ins, 'update']);
+                    \Flight::route('POST ' . $path . '/@id/destroy', [$ins, 'destroy']);
+                } elseif ($ref->isSubclassOf('Wwtg99\Flight2wwu\Common\RestfulController')) {
                     $path = FormatUtils::formatWebPath($pref);
                     \Flight::route('GET ' . $path, [$classname, 'index']);
                     \Flight::route('GET ' . $path . '/create', [$classname, 'create']);
                     \Flight::route('POST ' . $path, [$classname, 'store']);
                     \Flight::route('GET ' . $path . '/@id', [$classname, 'show']);
-                    \Flight::route('GET ' . $path . '/edit/@id', [$classname, 'edit']);
+                    \Flight::route('GET ' . $path . '/@id/edit', [$classname, 'edit']);
                     \Flight::route('POST ' . $path . '/@id', [$classname, 'update']);
-                    \Flight::route('POST ' . $path . '/destroy/@id', [$classname, 'destroy']);
+                    \Flight::route('POST ' . $path . '/@id/destroy', [$classname, 'destroy']);
                 }
             }
         }

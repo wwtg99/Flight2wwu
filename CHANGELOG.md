@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.1
+    - Add InstanceController and RestfulInstanceController
+
 ## 0.2.0
     - Use Config to manager config files
     - Use ClassLoader to load classes

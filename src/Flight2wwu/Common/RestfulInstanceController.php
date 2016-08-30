@@ -2,18 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: wuwentao
- * Date: 2016/8/3
- * Time: 16:09
+ * Date: 2016/8/30
+ * Time: 9:40
  */
 
 namespace Wwtg99\Flight2wwu\Common;
 
 /**
- * Class RestfulController
+ * Class RestfulInstanceController
  * Restful controller should extend this class and override all these methods.
  * @package Wwtg99\Flight2wwu\Common
  */
-abstract class RestfulController extends BaseController
+abstract class RestfulInstanceController extends InstanceController
 {
 
     /**
@@ -21,7 +21,7 @@ abstract class RestfulController extends BaseController
      * Method: Get
      * @return mixed
      */
-    public static function index()
+    public function index()
     {
 
     }
@@ -32,7 +32,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public static function show($id)
+    public function show($id)
     {
 
     }
@@ -42,7 +42,7 @@ abstract class RestfulController extends BaseController
      * Method Get
      * @return mixed
      */
-    public static function create()
+    public function create()
     {
 
     }
@@ -52,7 +52,7 @@ abstract class RestfulController extends BaseController
      * Method Post
      * @return mixed
      */
-    public static function store()
+    public function store()
     {
 
     }
@@ -63,7 +63,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public static function edit($id)
+    public function edit($id)
     {
 
     }
@@ -74,7 +74,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public static function update($id)
+    public function update($id)
     {
 
     }
@@ -85,7 +85,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public static function destroy($id)
+    public function destroy($id)
     {
 
     }
