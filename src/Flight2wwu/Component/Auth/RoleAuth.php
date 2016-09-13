@@ -161,6 +161,7 @@ class RoleAuth implements IAuth
             if ($this->use_session) {
                 $user = getSession()->get(self::SESSION_KEY);
                 if ($user) {
+                    getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
                     $this->user = new User($user);
                 }
             }

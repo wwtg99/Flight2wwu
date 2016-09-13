@@ -17,17 +17,17 @@ class FormatUtils
      * Create random string.
      *
      * @param int $length
+     * @param string $strPool
      * @return string
      */
-    public static function randStr($length)
+    public static function randStr($length, $strPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz")
     {
-        $str = null;
-        $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-        $max = strlen($strPol) - 1;
+        $strarr = [];
+        $max = strlen($strPool) - 1;
         for($i = 0; $i < $length; $i++){
-            $str .= $strPol[rand(0, $max)];
+            array_push($strarr, $strPool[mt_rand(0, $max)]);
         }
-        return $str;
+        return implode('', $strarr);
     }
 
     /**

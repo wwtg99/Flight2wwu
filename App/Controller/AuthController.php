@@ -12,7 +12,6 @@ namespace Wwtg99\App\Controller;
 use Wwtg99\App\Model\Auth\User;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
-use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 class AuthController extends BaseController
 {
@@ -110,7 +109,7 @@ class AuthController extends BaseController
     private static function postLogout() {
         getAuth()->logout();
         $c = getConfig();
-        $path = $c->get('defined_routes.login');
+        $path = U($c->get('defined_routes.login'));
         \Flight::redirect($path);
     }
 

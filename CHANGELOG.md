@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.2.2
+    - Fix logout last_path bug
+    - Change session to logout if not active for specifid seconds
+
 ## 0.2.1
     - Add InstanceController and RestfulInstanceController
 
