@@ -25,6 +25,7 @@
                             <input class="form-control" type="password" name="new2" placeholder="{{ 'Retype Password'|T }}" tabindex="2" required>
                         </div>
                     </div>
+                    <input type="hidden" name="state" value="{{ state }}">
                     <div class="form-group text-center">
                         <button class="btn btn-primary" type="submit" id="submit" tabindex="3">{{ 'Submit'|T }}</button>
                         <button class="btn btn-default" type="reset" id="reset" tabindex="4">{{ 'Reset'|T }}</button>

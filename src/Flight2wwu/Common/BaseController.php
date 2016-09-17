@@ -8,7 +8,9 @@
 
 namespace Wwtg99\Flight2wwu\Common;
 
+use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
+use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 /**
  * Class BaseController
@@ -143,7 +145,7 @@ abstract class BaseController
      * @param int $code
      * @return Message|string
      */
-    protected static function checkInput($name, $message = '', $code = 1)
+    protected static function checkInput($name, $message = '', $code = 11)
     {
         $req = self::getRequest();
         if (isset($req->data[$name])) {
@@ -204,5 +206,36 @@ abstract class BaseController
     {
         header('Cache-Control: no-cache');
         header('Pragma: no-cache');
+    }
+
+    /**
+     * @return string
+     */
+    protected static function generateCSRFState()
+    {
+        $ip = self::getRequest()->ip;
+        $url = self::getRequest()->url;
+        $uid = getUser(UserFactory::KEY_USER_ID);
+        $str = FormatUtils::randStr(10);
+        $tm = time();
+        $state = md5("CSRF_$ip;$url;$uid;$str;$tm");
+        $state_time = 600;
+        getCache()->set($state, 1, $state_time);
+        return $state;
+    }
+
+    /**
+     * @param $state
+     * @return bool
+     */
+    protected static function verifyCSRFState($state)
+    {
+        if ($state) {
+            $v = getCache()->get($state);
+            if ($v === 1) {
+                return true;
+            }
+        }
+        return false;
     }
 } 

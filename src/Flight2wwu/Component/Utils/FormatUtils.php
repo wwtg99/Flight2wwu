@@ -115,6 +115,20 @@ class FormatUtils
     }
 
     /**
+     * @param array $arr
+     * @param string $charlist
+     * @return array
+     */
+    public static function trimArray(array $arr, $charlist = " \t\n\r\0\x0B")
+    {
+        $keys = array_keys($arr);
+        for ($i = 0; $i < count($keys); $i++) {
+            $arr[$keys[$i]] = trim($arr[$keys[$i]], $charlist);
+        }
+        return $arr;
+    }
+
+    /**
      * Format array to string.
      *
      * @param array $arr

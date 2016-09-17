@@ -9,7 +9,7 @@
 namespace Wwtg99\Flight2wwu\Component\Auth;
 
 
-use Wwtg99\App\Model\Auth\User;
+use Wwtg99\App\Model\Auth\UserFactory;
 
 class RoleAuth implements IAuth
 {
@@ -19,7 +19,7 @@ class RoleAuth implements IAuth
     const COOKIE_USER_KEY = 'user_name';
 
     /**
-     * @var User
+     * @var AuthUser
      */
     protected $user = null;
 
@@ -76,12 +76,12 @@ class RoleAuth implements IAuth
             $cookie_token = getCookie()->get(self::COOKIE_TOKEN_KEY);
             $cookie_user = getCookie()->get(self::COOKIE_USER_KEY);
             if ($cookie_user && $cookie_token) {
-                $user[User::KEY_USER_TOKEN] = $cookie_token;
-                $user[User::KEY_USER_NAME] = $cookie_user;
+                $user[UserFactory::KEY_USER_TOKEN] = $cookie_token;
+                $user[UserFactory::KEY_USER_NAME] = $cookie_user;
                 $writeCookies = false;
             }
         }
-        $u = new User();
+        $u = UserFactory::getUser();
         $re = $u->verify($user);
         if ($re === true) {
             $this->login($u, $writeCookies);
@@ -93,7 +93,7 @@ class RoleAuth implements IAuth
     /**
      * Login user to storage (session or cookies).
      *
-     * @param User $user
+     * @param AuthUser $user
      * @param bool $writeCookies
      * @return $this
      */
@@ -105,9 +105,9 @@ class RoleAuth implements IAuth
             getSession()->set(self::SESSION_KEY, $u, $this->sessionExpires);
         }
         if ($this->use_cookie && $writeCookies) {
-            if (isset($u[User::KEY_USER_TOKEN]) && isset($u[User::KEY_USER_NAME])) {
-                $cookie_token = $u[User::KEY_USER_TOKEN];
-                $cookie_user = $u[User::KEY_USER_NAME];
+            if (isset($u[UserFactory::KEY_USER_TOKEN]) && isset($u[UserFactory::KEY_USER_NAME])) {
+                $cookie_token = $u[UserFactory::KEY_USER_TOKEN];
+                $cookie_user = $u[UserFactory::KEY_USER_NAME];
                 getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $this->cookieExpires);
                 getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $this->cookieExpires);
             }
@@ -116,7 +116,7 @@ class RoleAuth implements IAuth
     }
 
     /**
-     * @return User
+     * @return AuthUser
      */
     public function getUserObject()
     {
@@ -131,7 +131,8 @@ class RoleAuth implements IAuth
      */
     public function isLogin()
     {
-        if ($this->getUser()) {
+        $u = $this->getUser();
+        if ($u && isset($u[UserFactory::KEY_USER_ID])) {
             return true;
         }
         return false;
@@ -158,13 +159,16 @@ class RoleAuth implements IAuth
     public function getUser()
     {
         if (!$this->user) {
+            //check session
             if ($this->use_session) {
                 $user = getSession()->get(self::SESSION_KEY);
                 if ($user) {
+                    //refresh session
                     getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
-                    $this->user = new User($user);
+                    $this->user = UserFactory::getUser($user);
                 }
             }
+            //check cookies
             if (!$this->user) {
                 $this->attempt();
             }
@@ -221,9 +225,6 @@ class RoleAuth implements IAuth
     {
         if ($this->isLogin()) {
             $roles = $this->getRoles();
-            if (!is_array($roles)) {
-                $roles = [$roles];
-            }
             if (is_array($role_name)) {
                 return array_intersect($role_name, $roles) == $role_name;
             } else {
@@ -240,8 +241,8 @@ class RoleAuth implements IAuth
     {
         if ($this->isLogin()) {
             $u = $this->getUser();
-            if (isset($u[User::KEY_SUPERUSER])) {
-                return boolval($u[User::KEY_SUPERUSER]);
+            if (isset($u[UserFactory::KEY_SUPERUSER])) {
+                return boolval($u[UserFactory::KEY_SUPERUSER]);
             }
         }
         return false;
@@ -311,23 +312,14 @@ class RoleAuth implements IAuth
     }
 
     /**
-     * Add common_user to any login user
-     *
-     * @return array|string
+     * @return array
      */
     private function getRoles()
     {
-        if ($this->isLogin()) {
-            $u = $this->user->getUser();
-            $roles = isset($u[User::KEY_ROLES]) ? $u[User::KEY_ROLES] : [];
-            if (is_array($roles)) {
-                array_push($roles, 'common_user');
-                return $roles;
-            } else {
-                $roles .= ',common_user';
-                return explode(',', $roles);
-            }
+        if ($this->user) {
+            return $this->user->getRoles();
+        } else {
+            return ['anonymous'];
         }
-        return 'anonymous';
     }
 } 

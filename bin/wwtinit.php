@@ -164,11 +164,12 @@ function installCore($dir, $package_dir)
             'Controller'=>[
                 'DefaultController.php',
                 'HomeController.php',
-                'AuthController.php'
+                'AuthController.php',
+                'OAuthController.php',
             ],
             'Model'=>[
                 'Message.php',
-                'Auth'=>['User.php']
+                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthUser.phps']
             ],
             'Plugin'=>['PHPInterpreter.php'],
             'view_twig'=>[

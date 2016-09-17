@@ -46,4 +46,14 @@ return [
         'cookie'=>true, //use cookie to store token
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
+    'oauth'=>[
+        'code_uri'=>'http://192.168.0.21:10000/authorize',
+        'token_uri'=>'http://192.168.0.21:10000/token',
+        'redirect_uri'=>'http://localhost:8880',
+        'redirect_uri_key'=>'redirect_uri',
+        'app_id'=>'',
+        'app_id_key'=>'client_id',
+        'app_secret'=>'',
+        'app_secret_key'=>'client_secret',
+    ],
 ];

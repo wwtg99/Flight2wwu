@@ -12,6 +12,7 @@ namespace Wwtg99\App\Controller;
 use Wwtg99\App\Model\Auth\User;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Common\FWException;
 
 class AuthController extends BaseController
 {
@@ -78,7 +79,8 @@ class AuthController extends BaseController
         if (getAuth()->isLogin()) {
             \Flight::redirect(getConfig()->get('defined_routes.logout'));
         } else {
-            getView()->render('auth/login', ['title'=>'Login']);
+            $state = self::generateCSRFState();
+            getView()->render('auth/login', ['title'=>'Login', 'state'=>$state]);
         }
     }
 
@@ -88,6 +90,10 @@ class AuthController extends BaseController
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
         getOValue()->addOld('username', $name);
+        $state = self::getInput('state');
+        if (!self::verifyCSRFState($state)) {
+            throw new FWException(Message::messageList(25));
+        }
         $redirectPath = '/';
         if (getAuth()->attempt([User::KEY_USER_NAME=>$name, User::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
             $path = getOValue()->getOldOnce('last_path');
@@ -116,7 +122,8 @@ class AuthController extends BaseController
     private static function getChangePwd()
     {
         if (getAuth()->isLogin()) {
-            getView()->render('auth/change_pwd', ['title'=>'Change Password']);
+            $state = self::generateCSRFState();
+            getView()->render('auth/change_pwd', ['title'=>'Change Password', 'state'=>$state]);
         } else {
             \Flight::redirect(getConfig()->get('defined_routes.login'));
         }
@@ -127,6 +134,10 @@ class AuthController extends BaseController
         $old = self::getPost('old');
         $new1 = self::getPost('new1');
         $new2 = self::getPost('new2');
+        $state = self::getInput('state');
+        if (!self::verifyCSRFState($state)) {
+            throw new FWException(Message::messageList(25));
+        }
         if (!$new1 || !$new2){
             $msg = Message::getMessage(15);
         } elseif ($new1 != $new2) {

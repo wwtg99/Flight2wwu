@@ -96,6 +96,13 @@ class FormatUtilsTest extends PHPUnit_Framework_TestCase {
         $arr3 = ['a'=>1, 'b'=>'aa', 'c'=>null, 'd'=>'null'];
         $exp3 = ['d'=>'null'];
         $this->assertEquals($exp3, FormatUtils::formatArray($arr3, ['a', 'b']));
+        // trim array
+        $arr1 = ['a', 'b ', " c\n"];
+        $exp1 = ['a', 'b', 'c'];
+        $this->assertEquals($exp1, FormatUtils::trimArray($arr1));
+        $arr2 = ['a'=>'aa', 'b'=>' bb ', 2=>"\rcc\t"];
+        $exp2 = ['a'=>'aa', 'b'=>'bb', 2=>'cc'];
+        $this->assertEquals($exp2, FormatUtils::trimArray($arr2));
         // array to string
         $test_a2s = [
             'a = 1'=>['a'=>1],

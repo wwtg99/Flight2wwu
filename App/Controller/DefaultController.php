@@ -9,6 +9,7 @@
 namespace Wwtg99\App\Controller;
 
 
+use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\Flight2wwu\Common\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
@@ -50,7 +51,6 @@ class DefaultController extends BaseController
         }
         // last path
         $skip = [
-            '/',
             '/404',
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout'))
@@ -60,14 +60,14 @@ class DefaultController extends BaseController
         }
         // get user
         if (getAuth()->isLogin()) {
-            $user = getUser()['user_id'];
+            $user = getUser()[UserFactory::KEY_USER_ID];
         } else {
             $user = 'anonymous';
         }
         $logger = getLog();
         // log access
         if (!getAuth()->accessPath($path)->access(self::getRequest()->method)) {
-            $logger->changeLogger('access')->info("forbidden for $path by $user");
+            $logger->changeLogger('access')->info("forbidden from $ip by $user for $path method $method");
             $logger->changeLogger('main');
             \Flight::redirect('/403');
             return false;

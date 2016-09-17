@@ -17,6 +17,7 @@ return [
     'password mismatch'=>'密码不一致！',
     'password changed'=>'密码修改成功！',
     'password not changed'=>'密码修改失败！',
+    'CSRF token invalid'=>'CSRF错误！',
     'confirm logout'=>'确定要注销吗？',
     'server error'=>'服务器错误',
     'Return'=>'返回',
