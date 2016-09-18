@@ -54,6 +54,14 @@ function getDB()
 }
 
 /**
+ * @return \Wwtg99\Flight2wwu\Component\Database\PRedis
+ */
+function getRedis()
+{
+    return Flight::Redis();
+}
+
+/**
  * @return \Wwtg99\Flight2wwu\Component\Log\ILog
  */
 function getLog()

@@ -78,3 +78,25 @@ session_start();
 Flight::route('/error', function() {
     throw new Exception('error test', 1);
 });
+// ajax
+Flight::route('/ajax', function () {
+    echo "<br>---GET---<br>";
+    print_r($_GET);
+    echo "<br>---POST---<br>";
+    print_r($_POST);
+    echo "<br>---Header--<br>";
+    print_r($_SERVER);
+    echo "<br>---Cookies--<br>";
+    print_r($_COOKIE);
+});
+// ajax json
+Flight::route('/ajax_json', function () {
+    $re = [
+        'get'=>$_GET,
+        'post'=>$_POST,
+        'header'=>$_SERVER,
+        'cookies'=>$_COOKIE,
+        'ajax'=>Flight::request()->ajax
+    ];
+    Flight::json($re);
+});

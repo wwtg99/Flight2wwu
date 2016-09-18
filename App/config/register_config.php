@@ -19,6 +19,7 @@ return [
         'View' => 'Wwtg99\Flight2wwu\Component\View\TwigView',
         'Log' => 'Wwtg99\Flight2wwu\Component\Log\Monolog',
         'DB' => 'Wwtg99\Flight2wwu\Component\Database\MedooDB',
+        'Redis' => 'Wwtg99\Flight2wwu\Component\Database\PRedis',
         'DataPool' => 'Wwtg99\Flight2wwu\Component\Database\DataPool',
         'Locale' => 'Wwtg99\Flight2wwu\Component\Translation\SymTrans',
         'Cache' => 'Wwtg99\Flight2wwu\Component\Storage\Cache',

@@ -71,10 +71,12 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\View\IView::class, $ins);
         $ins = getLog();
         $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Log\ILog::class, $ins);
-        $ins = getDB();
-        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Database\MedooDB::class, $ins);
-        $ins = getDataPool();
-        $this->assertInstanceOf(\Wwtg99\DataPool\Common\IDataPool::class, $ins);
+//        $ins = getDB();
+//        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Database\MedooDB::class, $ins);
+//        $ins = getRedis();
+//        $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Database\PRedis::class, $ins);
+//        $ins = getDataPool();
+//        $this->assertInstanceOf(\Wwtg99\DataPool\Common\IDataPool::class, $ins);
         $ins = getCache();
         $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Storage\Cache::class, $ins);
         $ins = getSession();
@@ -91,6 +93,31 @@ class ComponentTester extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Utils\Express::class, $ins);
         $ins = getPlugin('php');
         $this->assertInstanceOf(\Wwtg99\Flight2wwu\Component\Plugin\IPlugin::class, $ins);
+    }
+
+    public function testAjaxRequest()
+    {
+        $base_uri = 'http://localhost:8880';
+        $req1 = new \Wwtg99\Flight2wwu\Component\Utils\AjaxRequest(['base_uri'=>$base_uri]);
+        $res = $req1->get('/ajax', ['a'=>'b']);
+        self::assertInstanceOf('\Psr\Http\Message\ResponseInterface', $res);
+        $req2 = new \Wwtg99\Flight2wwu\Component\Utils\AjaxRequest(['base_uri'=>$base_uri], 'string');
+        $res = $req2->get('/ajax', ['a'=>'b']);
+//        echo $res;
+        $req3 = new \Wwtg99\Flight2wwu\Component\Utils\AjaxRequest(['base_uri'=>$base_uri], 'json');
+        $res = $req3->get('/ajax_json', ['a'=>'b']);
+        self::assertTrue($res['ajax']);
+        self::assertEquals(['a'=>'b'], $res['get']);
+        $res = $req3->post('/ajax_json', ['c'=>'d']);
+        self::assertEquals(['c'=>'d'], $res['post']);
+        $header = ['User-Agent'=>'bbb'];
+        $req3->setHeaders($header);
+        $res = $req3->get('/ajax_json');
+        self::assertEquals('bbb', $res['header']['HTTP_USER_AGENT']);
+        $cookies = [['Name'=>'token', 'Value'=>'aaa', 'Domain'=>'localhost', 'Expires'=>time() + 1000]];
+        $req3->setCookies($cookies);
+        $res = $req3->get('/ajax_json');
+        self::assertEquals(['token'=>'aaa'], $res['cookies']);
     }
 
 }

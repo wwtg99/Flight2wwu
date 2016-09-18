@@ -3,6 +3,8 @@
 ## 0.2.2
     - Fix logout last_path bug
     - Change session to logout if not active for specifid seconds
+    - Add PRedis to support redis
+    - Add AjaxRequest
 
 ## 0.2.1
     - Add InstanceController and RestfulInstanceController

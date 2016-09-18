@@ -26,6 +26,8 @@ return [
                 '/auth/logout' => 3,
                 '/oauth/login' => 3,
                 '/oauth/redirect_login' => 3,
+                '/ajax'=>3,
+                '/ajax_json'=>3,
             ],
             'admin' => [
                 '*' => 3,

@@ -47,6 +47,12 @@ return [
         'password'=>'1',
         'port'=>5432
     ],
+    //Redis
+    'redis'=>[
+        'scheme' => 'tcp',
+        'host'   => '10.0.0.1',
+        'port'   => 6379,
+    ],
     //DataPool
     'datapool'=>[
         'log_dir'=>'storage/log',
