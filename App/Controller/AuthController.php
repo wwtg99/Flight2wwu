@@ -103,7 +103,8 @@ class AuthController extends BaseController
             \Flight::redirect($redirectPath);
         } else {
             $msg = Message::getMessage(21);
-            getView()->render('auth/login', ['msg'=>$msg, 'title'=>'Login']);
+            $state = self::generateCSRFState();
+            getView()->render('auth/login', ['msg'=>$msg, 'title'=>'Login', 'state'=>$state]);
         }
     }
 
@@ -150,7 +151,8 @@ class AuthController extends BaseController
                 $msg = Message::getMessage(24);
             }
         }
-        getView()->render('auth/change_pwd', ['msg'=>$msg, 'title'=>'Change Password']);
+        $state = self::generateCSRFState();
+        getView()->render('auth/change_pwd', ['msg'=>$msg, 'title'=>'Change Password', 'state'=>$state]);
     }
 
     private static function getInfo()

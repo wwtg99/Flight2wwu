@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.3
+    - Fix state bugs if failed in login and change password
+
 ## 0.2.2
     - Fix logout last_path bug
     - Change session to logout if not active for specifid seconds
