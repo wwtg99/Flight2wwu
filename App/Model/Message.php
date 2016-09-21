@@ -140,9 +140,18 @@ class Message
             case 24: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
             case 25: $msg = ['message'=>'CSRF token invalid', 'type'=>'danger']; break;
             // oauth error
-            case 1001: $msg = ['message'=>'illegal oauth', 'type'=>'danger']; break;
-            case 1002: $msg = ['message'=>'no code', 'type'=>'danger']; break;
+            case 1001: $msg = ['message'=>'oauth login failed', 'type'=>'danger']; break;
+            case 1002: $msg = ['message'=>'invalid code', 'type'=>'danger']; break;
             case 1003: $msg = ['message'=>'fail to get access_token', 'type'=>'danger']; break;
+            case 1004: $msg = ['message'=>'invalid response_type', 'type'=>'danger']; break;
+            case 1005: $msg = ['message'=>'invalid client_id or redirect uri', 'type'=>'danger']; break;
+            case 1006: $msg = ['message'=>'invalid grant_type', 'type'=>'danger']; break;
+            case 1007: $msg = ['message'=>'invalid client_id and client_secret', 'type'=>'danger']; break;
+            case 1008: $msg = ['message'=>'client_id does not exists', 'type'=>'danger']; break;
+            case 1009: $msg = ['message'=>'invalid client_id', 'type'=>'danger']; break;
+            case 1010: $msg = ['message'=>'redirect uri does not exists', 'type'=>'danger']; break;
+            case 1011: $msg = ['message'=>'app secret does not exists', 'type'=>'danger']; break;
+            case 1012: $msg = ['message'=>'invalid access_token', 'type'=>'danger']; break;
             default: $msg = ['message'=>'', 'type'=>'info']; $code = 0; break;
         }
         return new Message($code, $msg['message'], $msg['type']);

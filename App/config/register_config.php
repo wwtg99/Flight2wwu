@@ -59,7 +59,8 @@ return [
          */
         'controller'=>[
             'Wwtg99\App\Controller\Auth'=>'/auth',
-//            'Wwtg99\App\Controller\OAuth'=>'/oauth',
+            'Wwtg99\App\Controller\OAuth'=>'/oauth',
+//            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
 //            'Wwtg99\App\Controller\Admin'=>'/admin',
         ],
         'restful'=>[
@@ -85,6 +86,7 @@ return [
      */
     'defined_routes'=>[
         'login'=>'auth/login',
+//        'login'=>'oauth/login',
         'logout'=>'auth/logout',
         'user_home'=>'auth/info',
         'change_password'=>'auth/password',

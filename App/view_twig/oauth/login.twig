@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+        {{ renderAssets() }}
+        {{ debugbarHead() }}
+    {% endblock %}
+    <title>{% block title %}{{ title|T }} {% endblock %}</title>
+</head>
+<body>
+<header class="border_head">
+    {% block header %}
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ getConfig('base_url') }}">{{ getConfig('app') }}</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                        <li><a href="#">Link</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">One more separated link</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="{{ 'Search'|T }}">
+                        </div>
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if isLogin() %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% if isSuperuser() and hasRole('admin') %}
+                                        <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
+                                    {% endif %}
+                                    <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                    <li><a href="{{ getConfig('defined_routes.change_password')|U }}"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{ getConfig('defined_routes.logout')|U }}"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
+                        {% else %}
+                            <li><a href="{{ getConfig('defined_routes.login')|U }}">{{ 'Login'|T }}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+</header>
+<div class="border_body">
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ 'Authorization'|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <br><br>
+                <form method="post">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                            <input type="text" class="form-control" placeholder="{{ 'username'|T }}" name="username" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                            <input type="password" class="form-control" placeholder="{{ 'password'|T }}" name="password" required>
+                        </div>
+                    </div>
+                    <input type="hidden" name="client_id" value="{{ app.app_id }}">
+                    <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
+                    <input type="hidden" name="scope" value="{{ scope }}">
+                    <input type="hidden" name="state" value="{{ state }}">
+                    <button class="btn btn-success btn-group-justified">{{ 'Login'|T }}</button>
+                </form>
+                <br>
+                {% if error is defined %}
+                    <div class="alert alert-danger text-center">{{ error.message|T }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-5 col-md-offset-2">
+                <div class="page-header">
+                    <h3>{{ 'Login from'|T }} {{ app.app_name }}</h3>
+                </div>
+                <p>{{ app.descr }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{{ renderDebugbar() }}
+<footer class="border_foot">
+    {% block footer %}
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="row lwhite">
+                    <div class="col-md-5 col-md-offset-1">
+                        <h4>{{ 'Copyright' }}:</h4>
+                        <p>Genowise</p>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+</footer>
+
+<script>
+    $(document).ready(function(){
+
+    });
+</script>
+</body>
+</html>

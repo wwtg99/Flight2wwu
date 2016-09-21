@@ -13,21 +13,6 @@ use Wwtg99\Flight2wwu\Component\Auth\AuthUser;
 
 class NormalUser extends AuthUser
 {
-    /**
-     * AuthUser constructor.
-     * @param array $user
-     */
-    public function __construct(array $user)
-    {
-        if ($user) {
-            $roles = isset($user[UserFactory::KEY_ROLES]) ? $user[UserFactory::KEY_ROLES] : [];
-            if (!in_array('common_user', $roles)) {
-                array_push($roles, 'common_user');
-            }
-            $user[UserFactory::KEY_ROLES] = $roles;
-        }
-        parent::__construct($user);
-    }
 
     /**
      * TODO
@@ -39,7 +24,7 @@ class NormalUser extends AuthUser
     public function verify($user)
     {
         if (isset($user['name']) && $user['name'] == 'admin') {
-            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'remember_token'=>'aaa', 'roles'=>['admin', 'common_user']];
+            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'access_token'=>'aaa', 'roles'=>['admin', 'common_user']];
             return true;
         }
         return false;

@@ -2,6 +2,7 @@
 
 ## 0.2.3
     - Fix state bugs if failed in login and change password
+    - Add OAuth server controller
 
 ## 0.2.2
     - Fix logout last_path bug

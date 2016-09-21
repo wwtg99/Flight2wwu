@@ -10,7 +10,9 @@ namespace Wwtg99\App\Model\Auth;
 
 
 use GuzzleHttp\Client;
+use Wwtg99\Flight2wwu\Common\FWException;
 use Wwtg99\Flight2wwu\Component\Auth\AuthUser;
+use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
 
 class OAuthUser extends AuthUser
 {
@@ -19,22 +21,6 @@ class OAuthUser extends AuthUser
      * @var bool
      */
     protected $syncUser = false;
-
-    /**
-     * AuthUser constructor.
-     * @param array $user
-     */
-    public function __construct(array $user)
-    {
-        if ($user) {
-            $roles = isset($user[UserFactory::KEY_ROLES]) ? $user[UserFactory::KEY_ROLES] : [];
-            if (!in_array('common_user', $roles)) {
-                array_push($roles, 'common_user');
-            }
-            $user[UserFactory::KEY_ROLES] = $roles;
-        }
-        parent::__construct($user);
-    }
 
     /**
      * @return array
@@ -46,6 +32,7 @@ class OAuthUser extends AuthUser
     }
 
     /**
+     * TODO
      * Verify user.
      *
      * @param array $user
@@ -53,22 +40,39 @@ class OAuthUser extends AuthUser
      */
     public function verify($user)
     {
-        if (isset($user['access_token'])) {
-            $token = $user['access_token'];
+        if (isset($user[UserFactory::KEY_USER_TOKEN])) {
+            $token = $user[UserFactory::KEY_USER_TOKEN];
             $u = $this->getOAuthUser($token);
             if ($u && !array_key_exists('error', $u)) {
                 if ($this->syncUser) {
                     $this->syncUser($u);
                 }
-                $u[User::KEY_USER_TOKEN] = $token;
+                $u[UserFactory::KEY_USER_TOKEN] = $token;
+                if (isset($u[UserFactory::KEY_ROLES])) {
+                    if (is_array($u[UserFactory::KEY_ROLES])) {
+                        $roles = $u[UserFactory::KEY_ROLES];
+                    } else {
+                        $roles = explode(',', $u[UserFactory::KEY_ROLES]);
+                    }
+                    if (!in_array('common_user', $roles)) {
+                        array_push($roles, 'common_user');
+                    }
+                    $u[UserFactory::KEY_ROLES] = $roles;
+                } else {
+                    $u[UserFactory::KEY_ROLES] = ['common_user'];
+                }
                 $this->user = $u;
                 return true;
+            }
+            if (isset($u['error'])) {
+                //TODO handle error
             }
         }
         return false;
     }
 
     /**
+     * TODO
      * Change password.
      *
      * @param $old
@@ -81,6 +85,7 @@ class OAuthUser extends AuthUser
     }
 
     /**
+     * TODO
      * Change user info.
      *
      * @param array $user
@@ -92,6 +97,7 @@ class OAuthUser extends AuthUser
     }
 
     /**
+     * TODO
      * Sync oauth user to ours.
      *
      * @param $user
@@ -107,7 +113,7 @@ class OAuthUser extends AuthUser
      */
     protected function getOAuthUser($token)
     {
-        $uri = ''; //TODO
+        $uri = 'http://localhost:7280/authorize/user'; //TODO
         $res = $this->getResource($uri, $token);
         return $res;
     }
@@ -115,20 +121,28 @@ class OAuthUser extends AuthUser
     /**
      * @param $api_uri
      * @param $token
+     * @param $method
      * @param array $params
      * @return array
      */
-    protected function getResource($api_uri, $token, $params = [])
+    protected function getResource($api_uri, $token, $method = 'GET', $params = [])
     {
         $oauth = getConfig()->get('oauth');
         $appid = isset($oauth['app_id']) ? $oauth['app_id'] : '';
+        $appkey = isset($oauth['app_id_key']) ? $oauth['app_id_key'] : '';
         if ($appid) {
-            $params['app_key'] = $appid;
+            $params[$appkey] = $appid;
         }
         $params['access_token'] = $token;
-        $client = new Client();
-        $res = $client->request('GET', $api_uri, ['query'=>$params]);
-        return json_decode($res->getBody(), true);
+        $client = new AjaxRequest([], 'json');
+        if ($method == 'GET') {
+            $res = $client->get($api_uri, $params);
+        } elseif ($method == 'POST') {
+            $res = $client->post($api_uri, $params);
+        } else {
+            $res = [];
+        }
+        return $res;
     }
 
 }

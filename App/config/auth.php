@@ -49,13 +49,13 @@ return [
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
     'oauth'=>[
-        'code_uri'=>'http://192.168.0.21:10000/authorize',
-        'token_uri'=>'http://192.168.0.21:10000/token',
-        'redirect_uri'=>'http://localhost:8880',
+        'code_uri'=>'http://localhost:7280/authorize/authorize',
+        'token_uri'=>'http://localhost:7280/authorize/token',
+        'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
-        'app_id'=>'',
+        'app_id'=>'c7150743be21e9df63c1d5a50049360d',
         'app_id_key'=>'client_id',
-        'app_secret'=>'',
+        'app_secret'=>'9f2950219ba7b4a3773ba9bd2bab0941',
         'app_secret_key'=>'client_secret',
     ],
 ];

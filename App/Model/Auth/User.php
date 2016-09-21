@@ -10,6 +10,7 @@ namespace Wwtg99\App\Model\Auth;
 
 /**
  * Class User
+ * @deprecated
  * @package wwu\App\Model
  */
 class User

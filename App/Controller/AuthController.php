@@ -9,7 +9,7 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\App\Model\Auth\User;
+use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
 use Wwtg99\Flight2wwu\Common\FWException;
@@ -95,7 +95,7 @@ class AuthController extends BaseController
             throw new FWException(Message::messageList(25));
         }
         $redirectPath = '/';
-        if (getAuth()->attempt([User::KEY_USER_NAME=>$name, User::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
+        if (getAuth()->attempt([UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
             $path = getOValue()->getOldOnce('last_path');
             if ($path) {
                 $redirectPath = $path;
@@ -116,7 +116,8 @@ class AuthController extends BaseController
     private static function postLogout() {
         getAuth()->logout();
         $c = getConfig();
-        $path = U($c->get('defined_routes.login'));
+        $path = '/';
+//        $path = U($c->get('defined_routes.login'));
         \Flight::redirect($path);
     }
 

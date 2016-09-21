@@ -9,25 +9,29 @@
 namespace Wwtg99\App\Controller;
 
 
-
-use GuzzleHttp\Client;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
 use Wwtg99\Flight2wwu\Common\FWException;
+use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
 
 class OAuthController extends BaseController
 {
 
     public static function login()
     {
-//        $scope = ['get_user_info']; //TODO request scope
-        $state = self::generateCSRFState();
-        $params = ['state'=>$state, 'response_type'=>'code']; //TODO
-        $uri = self::getAuthorizeUri($params);
-        if ($uri) {
+        if (getAuth()->isLogin()) {
+            $uri = U(getConfig()->get('defined_routes.logout'));
             \Flight::redirect($uri);
         } else {
-            throw new FWException(Message::messageList(1001));
+//            $scope = ['get_user_info']; //TODO request scope
+            $state = self::generateCSRFState();
+            $params = ['state'=>$state, 'response_type'=>'code']; //TODO
+            $uri = self::getAuthorizeUri($params);
+            if ($uri) {
+                \Flight::redirect($uri);
+            } else {
+                throw new FWException(Message::messageList(1001));
+            }
         }
         return false;
     }
@@ -113,18 +117,19 @@ class OAuthController extends BaseController
                 $params[$appid_key] = $appid;
                 $params[$appsec_key] = $appsec;
             }
-            $client = new Client();
-            $res = $client->get($server_uri, ['query'=>$params]);
+            $client = new AjaxRequest([], 'json');
+            $res = $client->get($server_uri, $params);
             if ($res) {
-                $json = json_decode($res->getBody(), true);
+                if (isset($res['error'])) {
+                    throw new FWException(Message::messageList(1001));
+                }
                 //check state
                 if (isset($params['state'])) {
-                    $get_state = $json['state'];
-                    if (!self::verifyCSRFState($get_state)) {
+                    if (!isset($res['state']) || !self::verifyCSRFState($res['state'])) {
                         throw new FWException(Message::messageList(25));
                     }
                 }
-                return $json;
+                return $res;
             }
         }
         return [];

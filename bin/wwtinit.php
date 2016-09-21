@@ -18,7 +18,8 @@ function parseOption()
         'dir:',
         'clean',
         'clear-cache::',
-        'm-core::'
+        'm-core::',
+        'm-oauth::',
     ];
     $p = getopt($opt, $lopt);
     return $p;
@@ -29,7 +30,7 @@ function parseOption()
  */
 function getHelp()
 {
-    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n--m-core=False    Whether to install module core (default False, True if not specified)\n-v  --version    Show version\n-h  --help    Show Help\n";
+    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n--m-core=False    Whether to install module core (default False, True if not specified)\n--m-oauth=False    Whether to install module oauth server, depends on wwtg99/pgauth (False if not specified)\n-v  --version    Show version\n-h  --help    Show Help\n";
 }
 
 /**
@@ -37,7 +38,7 @@ function getHelp()
  */
 function getVersion()
 {
-    return 'wwtinit 0.1.0';
+    return 'wwtinit 0.1.1';
 }
 
 /**
@@ -47,7 +48,11 @@ function clean($dir)
 {
     $rd = ['App', 'bootstrap', 'web', 'storage'];
     foreach ($rd as $item) {
-        $re = removeDirectory($dir . DIRECTORY_SEPARATOR . $item);
+        $d = $dir . DIRECTORY_SEPARATOR . $item;
+        if (!file_exists($d)) {
+            continue;
+        }
+        $re = removeDirectory($d);
         if (!$re) {
             echo "Remove directory $item failed!\n";
         }
@@ -91,13 +96,21 @@ function clearCache($dir, $cache = null)
 }
 
 /**
+ * @param array $opt
  * @param array $modules
- * @param string $name
  * @return array
  */
-function addModule(&$modules, $name)
+function checkModules($opt, $modules)
 {
-    return $modules;
+    $module_map = ['oauth']; //TODO modules
+    foreach ($module_map as $m) {
+        if (isset($opt["m-$m"])) {
+            if (boolval($opt["m-$m"])) {
+                array_push($modules, $m);
+            }
+        }
+    }
+    return array_unique($modules);
 }
 
 /**
@@ -118,8 +131,9 @@ function installModules($modules, $dir)
     }
     echo "Install into $dir...\n";
     foreach ($modules as $module) {
-        switch ($module) {
+        switch ($module) { //TODO install modules
             case 'core': $re = installCore($dir, $pkg); break;
+            case 'oauth': $re = installOAuth($dir, $pkg); break;
             default: $re = 0;
         }
         if ($re !== 0) {
@@ -169,7 +183,7 @@ function installCore($dir, $package_dir)
             ],
             'Model'=>[
                 'Message.php',
-                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthUser.phps']
+                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthUser.php']
             ],
             'Plugin'=>['PHPInterpreter.php'],
             'view_twig'=>[
@@ -195,6 +209,29 @@ function installCore($dir, $package_dir)
     if ($re === 0) {
         $re = copyDir($package_dir . DIRECTORY_SEPARATOR . 'web', $dir);
     }
+    return $re;
+}
+
+/**
+ * @param string $dir
+ * @param string $package_dir
+ * @return int
+ */
+function installOAuth($dir, $package_dir)
+{
+    echo "Install oauth module...\n";
+    // copy files
+    $mfiles = [
+        'App'=>[
+            'Controller'=>[
+                'AuthorizeController.php',
+            ],
+            'view_twig'=>[
+                'oauth'=>['login.twig']
+            ],
+        ],
+    ];
+    $re = copyFiles($mfiles, $package_dir, $dir);
     return $re;
 }
 
@@ -309,7 +346,7 @@ if (isset($opt['clear-cache'])) {
     if ($m_core) {
         array_push($modules, $m_core);
     }
-    //TODO
+    $modules = checkModules($opt, $modules);
     $re = installModules($modules, $dir);
     if ($re === 0) {
         echo "Install successfully!\n";

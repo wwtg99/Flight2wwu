@@ -215,10 +215,9 @@ abstract class BaseController
     {
         $ip = self::getRequest()->ip;
         $url = self::getRequest()->url;
-        $uid = getUser(UserFactory::KEY_USER_ID);
         $str = FormatUtils::randStr(10);
         $tm = time();
-        $state = md5("CSRF_$ip;$url;$uid;$str;$tm");
+        $state = md5("CSRF_$ip;$url;$str;$tm");
         $state_time = 600;
         getCache()->set($state, 1, $state_time);
         return $state;
