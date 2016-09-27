@@ -88,6 +88,7 @@ return [
         'login'=>'auth/login',
 //        'login'=>'oauth/login',
         'logout'=>'auth/logout',
+        'signup'=>'auth/signup',
         'user_home'=>'auth/info',
         'change_password'=>'auth/password',
         'admin'=>'admin/home',

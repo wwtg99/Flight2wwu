@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 0.2.4
+    - Add sign up and user info
+    - Fix auth bugs
+    - Add captcha
+
 ## 0.2.3
     - Fix state bugs if failed in login and change password
     - Add OAuth server controller

@@ -121,4 +121,9 @@ return [
     'redirect uri does not exists'=>'重定向网址不存在！',
     'app secret does not exists'=>'应用密钥不存在！',
     'invalid access_token'=>'无效的access_token！',
+    'Sign Up'=>'注册',
+    'Email'=>'电子邮箱',
+    'sign up failed'=>'注册失败！',
+    'Captcha'=>'验证码',
+    'invalid captcha'=>'验证码错误！',
 ];

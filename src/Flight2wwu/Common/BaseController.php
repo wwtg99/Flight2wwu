@@ -8,6 +8,7 @@
 
 namespace Wwtg99\Flight2wwu\Common;
 
+use Gregwar\Captcha\CaptchaBuilder;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
@@ -232,6 +233,38 @@ abstract class BaseController
         if ($state) {
             $v = getCache()->get($state);
             if ($v === 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return CaptchaBuilder
+     */
+    protected static function generateCaptcha()
+    {
+        $builder = new CaptchaBuilder();
+        $builder->build();
+        $ip = self::getRequest()->ip;
+        $key = md5($builder->getPhrase() . $ip);
+        $phrase_time = 600;
+        getCache()->set($key, $builder->getPhrase(), $phrase_time);
+        return $builder;
+    }
+
+    /**
+     * @param string $phrase
+     * @return bool
+     */
+    protected static function verifyCaptcha($phrase)
+    {
+        if ($phrase) {
+            $ip = self::getRequest()->ip;
+            $key = md5($phrase . $ip);
+            $v = getCache()->get($key);
+            $b = CaptchaBuilder::create($v);
+            if ($b->testPhrase($phrase)) {
                 return true;
             }
         }

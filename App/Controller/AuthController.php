@@ -9,13 +9,16 @@
 namespace Wwtg99\App\Controller;
 
 
+use Gregwar\Captcha\CaptchaBuilder;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
+use Wwtg99\DataPool\Utils\FieldFormatter;
 use Wwtg99\Flight2wwu\Common\BaseController;
-use Wwtg99\Flight2wwu\Common\FWException;
 
 class AuthController extends BaseController
 {
+
+    const PHRASE_EXPIRES = 600;
 
     public static function login()
     {
@@ -77,10 +80,11 @@ class AuthController extends BaseController
     private static function getLogin()
     {
         if (getAuth()->isLogin()) {
-            \Flight::redirect(getConfig()->get('defined_routes.logout'));
+            \Flight::redirect(U(getConfig()->get('defined_routes.logout')));
         } else {
             $state = self::generateCSRFState();
-            getView()->render('auth/login', ['title'=>'Login', 'state'=>$state]);
+            $builder = self::generateCaptcha();
+            getView()->render('auth/login', ['title'=>'Login', 'state'=>$state, 'captcha'=>$builder]);
         }
     }
 
@@ -89,10 +93,21 @@ class AuthController extends BaseController
         $name = self::getPost('username');
         $pwd = self::getPost('password');
         $rem = self::getPost('remember');
-        getOValue()->addOld('username', $name);
+        getOValue()->addOld('login_username', $name);
         $state = self::getInput('state');
+        $phrase = self::getInput('captcha');
         if (!self::verifyCSRFState($state)) {
-            throw new FWException(Message::messageList(25));
+            $msg = Message::getMessage(25);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.login'));
+            \Flight::redirect($rpath);
+            return;
+        } elseif (!self::verifyCaptcha($phrase)) {
+            $msg = Message::getMessage(27);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.login'));
+            \Flight::redirect($rpath);
+            return;
         }
         $redirectPath = '/';
         if (getAuth()->attempt([UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
@@ -103,8 +118,9 @@ class AuthController extends BaseController
             \Flight::redirect($redirectPath);
         } else {
             $msg = Message::getMessage(21);
-            $state = self::generateCSRFState();
-            getView()->render('auth/login', ['msg'=>$msg, 'title'=>'Login', 'state'=>$state]);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.login'));
+            \Flight::redirect($rpath);
         }
     }
 
@@ -127,7 +143,7 @@ class AuthController extends BaseController
             $state = self::generateCSRFState();
             getView()->render('auth/change_pwd', ['title'=>'Change Password', 'state'=>$state]);
         } else {
-            \Flight::redirect(getConfig()->get('defined_routes.login'));
+            \Flight::redirect(U(getConfig()->get('defined_routes.login')));
         }
     }
 
@@ -138,9 +154,8 @@ class AuthController extends BaseController
         $new2 = self::getPost('new2');
         $state = self::getInput('state');
         if (!self::verifyCSRFState($state)) {
-            throw new FWException(Message::messageList(25));
-        }
-        if (!$new1 || !$new2){
+            $msg = Message::getMessage(25);
+        } elseif (!$new1 || !$new2){
             $msg = Message::getMessage(15);
         } elseif ($new1 != $new2) {
             $msg = Message::getMessage(22);
@@ -152,13 +167,15 @@ class AuthController extends BaseController
                 $msg = Message::getMessage(24);
             }
         }
-        $state = self::generateCSRFState();
-        getView()->render('auth/change_pwd', ['msg'=>$msg, 'title'=>'Change Password', 'state'=>$state]);
+        getOValue()->addOldOnce('msg', $msg);
+        $rpath = U(getConfig()->get('defined_routes.change_password'));
+        \Flight::redirect($rpath);
     }
 
     private static function getInfo()
     {
-
+        $user = getUser();
+        getView()->render('auth/user_info', ['user'=>FieldFormatter::formatFields($user, ['format_datetime'=>[], 'format_number'=>[]]), 'title'=>'User Center']);
     }
 
     private static function postInfo()
@@ -168,12 +185,55 @@ class AuthController extends BaseController
 
     private static function getSignup()
     {
-
+        if (getAuth()->isLogin()) {
+            \Flight::redirect(U(getConfig()->get('defined_routes.logout')));
+        } else {
+            $state = self::generateCSRFState();
+            $builder = self::generateCaptcha();
+            getView()->render('auth/signup', ['title'=>'Sign Up', 'state'=>$state, 'captcha'=>$builder]);
+        }
     }
 
     private static function postSignup()
     {
-
+        $name = self::getPost('username');
+        $email = self::getPost('email');
+        $pwd = self::getPost('password');
+        $pwd2 = self::getPost('password2');
+        $state = self::getInput('state');
+        $phrase = self::getInput('captcha');
+        getOValue()->addOld('signup_username', $name);
+        getOValue()->addOld('signup_email', $email);
+        if (!self::verifyCSRFState($state)) {
+            $msg = Message::getMessage(25);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.signup'));
+            \Flight::redirect($rpath);
+            return;
+        } elseif (!self::verifyCaptcha($phrase)) {
+            $msg = Message::getMessage(27);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.signup'));
+            \Flight::redirect($rpath);
+            return;
+        } elseif ($pwd != $pwd2) {
+            $msg = Message::getMessage(22);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.signup'));
+            \Flight::redirect($rpath);
+            return;
+        }
+        $redirectPath = U(getConfig()->get('defined_routes.user_home'));
+        $user = UserFactory::getUser();
+        if ($user->signUp([UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_USER_EMAIL=>$email])) {
+            getAuth()->login($user, true);
+            \Flight::redirect($redirectPath);
+        } else {
+            $msg = Message::getMessage(26);
+            getOValue()->addOldOnce('msg', $msg);
+            $rpath = U(getConfig()->get('defined_routes.signup'));
+            \Flight::redirect($rpath);
+        }
     }
 
     private static function getEdit()

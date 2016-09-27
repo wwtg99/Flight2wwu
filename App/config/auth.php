@@ -24,6 +24,7 @@ return [
                 '/403' => 3,
                 '/auth/login' => 3,
                 '/auth/logout' => 3,
+                '/auth/signup' => 3,
                 '/oauth/login' => 3,
                 '/oauth/redirect_login' => 3,
                 '/ajax'=>3,

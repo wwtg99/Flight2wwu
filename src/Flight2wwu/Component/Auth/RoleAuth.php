@@ -95,7 +95,7 @@ class RoleAuth implements IAuth
      *
      * @param AuthUser $user
      * @param bool $writeCookies
-     * @return $this
+     * @return IAuth
      */
     public function login($user, $writeCookies = true)
     {

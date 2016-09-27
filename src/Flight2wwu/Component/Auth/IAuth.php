@@ -26,6 +26,15 @@ interface IAuth
     public function isLogin();
 
     /**
+     * Login user to storage (session or cookies).
+     *
+     * @param AuthUser $user
+     * @param bool $writeCookies
+     * @return IAuth
+     */
+    public function login($user, $writeCookies = true);
+
+    /**
      * Logout User in storage (session or cookies).
      *
      * @return mixed

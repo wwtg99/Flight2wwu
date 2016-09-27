@@ -139,6 +139,8 @@ class Message
             case 23: $msg = ['message'=>'password changed', 'type'=>'success']; break;
             case 24: $msg = ['message'=>'password not changed', 'type'=>'danger']; break;
             case 25: $msg = ['message'=>'CSRF token invalid', 'type'=>'danger']; break;
+            case 26: $msg = ['message'=>'sign up failed', 'type'=>'danger']; break;
+            case 27: $msg = ['message'=>'invalid captcha', 'type'=>'danger']; break;
             // oauth error
             case 1001: $msg = ['message'=>'oauth login failed', 'type'=>'danger']; break;
             case 1002: $msg = ['message'=>'invalid code', 'type'=>'danger']; break;

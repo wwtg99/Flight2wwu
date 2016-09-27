@@ -30,7 +30,8 @@
                         <button class="btn btn-primary" type="submit" id="submit" tabindex="3">{{ 'Submit'|T }}</button>
                         <button class="btn btn-default" type="reset" id="reset" tabindex="4">{{ 'Reset'|T }}</button>
                     </div>
-                    {% if msg is defined %}
+                    {% set msg = old('msg') %}
+                    {% if msg %}
                         <div class="alert alert-{{ msg.type }} text-center">
                             {{ msg.message|T }}
                         </div>

@@ -10,13 +10,22 @@
                     <div class="form-group">
                         <label class="control-label col-md-2"><span class="glyphicon glyphicon-user"></span></label>
                         <div class="col-md-10">
-                            <input class="form-control" type="text" name="username" placeholder="{{ 'Username'|T }}" value="{{ old('username') }}" tabindex="1">
+                            <input class="form-control" type="text" name="username" placeholder="{{ 'Username'|T }}" value="{{ old('login_username') }}" tabindex="1" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2"><span class="glyphicon glyphicon-lock"></span></label>
                         <div class="col-md-10">
-                            <input class="form-control" type="password" name="password" placeholder="{{ 'Password'|T }}" tabindex="2">
+                            <input class="form-control" type="password" name="password" placeholder="{{ 'Password'|T }}" tabindex="2" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2"><span class="glyphicon glyphicon-certificate"></span></label>
+                        <div class="col-md-5">
+                            <input class="form-control" type="text" name="captcha" placeholder="{{ 'Captcha'|T }}" tabindex="3" required>
+                        </div>
+                        <div class="col-md-5">
+                            <img src="{{ captcha.inline() }}"> <a href="{{ getConfig('defined_routes.login')|U }}"><span class="glyphicon glyphicon-refresh"></span></a>
                         </div>
                     </div>
                     <input type="hidden" name="state" value="{{ state }}">
@@ -26,7 +35,8 @@
                     <div class="form-group text-center">
                         <button class="btn btn-primary" type="submit" id="submit" tabindex="3">{{ 'Login'|T }}</button>
                     </div>
-                    {% if msg is defined %}
+                    {% set msg = old('msg') %}
+                    {% if msg %}
                     <div class="alert alert-danger text-center">
                         {{ msg.message|T }}
                     </div>

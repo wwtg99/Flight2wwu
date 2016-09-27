@@ -59,6 +59,21 @@ class NormalUser extends AuthUser
     }
 
     /**
+     * Sign up new user.
+     *
+     * @param array $user
+     * @return bool
+     */
+    public function signUp($user)
+    {
+        if (isset($user['name']) && $user['name'] == 'admin') {
+            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'access_token'=>'aaa', 'roles'=>['admin', 'common_user']];
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @return array
      */
     public function getRoles()

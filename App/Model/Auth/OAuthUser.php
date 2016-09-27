@@ -97,6 +97,17 @@ class OAuthUser extends AuthUser
     }
 
     /**
+     * Sign up new user.
+     *
+     * @param array $user
+     * @return bool
+     */
+    public function signUp($user)
+    {
+        // TODO: Implement signUp() method.
+    }
+
+    /**
      * TODO
      * Sync oauth user to ours.
      *

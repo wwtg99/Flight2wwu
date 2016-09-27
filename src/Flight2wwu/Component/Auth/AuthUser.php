@@ -66,4 +66,12 @@ abstract class AuthUser
      * @return bool
      */
     abstract public function changeInfo($user);
+
+    /**
+     * Sign up new user.
+     *
+     * @param array $user
+     * @return bool
+     */
+    abstract public function signUp($user);
 }
