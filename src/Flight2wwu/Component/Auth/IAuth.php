@@ -47,6 +47,11 @@ interface IAuth
     public function getUser();
 
     /**
+     * @return AuthUser
+     */
+    public function getUserObject();
+
+    /**
      * @param string|array $role
      * @return bool
      */

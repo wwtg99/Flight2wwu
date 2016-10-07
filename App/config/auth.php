@@ -45,7 +45,7 @@ return [
             ],
         ],
         'session'=>true, //use session to store user info
-        'session_expires'=>60, // seconds for auth session expires
+        'session_expires'=>30, // seconds for auth session expires
         'cookie'=>true, //use cookie to store token
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
@@ -59,4 +59,13 @@ return [
         'app_secret'=>'9f2950219ba7b4a3773ba9bd2bab0941',
         'app_secret_key'=>'client_secret',
     ],
+    "auth_cache"=>[
+        "type"=>"redis",
+        "options"=>[
+            "schema"=>"tcp",
+            "host"=>"192.168.6.131",
+            "database"=>6
+        ]
+    ],
+    'token_ttl'=>300
 ];

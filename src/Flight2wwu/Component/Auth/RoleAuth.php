@@ -100,6 +100,7 @@ class RoleAuth implements IAuth
     public function login($user, $writeCookies = true)
     {
         $this->user = $user;
+        $user->login();
         $u = $user->getUser();
         if ($this->use_session) {
             getSession()->set(self::SESSION_KEY, $u, $this->sessionExpires);
@@ -143,6 +144,7 @@ class RoleAuth implements IAuth
      */
     public function logout()
     {
+        $this->user->logout();
         $this->user = null;
         if ($this->use_session) {
             getSession()->delete(self::SESSION_KEY);

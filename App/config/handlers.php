@@ -100,3 +100,7 @@ Flight::route('/ajax_json', function () {
     ];
     Flight::json($re);
 });
+Flight::route('/unset', function() {
+    unset($_SESSION);
+    echo 'unset';
+});

@@ -74,4 +74,14 @@ abstract class AuthUser
      * @return bool
      */
     abstract public function signUp($user);
+
+    /**
+     * @return mixed
+     */
+    abstract public function login();
+
+    /**
+     * @return mixed
+     */
+    abstract public function logout();
 }

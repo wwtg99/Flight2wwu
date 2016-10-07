@@ -104,7 +104,23 @@ class OAuthUser extends AuthUser
      */
     public function signUp($user)
     {
-        // TODO: Implement signUp() method.
+        return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function login()
+    {
+        // TODO: Implement login() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    public function logout()
+    {
+        // TODO: Implement logout() method.
     }
 
     /**

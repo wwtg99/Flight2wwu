@@ -10,9 +10,13 @@ namespace Wwtg99\App\Model\Auth;
 
 
 use Wwtg99\Flight2wwu\Component\Auth\AuthUser;
+use Wwtg99\PgAuth\Auth\IAuth;
+use Wwtg99\PgAuth\Auth\NormalAuth;
 
 class NormalUser extends AuthUser
 {
+
+    protected $originUser = [];
 
     /**
      * TODO
@@ -23,8 +27,11 @@ class NormalUser extends AuthUser
      */
     public function verify($user)
     {
-        if (isset($user['name']) && $user['name'] == 'admin') {
-            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'access_token'=>'aaa', 'roles'=>['admin', 'common_user']];
+        $this->originUser = $user;
+        $auth = $this->getAuth();
+        $u = $auth->verify($user);
+        if ($u) {
+            $this->user = $u->getUser();
             return true;
         }
         return false;
@@ -40,8 +47,10 @@ class NormalUser extends AuthUser
      */
     public function changePassword($old, $new)
     {
-        if ($old == '1') {
-            return true;
+        $auth = $this->getAuth();
+        $u = $auth->verify($this->user);
+        if ($u) {
+            return $u->changePassword($new);
         }
         return false;
     }
@@ -55,7 +64,12 @@ class NormalUser extends AuthUser
      */
     public function changeInfo($user)
     {
-        return true;
+        $auth = $this->getAuth();
+        $u = $auth->verify($this->user);
+        if ($u) {
+            return $u->changeInfo($user);
+        }
+        return false;
     }
 
     /**
@@ -66,8 +80,11 @@ class NormalUser extends AuthUser
      */
     public function signUp($user)
     {
-        if (isset($user['name']) && $user['name'] == 'admin') {
-            $this->user = ['user_id'=>'1', 'name'=>'admin', 'superuser'=>true, 'access_token'=>'aaa', 'roles'=>['admin', 'common_user']];
+        $auth = $this->getAuth();
+        $this->originUser = $user;
+        $u = $auth->signUp($user);
+        if ($u) {
+            $this->user = $u->getUser();
             return true;
         }
         return false;
@@ -80,6 +97,45 @@ class NormalUser extends AuthUser
     {
         $r = isset($this->user[UserFactory::KEY_ROLES]) ? $this->user[UserFactory::KEY_ROLES] : [];
         return $r;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function login()
+    {
+        $auth = $this->getAuth();
+        $u = $auth->signIn($this->originUser);
+        if ($u) {
+            $this->user = $u->getUser();
+            return $u->getUser();
+        }
+        return $auth->getMessage();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function logout()
+    {
+        $auth = $this->getAuth();
+        $u = $auth->signOut($this->user);
+        if ($u) {
+            $this->user = [];
+            return $u->getUser();
+        }
+        return $auth->getMessage();
+    }
+
+    /**
+     * @return IAuth
+     */
+    protected function getAuth()
+    {
+        $cache = getConfig()->get('auth_cache');
+        $ttl = getConfig()->get('token_ttl');
+        $auth = new NormalAuth(getDataPool()->getConnection('auth'), ['cache'=>$cache, 'token_ttl'=>$ttl]);
+        return $auth;
     }
 
 

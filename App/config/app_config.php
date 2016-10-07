@@ -75,6 +75,24 @@ return [
                     'max_logfile'=>5
                 ]
             ],
+            [
+                'name'=>'auth',
+                'class'=>'Wwtg99\\DataPool\\Connections\\DatabaseConnection',
+                'mapper_path'=>'Wwtg99\\PgAuth\\Mapper',
+                'database'=>[
+                    'driver'=>'pgsql',
+                    'dbname'=>'test2',
+                    'host'=>'192.168.6.131',
+                    'username'=>'wwu',
+                    'password'=>'1',
+                    'port'=>5432
+                ],
+                'logger'=>[
+                    'level'=>'DEBUG',
+                    'title'=>'dbconn.log',
+                    'max_logfile'=>5
+                ]
+            ],
         ]
     ],
     //View

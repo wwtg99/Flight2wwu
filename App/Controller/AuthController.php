@@ -9,7 +9,6 @@
 namespace Wwtg99\App\Controller;
 
 
-use Gregwar\Captcha\CaptchaBuilder;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\DataPool\Utils\FieldFormatter;
