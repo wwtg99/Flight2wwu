@@ -9,12 +9,11 @@
 namespace Wwtg99\App\Model\Auth;
 
 
-use GuzzleHttp\Client;
-use Wwtg99\Flight2wwu\Common\FWException;
-use Wwtg99\Flight2wwu\Component\Auth\AuthUser;
+use Wwtg99\Flight2wwu\Component\Auth\PgAuthUser;
 use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
+use Wwtg99\PgAuth\Auth\OAuthUser;
 
-class OAuthUser extends AuthUser
+class OAuthClientUser extends PgAuthUser
 {
 
     /**
@@ -23,12 +22,15 @@ class OAuthUser extends AuthUser
     protected $syncUser = false;
 
     /**
-     * @return array
+     * OAuthUser constructor.
+     * @param $user
      */
-    public function getRoles()
+    public function __construct($user)
     {
-        $r = isset($this->user[UserFactory::KEY_ROLES]) ? $this->user[UserFactory::KEY_ROLES] : [];
-        return $r;
+        parent::__construct($user);
+        if (is_array($user)) {
+            $this->user = new OAuthUser($user);
+        }
     }
 
     /**
@@ -38,7 +40,7 @@ class OAuthUser extends AuthUser
      * @param array $user
      * @return bool
      */
-    public function verify($user)
+    public function verify(array $user)
     {
         if (isset($user[UserFactory::KEY_USER_TOKEN])) {
             $token = $user[UserFactory::KEY_USER_TOKEN];
@@ -47,21 +49,7 @@ class OAuthUser extends AuthUser
                 if ($this->syncUser) {
                     $this->syncUser($u);
                 }
-                $u[UserFactory::KEY_USER_TOKEN] = $token;
-                if (isset($u[UserFactory::KEY_ROLES])) {
-                    if (is_array($u[UserFactory::KEY_ROLES])) {
-                        $roles = $u[UserFactory::KEY_ROLES];
-                    } else {
-                        $roles = explode(',', $u[UserFactory::KEY_ROLES]);
-                    }
-                    if (!in_array('common_user', $roles)) {
-                        array_push($roles, 'common_user');
-                    }
-                    $u[UserFactory::KEY_ROLES] = $roles;
-                } else {
-                    $u[UserFactory::KEY_ROLES] = ['common_user'];
-                }
-                $this->user = $u;
+                $this->user = new OAuthUser($u);
                 return true;
             }
             if (isset($u['error'])) {
@@ -72,9 +60,6 @@ class OAuthUser extends AuthUser
     }
 
     /**
-     * TODO
-     * Change password.
-     *
      * @param $old
      * @param $new
      * @return bool
@@ -85,42 +70,38 @@ class OAuthUser extends AuthUser
     }
 
     /**
-     * TODO
-     * Change user info.
-     *
      * @param array $user
      * @return bool
      */
-    public function changeInfo($user)
+    public function changeInfo(array $user)
     {
         return false;
     }
 
     /**
-     * Sign up new user.
-     *
      * @param array $user
      * @return bool
      */
-    public function signUp($user)
+    public function signUp(array $user)
     {
         return false;
     }
 
     /**
-     * @return mixed
+     * @param array $user
+     * @return bool
      */
-    public function login()
+    public function login(array $user)
     {
-        // TODO: Implement login() method.
+        return true;
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function logout()
     {
-        // TODO: Implement logout() method.
+        return true;
     }
 
     /**
@@ -140,7 +121,7 @@ class OAuthUser extends AuthUser
      */
     protected function getOAuthUser($token)
     {
-        $uri = 'http://localhost:7280/authorize/user'; //TODO
+        $uri = 'http://192.168.0.21:7611/authorize/user'; //TODO
         $res = $this->getResource($uri, $token);
         return $res;
     }

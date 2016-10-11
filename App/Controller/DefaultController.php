@@ -10,8 +10,10 @@ namespace Wwtg99\App\Controller;
 
 
 use Wwtg99\App\Model\Auth\UserFactory;
+use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\PgAuth\Auth\IUser;
 
 class DefaultController extends BaseController
 {
@@ -54,14 +56,15 @@ class DefaultController extends BaseController
             '/404',
             '/oauth/redirect_login',
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
-            FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout'))
+            FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout')),
+            FormatUtils::formatWebPath(getConfig()->get('defined_routes.signup')),
         ];
         if (!in_array($path, $skip) && !self::getRequest()->ajax) {
             getOValue()->addOldOnce('last_path', $path);
         }
         // get user
         if (getAuth()->isLogin()) {
-            $user = getUser()[UserFactory::KEY_USER_ID];
+            $user = getUser()[IUser::FIELD_USER_NAME];
         } else {
             $user = 'anonymous';
         }
@@ -95,6 +98,16 @@ class DefaultController extends BaseController
                 echo T('forbidden');
             }
         }
+        return false;
+    }
+
+    /**
+     * Method not allowed, error 405
+     * @return bool
+     */
+    public static function methodNotAllowed()
+    {
+        \Flight::halt(405, 'Method not allowed');
         return false;
     }
 

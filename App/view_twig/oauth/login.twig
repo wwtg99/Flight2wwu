@@ -50,7 +50,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    {% if isSuperuser() and hasRole('admin') %}
+                                    {% if isSuperuser() %}
                                         <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
                                     {% endif %}
                                     <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
@@ -95,8 +95,9 @@
                     <button class="btn btn-success btn-group-justified">{{ 'Login'|T }}</button>
                 </form>
                 <br>
-                {% if error is defined %}
-                    <div class="alert alert-danger text-center">{{ error.message|T }}</div>
+                {% set msg = old('msg') %}
+                {% if msg %}
+                    <div class="alert alert-danger text-center">{{ msg.message|T }}</div>
                 {% endif %}
             </div>
             <div class="col-md-5 col-md-offset-2">

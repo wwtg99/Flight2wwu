@@ -27,6 +27,7 @@ return [
                 '/auth/signup' => 3,
                 '/oauth/login' => 3,
                 '/oauth/redirect_login' => 3,
+                '/authorize/*'=>3,
                 '/ajax'=>3,
                 '/ajax_json'=>3,
             ],
@@ -50,22 +51,22 @@ return [
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
     'oauth'=>[
-        'code_uri'=>'http://localhost:7280/authorize/authorize',
-        'token_uri'=>'http://localhost:7280/authorize/token',
+        'code_uri'=>'http://192.168.0.21:7611/authorize/authorize',
+        'token_uri'=>'http://192.168.0.21:7611/authorize/token',
         'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
-        'app_id'=>'c7150743be21e9df63c1d5a50049360d',
+        'app_id'=>'0b442326cba19a891356a6288df4cc5a',
         'app_id_key'=>'client_id',
-        'app_secret'=>'9f2950219ba7b4a3773ba9bd2bab0941',
+        'app_secret'=>'c22c408bc8394d4d0ed2388457534fa1',
         'app_secret_key'=>'client_secret',
     ],
     "auth_cache"=>[
         "type"=>"redis",
         "options"=>[
             "schema"=>"tcp",
-            "host"=>"192.168.6.131",
+            "host"=>"192.168.0.21",
             "database"=>6
         ]
     ],
-    'token_ttl'=>300
+    'token_ttl'=>7200  // seconds for access_token expires
 ];

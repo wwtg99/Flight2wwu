@@ -50,7 +50,7 @@ return [
     //Redis
     'redis'=>[
         'scheme' => 'tcp',
-        'host'   => '10.0.0.1',
+        'host'   => '192.168.0.21',
         'port'   => 6379,
     ],
     //DataPool
@@ -81,15 +81,15 @@ return [
                 'mapper_path'=>'Wwtg99\\PgAuth\\Mapper',
                 'database'=>[
                     'driver'=>'pgsql',
-                    'dbname'=>'test2',
-                    'host'=>'192.168.6.131',
-                    'username'=>'wwu',
-                    'password'=>'1',
+                    'dbname'=>'auth_test',
+                    'host'=>'192.168.0.21',
+                    'username'=>'genobase',
+                    'password'=>'genobase',
                     'port'=>5432
                 ],
                 'logger'=>[
                     'level'=>'DEBUG',
-                    'title'=>'dbconn.log',
+                    'title'=>'database.log',
                     'max_logfile'=>5
                 ]
             ],

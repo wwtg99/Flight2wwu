@@ -126,4 +126,6 @@ return [
     'sign up failed'=>'注册失败！',
     'Captcha'=>'验证码',
     'invalid captcha'=>'验证码错误！',
+    'user info changed'=>'用户信息修改成功！',
+    'user info changed failed'=>'用户信息修改失败！',
 ];

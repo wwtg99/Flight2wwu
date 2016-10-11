@@ -9,10 +9,10 @@
 namespace Wwtg99\App\Controller;
 
 
+use Wwtg99\App\Model\Auth\OAuthServerUser;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\BaseController;
-use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 /**
  * Class AuthorizeController
@@ -24,10 +24,6 @@ use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 class AuthorizeController extends BaseController
 {
 
-    const CODE_EXPIRES = 180;
-
-    const TOKEN_EXPIRES = 7200;
-
     public static function authorize()
     {
         if (self::checkMethod('POST')) {
@@ -38,46 +34,48 @@ class AuthorizeController extends BaseController
             $state = self::getInput('state');
             $redirect_uri = self::getInput('redirect_uri');
             if (!$cid) {
-                $redata = ['error'=>Message::messageList(1008)->toArray()];
+                $msg = Message::getMessage(1008);
             } elseif (!$redirect_uri) {
-                $redata = ['error'=>Message::messageList(1010)->toArray()];
+                $msg = Message::getMessage(1010);
             } else {
-                $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
-                $app = $appmodel->getApp($cid, $redirect_uri);
-                if ($app) {
-                    if (!$username || !$pwd) {
-                        $redata = ['error'=>Message::messageList(21)->toArray()];
-                    } else {
-                        $u = UserFactory::getUser();
-                        $re = $u->verify([UserFactory::KEY_USER_NAME=>$username, UserFactory::KEY_USER_PASSWORD=>$pwd]);
-                        if ($re) {
-                            //generate code
-                            $code = self::generateCode($cid);
-                            getCache()->set($code, json_encode($u->getUser()), self::CODE_EXPIRES);
-                            $re = ['code=' . $code];
-                            if ($state) {
-                                array_push($re, 'state=' . $state);
-                            }
-                            $uri = $redirect_uri . '?' . implode('&', $re);
-                            \Flight::redirect($uri);
-                            return false;
-                        } else {
-                            $redata = ['error'=>Message::messageList(21)->toArray()];
-                        }
-                    }
-                    $redata['app'] = $app;
-                    $redata['redirect_uri'] = $redirect_uri;
-                    if ($state) {
-                        $redata['state'] = $state;
-                    }
-                    if ($scope) {
-                        $redata['scope'] = $scope;
-                    }
+                if (!$username || !$pwd) {
+                    $msg = Message::getMessage(21);
                 } else {
-                    $redata = ['error'=>Message::messageList(1005)->toArray()];
+                    $user = [UserFactory::KEY_USER_NAME=>$username, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_APP_ID=>$cid, UserFactory::KEY_APP_REDIRECT_URI=>$redirect_uri];
+                    //OAuth server
+                    $u = new OAuthServerUser(null);
+                    //generate code
+                    $code = $u->getCode($user);
+                    if ($code) {
+                        $q = ['code'=>$code];
+                        if ($state) {
+                            $q['state'] = $state;
+                        }
+                        $uri = self::createUri($redirect_uri, $q);
+                        \Flight::redirect($uri);
+                        return false;
+                    } else {
+                        $msg = Message::getMessage(21, $u->getMessage(), 'danger');
+                        getOValue()->addOldOnce('msg', $msg);
+                    }
                 }
             }
-            getView()->render('oauth/login', $redata);
+            getOValue()->addOldOnce('msg', $msg);
+            $q = [
+                'response_type'=>'code',
+                'client_id'=>$cid,
+                'redirect_uri'=>$redirect_uri
+            ];
+            if ($state) {
+                $q['state'] = $state;
+            }
+            if ($scope) {
+                $q['scope'] = $scope;
+            }
+            $uri = '/authorize/authorize';
+            $uri = self::createUri($uri, $q);
+            \Flight::redirect($uri);
+            return false;
         } else {
             $rtype = self::getInput('response_type');
             $cid = self::getInput('client_id');
@@ -85,11 +83,11 @@ class AuthorizeController extends BaseController
             $state = self::getInput('state');
             $scope = self::getInput('scope');
             if (!$rtype || $rtype != 'code') {
-                $redata = ['error'=>Message::messageList(1004)->toArray()];
+                $redata = ['error'=>Message::getMessage(1004)];
             } elseif (!$cid) {
-                $redata = ['error'=>Message::messageList(1008)->toArray()];
+                $redata = ['error'=>Message::getMessage(1008)];
             } elseif (!$rurl) {
-                $redata = ['error'=>Message::messageList(1010)->toArray()];
+                $redata = ['error'=>Message::getMessage(1010)];
             } else {
                 $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
                 $app = $appmodel->getApp($cid, $rurl);
@@ -102,7 +100,7 @@ class AuthorizeController extends BaseController
                         $redata['scope'] = $scope;
                     }
                 } else {
-                    $redata = ['error'=>Message::messageList(1005)->toArray()];
+                    $redata = ['error'=>Message::getMessage(1005)];
                 }
             }
             getView()->render('oauth/login', $redata);
@@ -113,43 +111,38 @@ class AuthorizeController extends BaseController
     public static function token()
     {
         $gtype = self::getInput('grant_type', 'authorization_code');
-        $cid = self::getInput('client_id');
         $cset = self::getInput('client_secret');
         $code = self::getInput('code');
         $rurl = self::getInput('redirect_uri');
         $state = self::getInput('state');
         if (!$gtype || $gtype != 'authorization_code') {
-            $redata = ['error'=>Message::messageList(1006)->toArray()];
-        } elseif (!$cid) {
-            $redata = ['error'=>Message::messageList(1008)->toArray()];
+            $redata = ['error'=>Message::getMessage(1006)];
         } elseif (!$cset) {
-            $redata = ['error'=>Message::messageList(1011)->toArray()];
+            $redata = ['error'=>Message::getMessage(1011)];
         } elseif (!$rurl) {
-            $redata = ['error'=>Message::messageList(1010)->toArray()];
+            $redata = ['error'=>Message::getMessage(1010)];
         } elseif (!$code) {
-            $redata = ['error'=>Message::messageList(1002)->toArray()];
+            $redata = ['error'=>Message::getMessage(1002)];
         } else {
+            //OAuth server
+            $u = new OAuthServerUser(null);
             //verify code
-            $u = getCache()->get($code);
-            if ($u) {
-                //verify app
-                $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
-                $re = $appmodel->verifySecret($cid, $cset, $rurl);
-                if (!$re) {
-                    $redata = ['error'=>Message::messageList(1007)->toArray()];
-                } else {
-                    //generate token
-                    $token = self::generateToken($cid);
-                    $redata = ['access_token'=>$token, 'expires_in'=>self::TOKEN_EXPIRES];
+            $user = [UserFactory::KEY_CODE=>$code, UserFactory::KEY_APP_SECRET=>$cset];
+            $re = $u->login($user);
+            if ($re) {
+                $us = $u->getUser()->getUser();
+                if (isset($us[UserFactory::KEY_USER_TOKEN])) {
+                    $token = $us[UserFactory::KEY_USER_TOKEN];
+                    $ttl = getConfig()->get('token_ttl');
+                    $redata = ['access_token'=>$token, 'expires_in'=>time() + $ttl];
                     if ($state) {
                         $redata['state'] = $state;
                     }
-                    //store token in redis
-                    getRedis()->set($token, $u, 'EX', self::TOKEN_EXPIRES);
+                } else {
+                    $redata = ['error'=>Message::getMessage(21, $u->getMessage(), 'danger')];
                 }
-
             } else {
-                $redata = ['error'=>Message::messageList(1002)->toArray()];
+                $redata = ['error'=>Message::getMessage(1002)];
             }
         }
         \Flight::json($redata);
@@ -160,39 +153,36 @@ class AuthorizeController extends BaseController
     {
         $cid = self::getInput('client_id');
         $token = self::getInput('access_token');
-        $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
-        $app = $appmodel->get($cid);
-        if ($cid && $app) {
-            $u = getRedis()->get($token);
-            if ($u) {
-                $redata = json_decode($u, true);
+        if (!$cid) {
+            $redata = ['error'=>Message::getMessage(1009)];
+        } elseif (!$token) {
+            $redata = ['error'=>Message::getMessage(1012)];
+        }  else {
+            //OAuth server
+            $u = new OAuthServerUser(null);
+            $user = [UserFactory::KEY_USER_TOKEN=>$token, UserFactory::KEY_APP_ID=>$cid];
+            $re = $u->verify($user);
+            if ($re) {
+                $redata = $u->getUser()->getUser();
             } else {
-                $redata = ['error'=>Message::messageList(1012)->toArray()];
+                $redata = ['error'=>Message::getMessage(1012)];
             }
-        } else {
-            $redata = ['error'=>Message::messageList(1009)->toArray()];
         }
-        \Flight::json($redata);
+        \Flight::json(TA($redata));
         return false;
     }
 
     /**
-     * @param string $app_id
+     * @param $uri
+     * @param array $query
      * @return string
      */
-    private static function generateCode($app_id = '')
+    private static function createUri($uri, $query = [])
     {
-        $str = $app_id . FormatUtils::randStr(20) . time();
-        return substr(md5($str), mt_rand(0, 5), 10);
-    }
-
-    /**
-     * @param string $app_id
-     * @return string
-     */
-    private static function generateToken($app_id)
-    {
-        $str = $app_id . FormatUtils::randStr(30) . time();
-        return substr(md5($str), 16);
+        $p = [];
+        foreach ($query as $k => $v) {
+            array_push($p, "$k=$v");
+        }
+        return $uri . '?' . implode('&', $p);
     }
 }

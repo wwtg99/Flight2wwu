@@ -86,6 +86,8 @@ Flight::route('/ajax', function () {
     print_r($_POST);
     echo "<br>---Header--<br>";
     print_r($_SERVER);
+    echo "<br>---Session---<br>";
+    print_r($_SESSION);
     echo "<br>---Cookies--<br>";
     print_r($_COOKIE);
 });
@@ -95,12 +97,16 @@ Flight::route('/ajax_json', function () {
         'get'=>$_GET,
         'post'=>$_POST,
         'header'=>$_SERVER,
+        'session'=>$_SESSION,
         'cookies'=>$_COOKIE,
         'ajax'=>Flight::request()->ajax
     ];
     Flight::json($re);
 });
 Flight::route('/unset', function() {
-    unset($_SESSION);
+    session_destroy();
+    foreach ($_COOKIE as $k => $v) {
+        setcookie($k, '', time() - 1);
+    }
     echo 'unset';
 });

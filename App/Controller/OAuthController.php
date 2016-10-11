@@ -47,7 +47,7 @@ class OAuthController extends BaseController
             $state = self::generateCSRFState();
             $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO
             $token = self::getAccessToken($code, $params);
-            if (isset($token['access_token']) && isset($token['expires_in'])) {
+            if (isset($token['access_token'])) {
                 if (getAuth()->attempt($token)) {
                     $redirectPath = '/';
                     $path = getOValue()->getOldOnce('last_path');
@@ -57,7 +57,7 @@ class OAuthController extends BaseController
                     \Flight::redirect($redirectPath);
                     return false;
                 } else {
-                    throw new FWException(Message::getMessage(15));
+                    throw new FWException(Message::getMessage(1001));
                 }
             } else {
                 throw new FWException(Message::messageList(1003));
@@ -103,8 +103,6 @@ class OAuthController extends BaseController
     {
         $oauth = getConfig()->get('oauth');
         $server_uri = $oauth['token_uri'];
-        $appid = isset($oauth['app_id']) ? $oauth['app_id'] : '';
-        $appid_key = isset($oauth['app_id_key']) ? $oauth['app_id_key'] : '';
         $appsec = isset($oauth['app_secret']) ? $oauth['app_secret'] : '';
         $appsec_key = isset($oauth['app_secret_key']) ? $oauth['app_secret_key'] : '';
         $redirect_uri = isset($oauth['redirect_uri']) ? $oauth['redirect_uri'] : '';
@@ -112,22 +110,20 @@ class OAuthController extends BaseController
         if ($server_uri && $redirect_uri && $redirect_uri_key && $code) {
             $params[$redirect_uri_key] = $redirect_uri;
             $params['code'] = $code;
+            $params['state'] = self::generateCSRFState();
             //app id and secret
-            if ($appid && $appid_key && $appsec && $appsec_key) {
-                $params[$appid_key] = $appid;
+            if ($appsec && $appsec_key) {
                 $params[$appsec_key] = $appsec;
             }
             $client = new AjaxRequest([], 'json');
             $res = $client->get($server_uri, $params);
             if ($res) {
                 if (isset($res['error'])) {
-                    throw new FWException(Message::messageList(1001));
+                    throw new FWException(Message::messageList(1003));
                 }
                 //check state
-                if (isset($params['state'])) {
-                    if (!isset($res['state']) || !self::verifyCSRFState($res['state'])) {
-                        throw new FWException(Message::messageList(25));
-                    }
+                if (!self::verifyCSRFState($res['state'])) {
+                    throw new FWException(Message::messageList(25));
                 }
                 return $res;
             }

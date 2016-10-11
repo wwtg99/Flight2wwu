@@ -10,6 +10,7 @@ namespace Wwtg99\Flight2wwu\Component\Auth;
 
 
 use Wwtg99\App\Model\Auth\UserFactory;
+use Wwtg99\PgAuth\Auth\IUser;
 
 class RoleAuth implements IAuth
 {
@@ -19,7 +20,7 @@ class RoleAuth implements IAuth
     const COOKIE_USER_KEY = 'user_name';
 
     /**
-     * @var AuthUser
+     * @var IAuthUser
      */
     protected $user = null;
 
@@ -37,11 +38,6 @@ class RoleAuth implements IAuth
      * @var array
      */
     protected $rbac = [];
-
-    /**
-     * @var bool
-     */
-    protected $first = true;
 
     /**
      * @var int
@@ -66,26 +62,20 @@ class RoleAuth implements IAuth
     }
 
     /**
-     * @inheritdoc
+     * Attempt to login.
+     *
+     * @param array $user
+     * @return bool
      */
-    public function attempt(array $user = [])
+    public function attempt(array $user)
     {
-        $writeCookies = true;
-        if (!$user && $this->use_cookie) {
-            //get from cookies
-            $cookie_token = getCookie()->get(self::COOKIE_TOKEN_KEY);
-            $cookie_user = getCookie()->get(self::COOKIE_USER_KEY);
-            if ($cookie_user && $cookie_token) {
-                $user[UserFactory::KEY_USER_TOKEN] = $cookie_token;
-                $user[UserFactory::KEY_USER_NAME] = $cookie_user;
-                $writeCookies = false;
+        if ($user) {
+            $this->user = UserFactory::getUser();
+            $re = $this->user->verify($user);
+            if ($re) {
+                $this->login($user);
+                return true;
             }
-        }
-        $u = UserFactory::getUser();
-        $re = $u->verify($user);
-        if ($re === true) {
-            $this->login($u, $writeCookies);
-            return true;
         }
         return false;
     }
@@ -93,48 +83,65 @@ class RoleAuth implements IAuth
     /**
      * Login user to storage (session or cookies).
      *
-     * @param AuthUser $user
-     * @param bool $writeCookies
+     * @param array $user
      * @return IAuth
      */
-    public function login($user, $writeCookies = true)
+    public function login(array $user)
     {
-        $this->user = $user;
-        $user->login();
-        $u = $user->getUser();
-        if ($this->use_session) {
-            getSession()->set(self::SESSION_KEY, $u, $this->sessionExpires);
+        if (!$this->user) {
+            $this->user = UserFactory::getUser();
         }
-        if ($this->use_cookie && $writeCookies) {
-            if (isset($u[UserFactory::KEY_USER_TOKEN]) && isset($u[UserFactory::KEY_USER_NAME])) {
-                $cookie_token = $u[UserFactory::KEY_USER_TOKEN];
-                $cookie_user = $u[UserFactory::KEY_USER_NAME];
-                getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $this->cookieExpires);
-                getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $this->cookieExpires);
+        $re = $this->user->login($user);
+        if ($re) {
+            if ($this->use_session) {
+                getSession()->set(self::SESSION_KEY, $this->user->getUser()->getUser(), $this->sessionExpires);
+            }
+            if ($this->use_cookie) {
+                $u = $this->user->getUser()->getUser();
+                if (isset($u[UserFactory::KEY_USER_TOKEN]) && isset($u[IUser::FIELD_USER_NAME])) {
+                    $cookie_token = $u[UserFactory::KEY_USER_TOKEN];
+                    $cookie_user = $u[IUser::FIELD_USER_NAME];
+                    getCookie()->set(self::COOKIE_TOKEN_KEY, $cookie_token, $this->cookieExpires);
+                    getCookie()->set(self::COOKIE_USER_KEY, $cookie_user, $this->cookieExpires);
+                }
             }
         }
         return $this;
     }
 
     /**
-     * @return AuthUser
-     */
-    public function getUserObject()
-    {
-        if ($this->isLogin()) {
-            return $this->user;
-        }
-        return null;
-    }
-
-    /**
-     * @return mixed
+     * @return bool
      */
     public function isLogin()
     {
-        $u = $this->getUser();
-        if ($u && isset($u[UserFactory::KEY_USER_ID])) {
-            return true;
+        if ($this->user) {
+            $u = $this->user->getUser();
+            if ($u && isset($u->getUser()[IUser::FIELD_USER_ID])) {
+                return true;
+            }
+        }
+        //check session
+        if ($this->use_session) {
+            $user = getSession()->get(self::SESSION_KEY);
+            if ($user) {
+                $this->user = UserFactory::getUser($user);
+                //refresh session
+                getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
+                return true;
+            }
+        }
+        //check cookies
+        $uname = getCookie()->get(self::COOKIE_USER_KEY);
+        $token = getCookie()->get(self::COOKIE_TOKEN_KEY);
+        if ($uname && $token) {
+            if (!$this->user) {
+                $this->user = UserFactory::getUser();
+            }
+            $re = $this->user->verify([UserFactory::KEY_USER_NAME=>$uname, UserFactory::KEY_USER_TOKEN=>$token]);
+            if ($re) {
+                getSession()->set(self::SESSION_KEY, $this->user->getUser()->getUser(), $this->sessionExpires);
+                return true;
+            }
         }
         return false;
     }
@@ -156,47 +163,25 @@ class RoleAuth implements IAuth
     }
 
     /**
+     * @return IAuthUser
+     */
+    public function getUserObject()
+    {
+        if ($this->isLogin()) {
+            return $this->user;
+        }
+        return null;
+    }
+
+    /**
      * @return array
      */
     public function getUser()
     {
-        if (!$this->user) {
-            //check session
-            if ($this->use_session) {
-                $user = getSession()->get(self::SESSION_KEY);
-                if ($user) {
-                    //refresh session
-                    getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
-                    $this->user = UserFactory::getUser($user);
-                }
-            }
-            //check cookies
-            if (!$this->user) {
-                $this->attempt();
-            }
-        }
-        if ($this->user) {
-            return $this->user->getUser();
+        if ($this->isLogin()) {
+            return $this->user->getUser()->getUser();
         }
         return [];
-    }
-
-    /**
-     * @param array $arr
-     */
-    public function loadConfig(array $arr)
-    {
-        $this->use_session = isset($arr['session']) ? boolval($arr['session']) : false;
-        $this->use_cookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
-        if (isset($arr['rbac']) && is_array($arr['rbac'])) {
-            $this->rbac = $arr['rbac'];
-        }
-        if (isset($arr['session_expires'])) {
-            $this->sessionExpires = intval($arr['session_expires']);
-        }
-        if (isset($arr['cookie_expires'])) {
-            $this->cookieExpires = intval($arr['cookie_expires']);
-        }
     }
 
     /**
@@ -242,10 +227,7 @@ class RoleAuth implements IAuth
     public function isSuperuser()
     {
         if ($this->isLogin()) {
-            $u = $this->getUser();
-            if (isset($u[UserFactory::KEY_SUPERUSER])) {
-                return boolval($u[UserFactory::KEY_SUPERUSER]);
-            }
+            return $this->user->isSuperuser();
         }
         return false;
     }
@@ -318,10 +300,31 @@ class RoleAuth implements IAuth
      */
     private function getRoles()
     {
+        $r = [];
         if ($this->user) {
-            return $this->user->getRoles();
-        } else {
-            return ['anonymous'];
+            $r = $this->user->getRoles();
+        }
+        if (!$r) {
+            $r = ['anonymous'];
+        }
+        return $r;
+    }
+
+    /**
+     * @param array $arr
+     */
+    private function loadConfig(array $arr)
+    {
+        $this->use_session = isset($arr['session']) ? boolval($arr['session']) : false;
+        $this->use_cookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
+        if (isset($arr['rbac']) && is_array($arr['rbac'])) {
+            $this->rbac = $arr['rbac'];
+        }
+        if (isset($arr['session_expires'])) {
+            $this->sessionExpires = intval($arr['session_expires']);
+        }
+        if (isset($arr['cookie_expires'])) {
+            $this->cookieExpires = intval($arr['cookie_expires']);
         }
     }
 } 

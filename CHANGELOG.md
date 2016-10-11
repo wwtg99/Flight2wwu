@@ -2,6 +2,7 @@
 
 ## 0.2.5
     - Integrate pgauth
+    - Update auth for pgauth
 
 ## 0.2.4
     - Add sign up and user info

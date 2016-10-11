@@ -179,7 +179,16 @@ class AuthController extends BaseController
 
     private static function postInfo()
     {
-
+        $data = self::getInput('user');
+        $user = getAuth()->getUserObject();
+        if ($user && $user->changeInfo($data)) {
+            $msg = Message::getMessage(28);
+        } else {
+            $msg = Message::getMessage(29);
+        }
+        $user = getUser();
+        getOValue()->addOldOnce('msg', $msg);
+        getView()->render('auth/user_info', ['user'=>FieldFormatter::formatFields($user, ['format_datetime'=>[], 'format_number'=>[]]), 'title'=>'User Center']);
     }
 
     private static function getSignup()
@@ -224,8 +233,9 @@ class AuthController extends BaseController
         }
         $redirectPath = U(getConfig()->get('defined_routes.user_home'));
         $user = UserFactory::getUser();
-        if ($user->signUp([UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_USER_EMAIL=>$email])) {
-            getAuth()->login($user, true);
+        $u = [UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_USER_EMAIL=>$email];
+        if ($user->signUp($u)) {
+            getAuth()->login($u);
             \Flight::redirect($redirectPath);
         } else {
             $msg = Message::getMessage(26);

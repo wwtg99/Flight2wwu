@@ -49,6 +49,7 @@ return [
             ['/', array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
             ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
             ["/403", array('\\Wwtg99\\App\\Controller\\DefaultController', 'forbidden'), 'pre'],
+            ["/405", array('\\Wwtg99\\App\\Controller\\DefaultController', 'methodNotAllowed'), 'pre'],
             ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog'), 'pre'],
         ],
         /**
@@ -60,7 +61,7 @@ return [
         'controller'=>[
             'Wwtg99\App\Controller\Auth'=>'/auth',
             'Wwtg99\App\Controller\OAuth'=>'/oauth',
-//            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
+            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
 //            'Wwtg99\App\Controller\Admin'=>'/admin',
         ],
         'restful'=>[
@@ -86,7 +87,7 @@ return [
      */
     'defined_routes'=>[
         'login'=>'auth/login',
-//        'login'=>'oauth/login',
+//        'login'=>'oauth/login', //oauth
         'logout'=>'auth/logout',
         'signup'=>'auth/signup',
         'user_home'=>'auth/info',

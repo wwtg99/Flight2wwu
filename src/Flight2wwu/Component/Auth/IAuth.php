@@ -21,6 +21,8 @@ interface IAuth
     public function attempt(array $user);
 
     /**
+     * Check login.
+     *
      * @return bool
      */
     public function isLogin();
@@ -28,16 +30,15 @@ interface IAuth
     /**
      * Login user to storage (session or cookies).
      *
-     * @param AuthUser $user
-     * @param bool $writeCookies
+     * @param array $user
      * @return IAuth
      */
-    public function login($user, $writeCookies = true);
+    public function login(array $user);
 
     /**
      * Logout User in storage (session or cookies).
      *
-     * @return mixed
+     * @return IAuth
      */
     public function logout();
 
@@ -47,7 +48,7 @@ interface IAuth
     public function getUser();
 
     /**
-     * @return AuthUser
+     * @return IAuthUser
      */
     public function getUserObject();
 
@@ -58,19 +59,19 @@ interface IAuth
     public function hasRole($role);
 
     /**
+     * Check object accessible.
+     *
      * @param string $object
      * @return AuthKey
      */
     public function getAuth($object);
 
     /**
+     * Check path accessible.
+     *
      * @param string $path
      * @return AuthKey
      */
     public function accessPath($path);
 
-    /**
-     * @return bool
-     */
-    public function isSuperuser();
 }

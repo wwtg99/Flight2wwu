@@ -183,14 +183,14 @@ function installCore($dir, $package_dir)
             ],
             'Model'=>[
                 'Message.php',
-                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthUser.php']
+                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthClientUser.php']
             ],
             'Plugin'=>['PHPInterpreter.php'],
             'view_twig'=>[
                 'layout.twig',
                 'home.twig',
                 'error'=>['403.twig', '404.twig', '500.twig'],
-                'auth'=>['login.twig', 'logout.twig', 'change_pwd.twig']
+                'auth'=>['login.twig', 'logout.twig', 'change_pwd.twig', 'signup.twig', 'user_info.twig', 'user_edit.twig']
             ],
             'view'=>[
                 'border_layout.php',
@@ -225,6 +225,9 @@ function installOAuth($dir, $package_dir)
         'App'=>[
             'Controller'=>[
                 'AuthorizeController.php',
+            ],
+            'Model'=>[
+                'Auth'=>['OAuthServerUser.php']
             ],
             'view_twig'=>[
                 'oauth'=>['login.twig']
