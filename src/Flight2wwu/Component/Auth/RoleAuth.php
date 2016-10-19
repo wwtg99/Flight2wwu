@@ -221,6 +221,14 @@ class RoleAuth implements IAuth
         return false;
     }
 
+    public function refreshSession()
+    {
+        if ($this->use_session) {
+            $user = $this->user->getUser()->getUser();
+            getSession()->set(self::SESSION_KEY, $user, $this->sessionExpires);
+        }
+    }
+
     /**
      * @return bool
      */

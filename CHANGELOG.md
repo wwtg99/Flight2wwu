@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.6
+    - Add refreshSession in RoleAuth
+
 ## 0.2.5
     - Integrate pgauth
     - Update auth for pgauth

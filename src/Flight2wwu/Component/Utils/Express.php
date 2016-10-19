@@ -49,7 +49,7 @@ class Express
             $url = str_replace('<no>', trim($no), $url);
             $client = new Client();
             $res = $client->get($url);
-            echo $res->getBody();
+//            echo $res->getBody();
             $arr = $this->extract($company, $res->getBody()->getContents());
             return $arr;
         } else {
