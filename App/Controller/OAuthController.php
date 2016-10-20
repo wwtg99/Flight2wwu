@@ -47,7 +47,6 @@ class OAuthController extends BaseController
             $state = self::generateCSRFState();
             $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO
             $token = self::getAccessToken($code, $params);
-            getLog()->warning('====1', $token);
             if (isset($token['access_token'])) {
                 if (getAuth()->attempt($token)) {
                     $redirectPath = '/';

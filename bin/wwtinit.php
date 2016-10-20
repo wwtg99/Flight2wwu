@@ -20,7 +20,8 @@ function parseOption()
         'clear-cache::',
         'm-core::',
         'm-oauth::',
-    ];
+        'm-admin::',
+    ];//TODO options
     $p = getopt($opt, $lopt);
     return $p;
 }
@@ -30,7 +31,7 @@ function parseOption()
  */
 function getHelp()
 {
-    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n--m-core=False    Whether to install module core (default False, True if not specified)\n--m-oauth=False    Whether to install module oauth server, depends on wwtg99/pgauth (False if not specified)\n-v  --version    Show version\n-h  --help    Show Help\n";
+    return getVersion() . "\nInitialize root directory for Flight2wwu framework.\n\n-d  --dir    Install directory, default current work dir\n--clean    Clear dir before installation (Warning: It will remove all related directories).\n--clear-cache  <cache_file>    Remove cache file.\n--m-core=False    Whether to install module core (default False, True if not specified)\n--m-oauth=False    Whether to install module oauth server, depends on wwtg99/pgauth (False if not specified)\n--m-admin=False    Whether to install module admin, depends on wwtg99/pgauth (False if not specified)\n-v  --version    Show version\n-h  --help    Show Help\n";
 }
 
 /**
@@ -38,7 +39,7 @@ function getHelp()
  */
 function getVersion()
 {
-    return 'wwtinit 0.1.1';
+    return 'wwtinit 0.2.7';
 }
 
 /**

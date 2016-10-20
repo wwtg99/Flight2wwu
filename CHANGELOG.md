@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.7
+    - Fix wwtinit bugs
+
 ## 0.2.6
     - Add refreshSession in RoleAuth
     - Add user edit
