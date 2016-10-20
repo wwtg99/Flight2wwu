@@ -115,6 +115,8 @@ class FormatUtils
     }
 
     /**
+     * Trim each elements in array.
+     *
      * @param array $arr
      * @param string $charlist
      * @return array
@@ -124,6 +126,30 @@ class FormatUtils
         $keys = array_keys($arr);
         for ($i = 0; $i < count($keys); $i++) {
             $arr[$keys[$i]] = trim($arr[$keys[$i]], $charlist);
+        }
+        return $arr;
+    }
+
+    /**
+     * Remove empty elements in array.
+     *
+     * @param array $arr
+     * @param bool $onlyStr: true if only remove empty string
+     * @return array
+     */
+    public static function removeArrayEmpty(array $arr, $onlyStr = true)
+    {
+        $keys = array_keys($arr);
+        for ($i = 0; $i < count($keys); $i++) {
+            if ($onlyStr) {
+                if ($arr[$keys[$i]] == '') {
+                    unset($arr[$keys[$i]]);
+                }
+            } else {
+                if (empty($arr[$keys[$i]])) {
+                    unset($arr[$keys[$i]]);
+                }
+            }
         }
         return $arr;
     }
@@ -191,6 +217,7 @@ class FormatUtils
     }
 
     /**
+     * @deprecated
      * Same as pathinfo but support chinese for < php5.6.
      *
      * @param $filepath

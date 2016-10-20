@@ -1,0 +1,77 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="btn-group col-md-8 col-md-offset-2">
+                <a class="btn btn-default" href="{{ route }}/create"><span class="glyphicon glyphicon-plus"></span> {{ 'New'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}/{{ data.user_id }}/edit"><span class="glyphicon glyphicon-pencil"></span> {{ 'Edit'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}"><span class="glyphicon glyphicon-share-alt"></span> {{ 'Return'|T }}</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+                    <div class="col-md-3">{{ 'user_id'|T }}:</div>
+                    <div class="col-md-9">{{ data.user_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'username'|T }}:</div>
+                    <div class="col-md-9">{{ data.name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'userlabel'|T }}:</div>
+                    <div class="col-md-9">{{ data.label }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'email'|T }}:</div>
+                    <div class="col-md-9">{{ data.email }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'descr'|T }}:</div>
+                    <div class="col-md-9">{{ data.descr }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'department_id'|T }}:</div>
+                    <div class="col-md-9">{{ data.department_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'department'|T }}:</div>
+                    <div class="col-md-9">{{ data.department }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'department_descr'|T }}:</div>
+                    <div class="col-md-9">{{ data.department_descr }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'superuser'|T }}:</div>
+                    <div class="col-md-9">{% if data.superuser %}<span class="glyphicon glyphicon-ok"></span>{% else %}<span class="glyphicon glyphicon-remove"></span>{% endif %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'roles'|T }}:</div>
+                    <div class="col-md-9">{{ data.roles }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'created_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.created_at }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'updated_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.updated_at }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'deleted_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.deleted_at }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+
+        }
+    </script>
+{% endblock %}

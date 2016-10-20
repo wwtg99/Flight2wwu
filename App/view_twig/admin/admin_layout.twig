@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+        {{ renderAssets() }}
+        {{ debugbarHead() }}
+    {% endblock %}
+    <title>{% block title %}{{ title|T }} {% endblock %}</title>
+</head>
+<body>
+<header class="border_head">
+    {% block header %}
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ getConfig('base_url') }}">{{ getConfig('app') }}</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="{{ '/admin/home'|U }}">{{ 'Home'|T }} <span class="sr-only">(current)</span></a></li>
+                        <li><a href="{{ '/admin/department'|U }}">{{ 'Department Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/role'|U }}">{{ 'Role Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/user'|U }}">{{ 'User Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/app'|U }}">{{ 'App Management'|T }}</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if isLogin() %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'Hello'|T }}, {{ getUser()['name'] }} <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% if isSuperuser() %}
+                                        <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
+                                    {% endif %}
+                                    <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                    <li><a href="{{ getConfig('defined_routes.change_password')|U }}"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{ getConfig('defined_routes.logout')|U }}"><span class="glyphicon glyphicon-log-out"></span> {{ 'Logout'|T }}</a></li>
+                        {% else %}
+                            <li><a href="{{ getConfig('defined_routes.login')|U }}">{{ 'Login'|T }}</a></li>
+                            <li><a href="{{ getConfig('defined_routes.signup')|U }}">{{ 'Sign Up'|T }}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+</header>
+<div class="border_body">
+    <div class="border_left">
+        {% block left %}
+        {% endblock %}
+    </div>
+    <div class="border_center">
+        {% block center %}
+        {% endblock %}
+    </div>
+    <div class="border_right">
+        {% block right %}
+        {% endblock %}
+    </div>
+</div>
+{{ renderDebugbar() }}
+<footer class="border_foot">
+    {% block footer %}
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5 col-md-offset-1">
+                        <h4><?php TP('Help'); ?></h4>
+                        <p><a href="{{ 'changelog'|U }}" class="item" target="_blank">{{ 'Change Log'|T }}</a></p>
+                        <p><a href="mailto:wwu@genowise.com" class="item">{{ 'Bug Report'|T }}</a></p>
+                    </div>
+                    <div class="col-md-3 col-md-offset-3">
+                        <h4>{{ 'Version'|T }}: {{ getConfig('version') }}</h4>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+</footer>
+
+<script>
+    $(document).ready(function(){
+        if (typeof init_head === 'function') {
+            init_head();
+        }
+        if (typeof init_left === 'function') {
+            init_left();
+        }
+        if (typeof init_center === 'function') {
+            init_center();
+        }
+        if (typeof init_right === 'function') {
+            init_right();
+        }
+        if (typeof init_foot === 'function') {
+            init_foot();
+        }
+    });
+</script>
+</body>
+</html>

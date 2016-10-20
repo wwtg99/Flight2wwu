@@ -1,0 +1,62 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="btn-group col-md-8 col-md-offset-2">
+                <a class="btn btn-default" href="{{ route }}/create"><span class="glyphicon glyphicon-plus"></span> {{ 'New'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}/{{ data.app_id }}/edit"><span class="glyphicon glyphicon-pencil"></span> {{ 'Edit'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}"><span class="glyphicon glyphicon-share-alt"></span> {{ 'Return'|T }}</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+                    <div class="col-md-3">{{ 'app_id'|T }}:</div>
+                    <div class="col-md-9">{{ data.app_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'app_name'|T }}:</div>
+                    <div class="col-md-9">{{ data.app_name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'descr'|T }}:</div>
+                    <div class="col-md-9">{{ data.descr }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'app_secret'|T }}:</div>
+                    <div class="col-md-9">{{ data.app_secret }} <button class="btn btn-link" id="bt_refresh"><span class="glyphicon glyphicon-refresh"></span></button></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'redirect_uri'|T }}:</div>
+                    <div class="col-md-9">{{ data.redirect_uri }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'created_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.created_at }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'updated_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.updated_at }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+            $('#bt_refresh').click(function () {
+                BootstrapDialog.confirm('{{ 'Refresh app secret'|T }}?', function (result) {
+                    if (result) {
+                        var url = '{{ route }}/{{ data.app_id }}';
+                        $.post(url, {app_secret: '1'}, function (data) {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+{% endblock %}

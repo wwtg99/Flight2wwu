@@ -54,6 +54,22 @@ return [
                 'css'=>['font-awesome.min.css'],
                 'prefix'=>'assets/fa'
             ],
+            'bootstrap-table'=>[
+                'depends'=>['bootstrap'],
+                'css'=>['bootstrap-table.min.css'],
+                'js'=>['bootstrap-table.min.js', 'bootstrap-table-zh-CN.min.js'],
+                'prefix'=>'assets/bootstrap-table'
+            ],
+            'bootstrap-dialog'=>[
+                'css'=>['bootstrap-dialog.css'],
+                'js'=>['bootstrap-dialog.js'],
+                'prefix'=>'assets/bootstrap-dialog'
+            ],
+            'select2'=>[
+                'js'=>['select2.min.js'],
+                'css'=>['select2.min.css'],
+                'prefix'=>'assets/select2'
+            ],
         ]
     ]
 ];

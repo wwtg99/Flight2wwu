@@ -13,6 +13,7 @@ use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\DataPool\Utils\FieldFormatter;
 use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\PgAuth\Auth\IUser;
 
 class AuthController extends BaseController
 {
@@ -179,16 +180,7 @@ class AuthController extends BaseController
 
     private static function postInfo()
     {
-        $data = self::getInput('user');
-        $user = getAuth()->getUserObject();
-        if ($user && $user->changeInfo($data)) {
-            $msg = Message::getMessage(28);
-        } else {
-            $msg = Message::getMessage(29);
-        }
-        $user = getUser();
-        getOValue()->addOldOnce('msg', $msg);
-        getView()->render('auth/user_info', ['user'=>FieldFormatter::formatFields($user, ['format_datetime'=>[], 'format_number'=>[]]), 'title'=>'User Center']);
+
     }
 
     private static function getSignup()
@@ -247,11 +239,24 @@ class AuthController extends BaseController
 
     private static function getEdit()
     {
-
+        $u = getUser();
+        getView()->render('auth/user_edit', ['user'=>FieldFormatter::formatDateTime($u)]);
     }
 
     private static function postEdit()
     {
-
+        $label = self::getInput('label');
+        $email = self::getInput('email');
+        $des = self::getInput('descr');
+        $user = getAuth()->getUserObject();
+        $d = [IUser::FIELD_LABEL=>$label, IUser::FIELD_EMAIL=>$email, 'descr'=>$des];
+        if ($user && $user->changeInfo($d)) {
+            $msg = Message::getMessage(0, 'update successfully', 'success');
+            getAuth()->refreshSession();
+        } else {
+            $msg = Message::getMessage(13);
+        }
+        getOValue()->addOldOnce('msg', $msg);
+        \Flight::redirect('/auth/user_edit');
     }
 } 

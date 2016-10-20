@@ -51,8 +51,8 @@ return [
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
     'oauth'=>[
-        'code_uri'=>'http://192.168.0.21:7611/authorize/authorize',
-        'token_uri'=>'http://192.168.0.21:7611/authorize/token',
+        'code_uri'=>'http://localhost:9111/authorize/authorize',
+        'token_uri'=>'http://localhost:9111/authorize/token',
         'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
         'app_id'=>'0b442326cba19a891356a6288df4cc5a',

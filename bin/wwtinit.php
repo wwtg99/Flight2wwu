@@ -102,7 +102,7 @@ function clearCache($dir, $cache = null)
  */
 function checkModules($opt, $modules)
 {
-    $module_map = ['oauth']; //TODO modules
+    $module_map = ['oauth', 'admin']; //TODO modules
     foreach ($module_map as $m) {
         if (isset($opt["m-$m"])) {
             if (boolval($opt["m-$m"])) {
@@ -134,6 +134,7 @@ function installModules($modules, $dir)
         switch ($module) { //TODO install modules
             case 'core': $re = installCore($dir, $pkg); break;
             case 'oauth': $re = installOAuth($dir, $pkg); break;
+            case 'admin': $re = installAdmin($dir, $pkg); break;
             default: $re = 0;
         }
         if ($re !== 0) {
@@ -231,6 +232,52 @@ function installOAuth($dir, $package_dir)
             ],
             'view_twig'=>[
                 'oauth'=>['login.twig']
+            ],
+        ],
+    ];
+    $re = copyFiles($mfiles, $package_dir, $dir);
+    return $re;
+}
+
+
+/**
+ * @param string $dir
+ * @param string $package_dir
+ * @return int
+ */
+function installAdmin($dir, $package_dir)
+{
+    echo "Install admin module...\n";
+    // copy files
+    $mfiles = [
+        'App'=>[
+            'Controller'=>[
+                'Admin'=>[
+                    'AdminController.php',
+                    'AppController.php',
+                    'DepartmentController.php',
+                    'ResourceAdminController.php',
+                    'RoleController.php',
+                    'UserController.php',
+                ]
+            ],
+            'view_twig'=>[
+                'admin'=>[
+                    'admin_home.twig',
+                    'admin_layout.twig',
+                    'app_edit.twig',
+                    'app_index.twig',
+                    'app_show.twig',
+                    'department_edit.twig',
+                    'department_index.twig',
+                    'department_show.twig',
+                    'role_edit.twig',
+                    'role_index.twig',
+                    'role_show.twig',
+                    'user_edit.twig',
+                    'user_index.twig',
+                    'user_show.twig',
+                ]
             ],
         ],
     ];

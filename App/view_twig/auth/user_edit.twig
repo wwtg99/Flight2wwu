@@ -5,21 +5,34 @@
             <h1>{{ 'User Center'|T }}</h1>
         </div>
         <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                {% if msg is defined %}
-                    {{ component('alert', {'level': msg.type, 'data': {"message": msg.message|T}}) }}
+            <div class="col-md-4 col-md-offset-1">
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'user_id'|T }}: </label></div><div class="col-md-8">{{ user.user_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'username'|T }}: </label></div><div class="col-md-8">{{ user.name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'user department'|T }}: </label></div><div class="col-md-8">{{ user.department }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'superuser'|T }}: </label></div><div class="col-md-8">{% if user.superuser %} <span class="glyphicon glyphicon-ok"></span>{% else %}<span class="glyphicon glyphicon-remove"></span>{% endif %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'roles'|T }}: </label></div><div class="col-md-8">{{ user.roles }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>{{ 'created_at'|T }}: </label></div><div class="col-md-8">{{ user.created_at }}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                {% set msg = old('msg') %}
+                {% if msg %}
+                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
                 {% endif %}
-                <form class="form" role="form" id="form_user" method="post" action="/auth/user_edit">
+                <form class="form" role="form" id="form_user" method="post">
                     <div class="form-group">
-                        <label class="control-label" for="txt_id" id="lb_id">{{ 'user_id'|T }}</label>
-                        <input class="form-control" name="user_id" type="text" id="txt_id" value="{{ user.user_id }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label" for="txt_name">{{ 'username'|T }}</label>
-                        <input class="form-control" name="name" type="text" id="txt_name" value="{{ user.name }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label" for="txt_label">{{ 'label'|T }}</label>
+                        <label class="control-label" for="txt_label">{{ 'userlabel'|T }}</label>
                         <input class="form-control" name="label" type="text" id="txt_label" value="{{ user.label }}">
                     </div>
                     <div class="form-group">

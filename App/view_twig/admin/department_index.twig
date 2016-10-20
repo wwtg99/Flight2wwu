@@ -1,0 +1,65 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4 btn-group">
+                <a class="btn btn-default" href="{{ route }}/create"><span class="glyphicon glyphicon-plus"></span> {{ 'New'|T }}</a>
+            </div>
+            <div class="col-md-4">
+                {% set msg = old('msg') %}
+                {% if msg %}
+                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <table class="table" id="tb_dep"></table>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+            var head = {{ head|J }};
+            for (var i in head) {
+                head[i]['sortable'] = true;
+                if (head[i]['field'] == 'department_id') {
+                    head[i]['formatter'] = function (val, row, index) {
+                        return '<a href="{{ route }}/' + val + '">' + val + '</a>';
+                    }
+                }
+            }
+            head.push({
+                title: '{{ 'operation'|T }}', 
+                field: 'operation', formatter: function (val, row, index) {
+                    return ['<button class="btn btn-link bt_del">{{ 'Delete'|T }}</button>'].join(' ');
+                }, 
+                events: {
+                    'click .bt_del': function (e, val, row, index) {
+                        BootstrapDialog.confirm('{{ 'confirm to delete'|T }} ' + row['name'] + '?', function (result) {
+                            if (result) {
+                                var id = row['department_id'];
+                                var url = '{{ route }}/' + id + '/destroy';
+                                $.post(url, {}, function (data) {
+                                    if (data.code == 0) {
+                                        location.reload();
+                                    } else {
+                                        BootstrapDialog.alert(data.message);
+                                    }
+                                });
+                            }
+                        })
+                    }
+                }
+            });
+            $('#tb_dep').bootstrapTable({
+                columns: head,
+                data: {{ data|J }},
+                striped: true,
+                search: true,
+                pagination: true
+            });
+        }
+    </script>
+{% endblock %}

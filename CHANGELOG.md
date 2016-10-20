@@ -2,6 +2,8 @@
 
 ## 0.2.6
     - Add refreshSession in RoleAuth
+    - Add user edit
+    - Add admin module
 
 ## 0.2.5
     - Integrate pgauth

@@ -61,8 +61,8 @@ return [
         'controller'=>[
             'Wwtg99\App\Controller\Auth'=>'/auth',
             'Wwtg99\App\Controller\OAuth'=>'/oauth',
-            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
-//            'Wwtg99\App\Controller\Admin'=>'/admin',
+//            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
+//            'Wwtg99\App\Controller\Admin\Admin'=>'/admin', //admin
         ],
         'restful'=>[
             /**
@@ -79,7 +79,10 @@ return [
              * Post      /prefix/id           update    update
              * Post      /prefix/destroy/id   destroy   destroy
              */
-//            'Wwtg99\App\Controller\User'=>'/user',
+//            'Wwtg99\App\Controller\Admin\Department'=>'/admin/department',
+//            'Wwtg99\App\Controller\Admin\Role'=>'/admin/role',
+//            'Wwtg99\App\Controller\Admin\User'=>'/admin/user',
+//            'Wwtg99\App\Controller\Admin\App'=>'/admin/app',
         ]
     ],
     /**

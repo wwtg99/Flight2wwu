@@ -1,0 +1,69 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-info num" id="departments">
+                    <div class="panel-heading">{{ 'Department Num'|T }}</div>
+                    <div class="panel-body">
+                        <p class="text-center h2">{{ department_num }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-info num" id="roles">
+                    <div class="panel-heading">{{ 'Role Num'|T }}</div>
+                    <div class="panel-body">
+                        <p class="text-center h2">{{ role_num }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-info num" id="users">
+                    <div class="panel-heading">{{ 'User Num'|T }}</div>
+                    <div class="panel-body">
+                        <p class="text-center h2">{{ user_num }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-info num" id="apps">
+                    <div class="panel-heading">{{ 'App Num'|T }}</div>
+                    <div class="panel-body">
+                        <p class="text-center h2">{{ app_num }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+            $('#departments').click(function () {
+                location.href = '/admin/department';
+            });
+            $('#roles').click(function () {
+                location.href = '/admin/role';
+            });
+            $('#users').click(function () {
+                location.href = '/admin/user';
+            });
+            $('.num p').each(function () {
+                rollToNum($(this), $(this).text(), 50);
+            });
+        }
+
+        function rollToNum(ele, num, milisecond) {
+            var n = 0;
+            var id = setInterval(function () {
+                n++;
+                ele.text(n);
+                if (n >= num) {
+                    clearInterval(id);
+                }
+            }, milisecond)
+        }
+    </script>
+{% endblock %}

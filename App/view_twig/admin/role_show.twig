@@ -1,0 +1,49 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="btn-group col-md-8 col-md-offset-2">
+                <a class="btn btn-default" href="{{ route }}/create"><span class="glyphicon glyphicon-plus"></span> {{ 'New'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}/{{ data.role_id }}/edit"><span class="glyphicon glyphicon-pencil"></span> {{ 'Edit'|T }}</a>
+                <a class="btn btn-default" href="{{ route }}"><span class="glyphicon glyphicon-share-alt"></span> {{ 'Return'|T }}</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+                    <div class="col-md-3">{{ 'role_id'|T }}:</div>
+                    <div class="col-md-9">{{ data.role_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'role_name'|T }}:</div>
+                    <div class="col-md-9">{{ data.name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'descr'|T }}:</div>
+                    <div class="col-md-9">{{ data.descr }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'params'|T }}:</div>
+                    <div class="col-md-9">{{ data.params }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'created_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.created_at }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">{{ 'updated_at'|T }}:</div>
+                    <div class="col-md-9">{{ data.updated_at }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+
+        }
+    </script>
+{% endblock %}

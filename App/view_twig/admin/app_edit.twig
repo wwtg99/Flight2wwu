@@ -1,0 +1,38 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% set msg = old('msg') %}
+                {% if msg %}
+                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
+                {% endif %}
+                <form method="post" {% if data is defined %} action="{{ route }}/{{ data.app_id }}" {% else %} action="{{ route }}" {% endif %}>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'app_name'|T }}</label>
+                        <input class="form-control" type="text" name="app_name" value="{{ data.app_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'redirect_uri'|T }}</label>
+                        <input class="form-control" type="text" name="redirect_uri" value="{{ data.redirect_uri }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'descr'|T }}</label>
+                        <input class="form-control" type="text" name="descr" value="{{ data.descr }}">
+                    </div>
+                    <button class="btn btn-primary" type="submit">{{ 'Submit'|T }}</button>
+                    <button class="btn btn-default" type="reset">{{ 'Reset'|T }}</button>
+                    <a href="{{ route }}" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "admin/admin_layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% set msg = old('msg') %}
+                {% if msg %}
+                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
+                {% endif %}
+                <form method="post" {% if data is defined %} action="{{ route }}/{{ data.user_id }}" {% else %} action="{{ route }}" {% endif %}>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'username'|T }}</label>
+                        <input class="form-control" type="text" name="name" value="{{ data.name }}" {% if data is defined %} readonly {% endif %} required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'userlabel'|T }}</label>
+                        <input class="form-control" type="text" name="label" value="{{ data.label }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'password'|T }}</label>
+                        <input class="form-control" type="password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'email'|T }}</label>
+                        <input class="form-control" type="email" name="email" value="{{ data.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'department'|T }}</label>
+                        <select name="department_id" class="select2 form-control">
+                            <option value="">{{ '------' }}</option>
+                            {% for d in departments %}
+                                <option value="{{ d.department_id }}" {% if data.department_id == d.department_id %} selected {% endif %}>{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'descr'|T }}</label>
+                        <input class="form-control" type="text" name="descr" value="{{ data.descr }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'params'|T }}</label>
+                        <textarea class="form-control" name="params">{{ data.params }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'superuser'|T }} <input type="checkbox" name="superuser" {% if data.superuser %} checked {% endif %}></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">{{ 'roles'|T }}</label>
+                        <input id="txt_roles" type="hidden" name="roles" value="{{ data.roles }}">
+                    </div>
+                    <div class="form-group">
+                        {% for r in roles %}
+                            <label><input class="roles" type="checkbox" role-name="{{ r.name }}" {% if r.name in user_role %} checked {% endif %}> {{ r.name }}</label>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-primary" type="submit">{{ 'Submit'|T }}</button>
+                    <button class="btn btn-default" type="reset">{{ 'Reset'|T }}</button>
+                    <a href="{{ route }}" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function init_center() {
+            $('.select2').select2();
+            $('.roles').change(function () {
+                var r = [];
+                $('.roles:checked').each(function (index, ele) {
+                    r.push($(this).attr('role-name'));
+                });
+                $('#txt_roles').val(r.join(','));
+            });
+        }
+    </script>
+{% endblock %}
