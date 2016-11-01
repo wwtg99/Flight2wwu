@@ -1,0 +1,69 @@
+{% extends "layout.twig" %}
+{% block center %}
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>{{ title|T }}</h1>
+        </div>
+        {% if msg is defined %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <h4>{{ name }}</h4>
+                    <h4>{{ msg.message|T }}</h4>
+                    <a href="{{ getConfig('defined_routes.login')|U }}" class="btn btn-default">{{ 'Login'|T }}</a>
+                </div>
+            </div>
+        {% elseif token is defined %}
+            <div class="row text-center">
+                <h4>{{ 'username'|T }}: {{ name }}</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <form class="form-horizontal" role="form" id="form_pwd" method="post">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">{{ 'New Password'|T }}</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="password" name="pwd1" placeholder="{{ 'New Password'|T }}" tabindex="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">{{ 'Retype Password'|T }}</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="password" name="pwd2" placeholder="{{ 'Retype Password'|T }}" tabindex="2" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">{{ 'Captcha'|T }}</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" name="captcha" placeholder="{{ 'Captcha'|T }}" tabindex="3" required>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-link" type="button" id="bt_refcap"><img src="{{ captcha.inline() }}"> <span class="glyphicon glyphicon-refresh"></span></button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="token" value="{{ token }}">
+                        <input type="hidden" name="state" value="{{ state }}">
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" type="submit" id="submit" tabindex="4">{{ 'Submit'|T }}</button>
+                            <button class="btn btn-default" type="reset" id="reset" tabindex="5">{{ 'Reset'|T }}</button>
+                        </div>
+                        {% set msg = old('msg') %}
+                        {% if msg %}
+                            <div class="alert alert-danger text-center">
+                                {{ msg.message|T }}
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <script>
+        function init_center() {
+            $('#bt_refcap').click(function() {
+                $.get('{{ getConfig('defined_routes.update_captcha')|U }}', {}, function (data) {
+                    $('#bt_refcap img').attr('src', data);
+                });
+            });
+        }
+    </script>
+{% endblock %}

@@ -236,7 +236,7 @@ class UserController extends ResourceAdminController
         } else {
             $msg = Message::getMessage(14);
         }
-        \Flight::json(TA($msg));
+        \Flight::json(TA($msg), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
         return false;
     }
 

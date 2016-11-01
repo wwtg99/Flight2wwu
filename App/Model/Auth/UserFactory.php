@@ -15,7 +15,7 @@ class UserFactory
 {
 
     const KEY_USER_ID = 'user_id';
-    const KEY_USER_NAME = 'username';
+    const KEY_USER_NAME = 'name';
     const KEY_USER_PASSWORD = 'password';
     const KEY_USER_EMAIL = 'email';
     const KEY_USER_TOKEN = 'access_token';

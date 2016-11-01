@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.2.8
+    - Update flight json
+    - Fix bugs in roles
+    - Update AuthController
+    - Add forget password
+
 ## 0.2.7
     - Fix wwtinit bugs
 

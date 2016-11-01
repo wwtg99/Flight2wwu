@@ -22,9 +22,14 @@ return [
                 '*' => 0,
                 '/' => 3,
                 '/403' => 3,
+                '/404' => 3,
+                '/405' => 3,
                 '/auth/login' => 3,
                 '/auth/logout' => 3,
                 '/auth/signup' => 3,
+                '/auth/forget_password' => 3,
+                '/auth/forget_change_password' => 3,
+                '/auth/update_captcha' => 3,
                 '/oauth/login' => 3,
                 '/oauth/redirect_login' => 3,
                 '/authorize/*'=>3,
@@ -39,6 +44,8 @@ return [
                 '*' => 0,
                 '/' => 3,
                 '/403' => 3,
+                '/404' => 3,
+                '/405' => 3,
                 '/admin/*' => 0,
                 '/auth/*' => 3,
                 '/oauth/*' => 3,
@@ -64,7 +71,7 @@ return [
         "type"=>"redis",
         "options"=>[
             "schema"=>"tcp",
-            "host"=>"192.168.0.21",
+            "host"=>"192.168.6.131",
             "database"=>6
         ]
     ],

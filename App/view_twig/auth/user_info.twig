@@ -14,7 +14,7 @@
                 <p>{{ 'joined on'|T ~ ': ' ~ user.created_at }}</p>
                 <hr>
                 <p>{{ user.descr }}</p>
-                <p><a href="/auth/user_edit" class="btn btn-default"><span class="glyphicon glyphicon-pencil"> {{ 'Edit'|T }}</span></a></p>
+                <p><a href="{{ getConfig('defined_routes.user_edit')|U }}" class="btn btn-default"><span class="glyphicon glyphicon-pencil"> {{ 'Edit'|T }}</span></a></p>
             </div>
             <div class="col-md-6"></div>
         </div>

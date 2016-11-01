@@ -47,8 +47,8 @@ class DefaultController extends BaseController
         $url = self::getRequest()->url;
         $method = self::getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
-        // skip /403
-        if ($path == '/403') {
+        // skip /403 and /404
+        if ($path == '/403' || $path == '/404') {
             return true;
         }
         // last path

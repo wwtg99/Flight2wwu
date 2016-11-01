@@ -182,6 +182,7 @@ function installCore($dir, $package_dir)
                 'HomeController.php',
                 'AuthController.php',
                 'OAuthController.php',
+                'UserController.php',
             ],
             'Model'=>[
                 'Message.php',
@@ -192,7 +193,7 @@ function installCore($dir, $package_dir)
                 'layout.twig',
                 'home.twig',
                 'error'=>['403.twig', '404.twig', '500.twig'],
-                'auth'=>['login.twig', 'logout.twig', 'change_pwd.twig', 'signup.twig', 'user_info.twig', 'user_edit.twig']
+                'auth'=>['login.twig', 'change_pwd.twig', 'signup.twig', 'user_info.twig', 'user_edit.twig', 'forget_pwd.twig', 'forget_change_pwd.twig']
             ],
             'view'=>[
                 'border_layout.php',

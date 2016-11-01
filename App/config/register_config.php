@@ -61,6 +61,7 @@ return [
         'controller'=>[
             'Wwtg99\App\Controller\Auth'=>'/auth',
             'Wwtg99\App\Controller\OAuth'=>'/oauth',
+            'Wwtg99\App\Controller\User'=>'/user',
 //            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
 //            'Wwtg99\App\Controller\Admin\Admin'=>'/admin', //admin
         ],
@@ -79,10 +80,10 @@ return [
              * Post      /prefix/id           update    update
              * Post      /prefix/destroy/id   destroy   destroy
              */
-//            'Wwtg99\App\Controller\Admin\Department'=>'/admin/department',
-//            'Wwtg99\App\Controller\Admin\Role'=>'/admin/role',
-//            'Wwtg99\App\Controller\Admin\User'=>'/admin/user',
-//            'Wwtg99\App\Controller\Admin\App'=>'/admin/app',
+//            'Wwtg99\App\Controller\Admin\Department'=>'/admin/department',//admin
+//            'Wwtg99\App\Controller\Admin\Role'=>'/admin/role',//admin
+//            'Wwtg99\App\Controller\Admin\User'=>'/admin/user',//admin
+//            'Wwtg99\App\Controller\Admin\App'=>'/admin/app',//admin
         ]
     ],
     /**
@@ -93,8 +94,12 @@ return [
 //        'login'=>'oauth/login', //oauth
         'logout'=>'auth/logout',
         'signup'=>'auth/signup',
-        'user_home'=>'auth/info',
+        'info'=>'auth/info',
         'change_password'=>'auth/password',
+        'forget_password'=>'auth/forget_password',
+        'user_edit'=>'auth/user_edit',
+        'update_captcha'=>'auth/update_captcha',
+        'user_center'=>'user/center',
         'admin'=>'admin/home',
     ],
     /**

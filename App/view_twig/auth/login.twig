@@ -25,7 +25,15 @@
                             <input class="form-control" type="text" name="captcha" placeholder="{{ 'Captcha'|T }}" tabindex="3" required>
                         </div>
                         <div class="col-md-5">
-                            <img src="{{ captcha.inline() }}"> <a href="{{ getConfig('defined_routes.login')|U }}"><span class="glyphicon glyphicon-refresh"></span></a>
+                            <button class="btn btn-link" type="button" id="bt_refcap"><img src="{{ captcha.inline() }}"> <span class="glyphicon glyphicon-refresh"></span></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-md-offset-1">
+                            <a href="{{ getConfig('defined_routes.forget_password')|U }}">{{ 'Forget Password'|T }}</a>
+                        </div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <a href="{{ getConfig('defined_routes.signup')|U }}">{{ 'Sign Up'|T }}</a>
                         </div>
                     </div>
                     <input type="hidden" name="state" value="{{ state }}">
@@ -47,7 +55,11 @@
     </div>
     <script>
         function init_center() {
-
+            $('#bt_refcap').click(function() {
+                $.get('{{ getConfig('defined_routes.update_captcha')|U }}', {}, function (data) {
+                    $('#bt_refcap img').attr('src', data);
+                });
+            });
         }
     </script>
 {% endblock %}

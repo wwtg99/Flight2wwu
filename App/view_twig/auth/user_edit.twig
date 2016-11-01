@@ -43,9 +43,10 @@
                         <label class="control-label" for="txt_descr">{{ 'descr'|T }}</label>
                         <input class="form-control" name="descr" type="text" id="txt_descr" value="{{ user.descr }}">
                     </div>
+                    <input type="hidden" name="state" value="{{ state }}">
                     <button class="btn btn-primary" type="submit">{{ 'Submit'|T }}</button>
                     <button class="btn btn-default" type="reset">{{ 'Reset'|T }}</button>
-                    <a href="/auth/info" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
+                    <a href="{{ getConfig('base_url') }}" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
                 </form>
             </div>
         </div>

@@ -145,7 +145,7 @@ class AuthorizeController extends BaseController
                 $redata = ['error'=>Message::getMessage(1002)];
             }
         }
-        \Flight::json($redata);
+        \Flight::json(TA($redata), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
         return false;
     }
 
@@ -168,7 +168,7 @@ class AuthorizeController extends BaseController
                 $redata = ['error'=>Message::getMessage(1012)];
             }
         }
-        \Flight::json(TA($redata));
+        \Flight::json(TA($redata), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
         return false;
     }
 

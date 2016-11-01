@@ -38,7 +38,7 @@ if (isDebug()) {
     $msg = sprintf('<h1>500 Internal Server Error</h1><h3>%s (%s)</h3>', $m, $ex->getCode());
     try {
         if (Flight::request()->ajax) {
-            \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]]);
+            \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]], 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
         } else {
             $v = getView();
             if ($v) {
@@ -55,7 +55,7 @@ if (isDebug()) {
 // not found
 \Flight::map('notFound', function() {
     if (Flight::request()->ajax) {
-        Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]]);
+        Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]], 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
     } else {
         $v = getView();
         if ($v) {

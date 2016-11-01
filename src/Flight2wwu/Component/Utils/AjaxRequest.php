@@ -43,7 +43,7 @@ class AjaxRequest
      */
     public function __construct($config = [], $retype = 'raw')
     {
-        $this->headers = ['X_REQUESTED_WITH'=>'XMLHttpRequest'];
+        $this->headers = ['X-REQUESTED-WITH'=>'XMLHttpRequest'];
         $this->retype = $retype;
         $this->cli = new Client($config);
     }

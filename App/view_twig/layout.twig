@@ -53,7 +53,7 @@
                                 {% if isSuperuser() %}
                                 <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
                                 {% endif %}
-                                <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                <li><a href="{{ getConfig('defined_routes.user_center')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
                                 <li><a href="{{ getConfig('defined_routes.change_password')|U }}"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
                             </ul>
                         </li>

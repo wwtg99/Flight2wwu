@@ -105,5 +105,9 @@ if (isset($opt['mask'])) {
     if ($re !== 0) {
         echo "Fail to unmask!\n";
     }
+} else {
+    echo "Invalid options\n";
+    showHelp();
+    $re = 0;
 }
 exit($re);

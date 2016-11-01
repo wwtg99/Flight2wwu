@@ -55,15 +55,19 @@ abstract class PgAuthUser implements IAuthUser
      */
     public function getRoles()
     {
-        $u = $this->user ? $this->user->getUser() : [];
-        $r = isset($u[IUser::FIELD_ROLES]) ? $u[IUser::FIELD_ROLES] : [];
-        if (!is_array($r)) {
-            $r = explode(',', $r);
+        if ($this->user) {
+            $u = $this->user->getUser();
+            $r = isset($u[IUser::FIELD_ROLES]) ? $u[IUser::FIELD_ROLES] : [];
+            if (!is_array($r)) {
+                $r = explode(',', $r);
+            }
+            if (!in_array('common_user', $r)) {
+                array_push($r, 'common_user');
+            }
+            return $r;
+        } else {
+            return [];
         }
-        if (!in_array('common_user', $r)) {
-            array_push($r, 'common_user');
-        }
-        return $r;
     }
 
     /**
