@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.9
+    - Update pgauth
+
 ## 0.2.8
     - Update flight json
     - Fix bugs in roles

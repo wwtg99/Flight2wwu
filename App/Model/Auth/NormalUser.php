@@ -42,7 +42,7 @@ class NormalUser extends PgAuthUser
         ];
         $this->auth = new NormalAuth(getDataPool()->getConnection('auth'), $conf);
         if ($user && is_array($user)) {
-            $this->user = new \Wwtg99\PgAuth\Auth\NormalUser($user, getDataPool()->getConnection('auth'));
+            $this->user = new \Wwtg99\PgAuth\Auth\NormalUser($user, getDataPool()->getConnection('auth'), $this->auth);
         }
     }
 
