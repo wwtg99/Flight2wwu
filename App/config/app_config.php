@@ -82,7 +82,7 @@ return [
                 'database'=>[
                     'driver'=>'pgsql',
                     'dbname'=>'auth_test',
-                    'host'=>'192.168.6.131',
+                    'host'=>'192.168.0.21',
                     'username'=>'genobase',
                     'password'=>'genobase',
                     'port'=>5432

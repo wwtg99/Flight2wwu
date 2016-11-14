@@ -35,7 +35,11 @@ class UserFactory
      */
     public static function getUser($user = [])
     {
-        return new NormalUser($user);
-//        return new OAuthClientUser($user);  //oauth
+        $m = getConfig()->get('login_method');
+        if ($m == 'oauth') {
+            return new OAuthClientUser($user);
+        } else {
+            return new NormalUser($user);
+        }
     }
 }

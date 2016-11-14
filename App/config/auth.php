@@ -57,6 +57,7 @@ return [
         'cookie'=>true, //use cookie to store token
         'cookie_expires'=>86400, // seconds for auth cookies expires
     ],
+    'login_method'=>'normal', //normal or oauth
     'oauth'=>[
         'code_uri'=>'http://localhost:9111/authorize/authorize',
         'token_uri'=>'http://localhost:9111/authorize/token',
@@ -68,10 +69,10 @@ return [
         'app_secret_key'=>'client_secret',
     ],
     "auth_cache"=>[
-        "type"=>"redis",
+        "type"=>"redis",  //apcu, file, redis, memcache or no cache
         "options"=>[
             "schema"=>"tcp",
-            "host"=>"192.168.6.131",
+            "host"=>"192.168.0.21",
             "database"=>6
         ]
     ],

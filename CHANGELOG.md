@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.10
+    - Add login method
+
 ## 0.2.9
     - Update pgauth
 
