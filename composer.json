@@ -43,7 +43,10 @@
         "bin/wwtinit.php"
     ],
     "autoload": {
-        "psr-4": {"Wwtg99\\Flight2wwu\\": "src/Flight2wwu"}
+        "psr-4": {
+            "Wwtg99\\Flight2wwu\\": "src/Flight2wwu",
+            "Wwtg99\\App\\": "App"
+        }
     },
     "repositories": [
         {

@@ -9,6 +9,14 @@
 //Define global functions here
 
 /**
+ * @return \Wwtg99\Flight2wwu\Component\Utils\Timer
+ */
+function getTimer()
+{
+    return Flight::Timer();
+}
+
+/**
  * @return \Wwtg99\Config\Common\IConfig
  */
 function getConfig()

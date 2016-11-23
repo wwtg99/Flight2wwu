@@ -9,12 +9,12 @@
 //ini_set('display_errors', '0');
 
 // define path
-define('ROOT', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));
-define('APP', ROOT . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR);
-define('CONFIG', APP . 'config' . DIRECTORY_SEPARATOR);
-define('WEB', ROOT . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR);
-define("STORAGE", ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
-define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);
+define('ROOT', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));  //root path for project
+define('APP', ROOT . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR);  //App path in project
+define('CONFIG', APP . 'config' . DIRECTORY_SEPARATOR);  //config path
+define('WEB', ROOT . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR);  //web document root path
+define("STORAGE", ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);  //storage path with write accessible
+define("TMP", STORAGE . 'tmp' . DIRECTORY_SEPARATOR);  //tmp path in storage
 
 // autoload
 require_once implode(DIRECTORY_SEPARATOR, [ROOT, 'vendor', 'autoload.php']);
@@ -30,17 +30,13 @@ $source = new \Wwtg99\Config\Source\FileSource(CONFIG, $conf_files);
 $source->addLoader(new \Wwtg99\Config\Source\Loader\JsonLoader())->addLoader(new \Wwtg99\Config\Source\Loader\PHPLoader());
 $conf->addSource($source);
 $conf->load();
-Flight::set('config', $conf);
-
-// load class
-$register_path = [
-    ['Wwtg99\\App', 'App', true],
-];
-$loader = new \Wwtg99\ClassLoader\Loader(ROOT, $register_path);
-$loader->autoload();
+Flight::set('config', $conf);  //use Flight::get('config') to get config
 
 require_once 'helpfunctions.php';
 
 // register
 $register = \Wwtg99\Flight2wwu\Common\Register::getInstance();
 $register->registerAll($conf);
+
+// routes
+Flight::Router()->registerRoutes();

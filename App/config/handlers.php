@@ -110,3 +110,7 @@ Flight::route('/unset', function() {
     }
     echo 'unset';
 });
+
+Flight::route('/a', function() {
+    print_r($_SERVER);
+});

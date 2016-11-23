@@ -2,18 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: wuwentao
- * Date: 2016/8/30
- * Time: 9:40
+ * Date: 2016/8/3
+ * Time: 16:09
  */
 
-namespace Wwtg99\Flight2wwu\Common;
+namespace Wwtg99\Flight2wwu\Component\Controller;
 
 /**
- * Class RestfulInstanceController
+ * Class RestfulController
  * Restful controller should extend this class and override all these methods.
  * @package Wwtg99\Flight2wwu\Common
  */
-abstract class RestfulInstanceController extends InstanceController
+abstract class RestfulController extends BaseController
 {
 
     /**

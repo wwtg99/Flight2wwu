@@ -9,9 +9,10 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
-use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Common\Request;
+use Wwtg99\Flight2wwu\Common\Response;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 use Wwtg99\PgAuth\Auth\IUser;
 
@@ -24,7 +25,7 @@ class DefaultController extends BaseController
      */
     public static function language()
     {
-        $locale = self::getInput('language');
+        $locale = Request::get()->getInput('language');
         if ($locale) {
             \Flight::Locale()->setLocale($locale);
             getOValue()->addOld('language', $locale);
@@ -43,9 +44,9 @@ class DefaultController extends BaseController
      */
     public static function rbac()
     {
-        $ip = self::getRequest()->ip;
-        $url = self::getRequest()->url;
-        $method = self::getRequest()->method;
+        $ip = Request::get()->getRequest()->ip;
+        $url = Request::get()->getRequest()->url;
+        $method = Request::get()->getRequest()->method;
         $path = parse_url($url, PHP_URL_PATH);
         // skip /403 and /404
         if ($path == '/403' || $path == '/404') {
@@ -53,13 +54,11 @@ class DefaultController extends BaseController
         }
         // last path
         $skip = [
-            '/404',
-            '/oauth/redirect_login',
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.signup')),
         ];
-        if (!in_array($path, $skip) && !self::getRequest()->ajax) {
+        if (!in_array($path, $skip) && !Request::get()->isAjax()) {
             getOValue()->addOldOnce('last_path', $path);
         }
         // get user
@@ -70,7 +69,7 @@ class DefaultController extends BaseController
         }
         $logger = getLog();
         // log access
-        if (!getAuth()->accessPath($path)->access(self::getRequest()->method)) {
+        if (!getAuth()->accessPath($path)->access(Request::get()->getMethod())) {
             $logger->changeLogger('access')->info("forbidden from $ip by $user for $path method $method");
             $logger->changeLogger('main');
             \Flight::redirect('/403');
@@ -88,8 +87,11 @@ class DefaultController extends BaseController
      */
     public static function forbidden()
     {
-        if (self::getRequest()->ajax) {
-            \Flight::json([]);
+        if (Request::get()->isAjax()) {
+            $msg = new Message(403, 'forbidden', 'info');
+            $res = Response::get();
+            $res->setResCode(403)->setResType('json')->setData($msg->toApiArray());
+            return $res->send();
         } else {
             $v = getView();
             if ($v) {
@@ -107,7 +109,14 @@ class DefaultController extends BaseController
      */
     public static function methodNotAllowed()
     {
-        \Flight::halt(405, 'Method not allowed');
+        if (Request::get()->isAjax()) {
+            $msg = new Message(405, 'Method not allowed', 'info');
+            $res = Response::get();
+            $res->setResCode(405)->setResType('json')->setData($msg->toApiArray());
+            return $res->send();
+        } else {
+            \Flight::halt(405, 'Method not allowed');
+        }
         return false;
     }
 

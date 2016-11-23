@@ -9,7 +9,8 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Common\Request;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 
 class HomeController extends BaseController
 {
@@ -18,7 +19,12 @@ class HomeController extends BaseController
      */
     public static function home()
     {
-        getView()->render('home');
+//        getView()->render('home');
+        echo Request::get()->getRequest()->url;
+        echo '===';
+        echo Request::get()->getRequest()->ip;
+        echo "====";
+        echo Request::get()->getRequest()->user_agent;
         return false;
     }
 

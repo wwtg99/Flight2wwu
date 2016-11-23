@@ -14,6 +14,8 @@ return [
      * Class must have a non-parameter constructor
      */
     'services'=>[
+        'Timer' => 'Wwtg99\Flight2wwu\Component\Utils\Timer',
+        'Router' => 'Wwtg99\Flight2wwu\Common\Router',
         'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RoleAuth',
 //        'View' => 'Wwtg99\Flight2wwu\Component\View\BorderView',
         'View' => 'Wwtg99\Flight2wwu\Component\View\TwigView',
@@ -27,6 +29,8 @@ return [
         'Cookie' => 'Wwtg99\Flight2wwu\Component\Storage\CookieUtil',
         'Value' => 'Wwtg99\Flight2wwu\Component\Storage\OldValue',
         'Assets' => 'Wwtg99\Flight2wwu\Component\View\AssetsManager',
+        'Captcha' => 'Wwtg99\Flight2wwu\Component\Utils\Captcha',
+        'CSRF' => 'Wwtg99\Flight2wwu\Component\Utils\CSRFCode',
         'Mail' => 'Wwtg99\Flight2wwu\Component\Utils\Mail',
         'Express' => 'Wwtg99\Flight2wwu\Component\Utils\Express',
         'Plugin' => 'Wwtg99\Flight2wwu\Component\Plugin\PluginManager',
@@ -38,20 +42,36 @@ return [
     'route'=>[
         /**
          * Route path for functions
-         * [route, array(full class name, function name), pre]
+         * [route, array(full class name, function name)] or
+         * [route, controller class name<, options>] or
+         * [route, function]
          * First param: route / or specify method: GET / or GET|POST /
-         * Second param: array should be class name and static public function name
-         * Third param: pre specify this route will be registered before controller, post: this route will be registered after controller
+         * Second param: array should be class name and public function name, controller class name should not contain last "Controller"
+         * Third param: set option to "restful" to register Restful controller
+         *
+         * Restful Controller register methods:
+         * GET route | index | List all objects
+         * GET route/create | create | show create view
+         * POST route | store | create new object
+         * GET route/@id | show | show one object
+         * GET route/@id/edit | edit | show edit view
+         * PUT|PATCH route/@id | update | update object
+         * DELETE route/@id | destroy | delete object
          */
         'path'=>[
-            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac'), 'pre'],
-            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'language'), 'pre'],
+//            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac')],
+//            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'language')],
             ['/', array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
-            ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
-            ["/403", array('\\Wwtg99\\App\\Controller\\DefaultController', 'forbidden'), 'pre'],
-            ["/405", array('\\Wwtg99\\App\\Controller\\DefaultController', 'methodNotAllowed'), 'pre'],
-            ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog'), 'pre'],
+            ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home')],
+//            ["/403", array('\\Wwtg99\\App\\Controller\\DefaultController', 'forbidden'), 'pre'],
+//            ["/405", array('\\Wwtg99\\App\\Controller\\DefaultController', 'methodNotAllowed'), 'pre'],
+//            ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog'), 'pre'],
         ],
+        /**
+         * Override http method with header X-HTTP-Method-Override
+         * All non-GET method will redirect to POST, get http method from X-HTTP-Method-Override
+         */
+        'override_http_method'=>true,
         /**
          * Register whole controller class with static public functions
          * full class name (without Controller) => prefix

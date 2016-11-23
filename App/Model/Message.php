@@ -101,6 +101,14 @@ class Message
     }
 
     /**
+     * @return array
+     */
+    public function toApiArray()
+    {
+        return ['error'=>$this->msg];
+    }
+
+    /**
      * @param int $code
      * @param string $message
      * @param string $type
