@@ -25,6 +25,22 @@ function getConfig()
 }
 
 /**
+ * @return \Wwtg99\Flight2wwu\Component\Utils\Captcha
+ */
+function getCaptcha()
+{
+    return Flight::Captcha();
+}
+
+/**
+ * @return \Wwtg99\Flight2wwu\Component\Utils\CSRFCode
+ */
+function getCSRF()
+{
+    return Flight::CSRF();
+}
+
+/**
  * @return \Wwtg99\DataPool\Common\IDataPool
  */
 function getDataPool()

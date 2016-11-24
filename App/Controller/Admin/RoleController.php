@@ -33,7 +33,7 @@ class RoleController extends ResourceAdminController
      */
     protected function storeParse()
     {
-        $name = self::checkInput('name');
+        $name = self::getRequest()->checkInput('name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);
@@ -49,7 +49,7 @@ class RoleController extends ResourceAdminController
      */
     protected function updateParse($id)
     {
-        $name = self::checkInput('name');
+        $name = self::getRequest()->checkInput('name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);

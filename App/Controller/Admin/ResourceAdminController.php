@@ -11,10 +11,10 @@ namespace Wwtg99\App\Controller\Admin;
 
 use Wwtg99\App\Model\Message;
 use Wwtg99\DataPool\Utils\FieldFormatter;
-use Wwtg99\Flight2wwu\Common\RestfulInstanceController;
+use Wwtg99\Flight2wwu\Component\Controller\RestfulController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
-abstract class ResourceAdminController extends RestfulInstanceController
+abstract class ResourceAdminController extends RestfulController
 {
     /**
      * @var array
@@ -62,8 +62,10 @@ abstract class ResourceAdminController extends RestfulInstanceController
         $re = $model->select($this->indexFields);
         $re = FieldFormatter::formatDateTime($re);
         getAssets()->addLibrary(['bootstrap-table', 'bootstrap-dialog']);
-        getView()->render($this->templatePrefix . 'index', ['data'=>$re, 'head'=>FormatUtils::formatHead($this->indexFields), 'title'=>$this->title, 'route'=>$this->baseRoute]);
-        return false;
+        return self::getResponse()->setResType('view')
+            ->setView($this->templatePrefix . 'index')
+            ->setData(['data'=>$re, 'head'=>FormatUtils::formatHead($this->indexFields), 'title'=>$this->title, 'route'=>$this->baseRoute])
+            ->send();
     }
 
     /**
@@ -77,8 +79,10 @@ abstract class ResourceAdminController extends RestfulInstanceController
         $model = $this->getMapper();
         $re = $model->get($id, $this->showFields);
         $re = FieldFormatter::formatDateTime($re);
-        getView()->render($this->templatePrefix . 'show', ['data'=>$re, 'title'=>$this->title, 'route'=>$this->baseRoute]);
-        return false;
+        return self::getResponse()->setResType('view')
+            ->setView($this->templatePrefix . 'show')
+            ->setData(['data'=>$re, 'title'=>$this->title, 'route'=>$this->baseRoute])
+            ->send();
     }
 
     /**
@@ -88,8 +92,10 @@ abstract class ResourceAdminController extends RestfulInstanceController
      */
     public function create()
     {
-        getView()->render($this->templatePrefix . 'edit', ['title'=>$this->title, 'route'=>$this->baseRoute]);
-        return false;
+        return self::getResponse()->setResType('view')
+            ->setView($this->templatePrefix . 'edit')
+            ->setData(['title'=>$this->title, 'route'=>$this->baseRoute])
+            ->send();
     }
 
     /**
@@ -120,7 +126,7 @@ abstract class ResourceAdminController extends RestfulInstanceController
      */
     protected function storeParse()
     {
-        $d = FormatUtils::removeArrayEmpty(FormatUtils::trimArray(self::getArrayInputN($this->storeFields)));
+        $d = FormatUtils::removeArrayEmpty(FormatUtils::trimArray(self::getRequest()->getArrayInputN($this->storeFields)));
         return $d;
     }
 
@@ -169,7 +175,7 @@ abstract class ResourceAdminController extends RestfulInstanceController
      */
     protected function updateParse($id)
     {
-        $d = FormatUtils::trimArray(self::getArrayInputN($this->updateFields));
+        $d = FormatUtils::trimArray(self::getRequest()->getArrayInputN($this->updateFields));
         return $d;
     }
 

@@ -83,7 +83,7 @@ class Router
         if ($rest) {
             if ($ref->isSubclassOf('Wwtg99\Flight2wwu\Component\Controller\RestfulController')) {
                 $ins = $ref->newInstance();
-                $path = ltrim($path, '/');
+                $path = rtrim($path, '/');
                 \Flight::route("GET $path", [$ins, 'index']);
                 \Flight::route("GET $path/create", [$ins, 'create']);
                 \Flight::route("POST $path", [$ins, 'store']);
@@ -100,9 +100,10 @@ class Router
         } elseif ($ref->isSubclassOf('Wwtg99\Flight2wwu\Component\Controller\BaseController')) {
             $ins = $ref->newInstance();
             $methods = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+            $path = rtrim($path, '/') . '/';
             foreach ($methods as $method) {
-                $path = ltrim($path, '/') . '/' . $method->getName();
-                \Flight::route($path, [$ins, $method->getName()]);
+                $p = $path . $method->getName();
+                \Flight::route($p, [$ins, $method->getName()]);
             }
         }
     }

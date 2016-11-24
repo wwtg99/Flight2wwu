@@ -9,7 +9,7 @@
 namespace Wwtg99\App\Controller\Admin;
 
 
-use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 
 class AdminController extends BaseController
 {
@@ -21,6 +21,9 @@ class AdminController extends BaseController
         $role_num = $db->getMapper('Role')->count();
         $user_num = $db->getMapper('User')->count();
         $app_num = $db->getMapper('App')->count();
-        getView()->render('admin/admin_home', ['department_num'=>$dep_num, 'role_num'=>$role_num, 'user_num'=>$user_num, 'app_num'=>$app_num, 'title'=>'Admin']);
+        self::getResponse()->setResType('view')
+            ->setView('admin/admin_home')
+            ->setData(['department_num'=>$dep_num, 'role_num'=>$role_num, 'user_num'=>$user_num, 'app_num'=>$app_num, 'title'=>'Admin'])
+            ->send();
     }
 }

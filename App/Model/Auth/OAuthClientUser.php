@@ -121,7 +121,7 @@ class OAuthClientUser extends PgAuthUser
      */
     protected function getOAuthUser($token)
     {
-        $uri = 'http://localhost:9111/authorize/user'; //TODO
+        $uri = 'http://192.168.0.21:10002/authorize/user'; //TODO
         $res = $this->getResource($uri, $token);
         return $res;
     }

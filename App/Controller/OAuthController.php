@@ -10,9 +10,10 @@ namespace Wwtg99\App\Controller;
 
 
 use Wwtg99\App\Model\Message;
-use Wwtg99\Flight2wwu\Common\BaseController;
 use Wwtg99\Flight2wwu\Common\FWException;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
+use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 
 class OAuthController extends BaseController
 {
@@ -24,9 +25,10 @@ class OAuthController extends BaseController
             \Flight::redirect($uri);
         } else {
 //            $scope = ['get_user_info']; //TODO request scope
-            $state = self::generateCSRFState();
-            $params = ['state'=>$state, 'response_type'=>'code']; //TODO
+            $state = getCSRF()->generateCSRFCode();
+            $params = ['state'=>$state, 'response_type'=>'code']; //TODO use state and response_type
             $uri = self::getAuthorizeUri($params);
+//            echo $uri;
             if ($uri) {
                 \Flight::redirect($uri);
             } else {
@@ -38,14 +40,14 @@ class OAuthController extends BaseController
 
     public static function redirect_login()
     {
-        $code = self::getInput('code');
-        $state = self::getInput('state');
-        if (!self::verifyCSRFState($state)) {
+        $code = self::getRequest()->getInput('code');
+        $state = self::getRequest()->getInput('state');
+        if (!getCSRF()->verifyCSRFCode($state)) {
             throw new FWException(Message::messageList(25));
         }
         if ($code) {
-            $state = self::generateCSRFState();
-            $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO
+            $state = getCSRF()->generateCSRFCode();
+            $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO use state and grant_type
             $token = self::getAccessToken($code, $params);
             if (isset($token['access_token'])) {
                 if (getAuth()->attempt($token)) {
@@ -110,7 +112,7 @@ class OAuthController extends BaseController
         if ($server_uri && $redirect_uri && $redirect_uri_key && $code) {
             $params[$redirect_uri_key] = $redirect_uri;
             $params['code'] = $code;
-            $params['state'] = self::generateCSRFState();
+            $params['state'] = getCSRF()->generateCSRFCode();
             //app id and secret
             if ($appsec && $appsec_key) {
                 $params[$appsec_key] = $appsec;
@@ -122,7 +124,7 @@ class OAuthController extends BaseController
                     throw new FWException(Message::messageList(1003));
                 }
                 //check state
-                if (!self::verifyCSRFState($res['state'])) {
+                if (!getCSRF()->verifyCSRFCode($res['state'])) {
                     throw new FWException(Message::messageList(25));
                 }
                 return $res;

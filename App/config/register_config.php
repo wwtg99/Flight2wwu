@@ -59,13 +59,23 @@ return [
          * DELETE route/@id | destroy | delete object
          */
         'path'=>[
-//            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac')],
-//            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'language')],
-            ['/', array('\\Wwtg99\\App\\Controller\\HomeController', 'home'), 'pre'],
+            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac')],
+            ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'language')],
+            ["/403", array('\\Wwtg99\\App\\Controller\\DefaultController', 'forbidden')],
+            ["/405", array('\\Wwtg99\\App\\Controller\\DefaultController', 'methodNotAllowed')],
+            ['/', array('\\Wwtg99\\App\\Controller\\HomeController', 'home')],
             ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home')],
-//            ["/403", array('\\Wwtg99\\App\\Controller\\DefaultController', 'forbidden'), 'pre'],
-//            ["/405", array('\\Wwtg99\\App\\Controller\\DefaultController', 'methodNotAllowed'), 'pre'],
-//            ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog'), 'pre'],
+            ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog')],
+            ["/auth", 'Wwtg99\App\Controller\Auth'],
+            ["/oauth", 'Wwtg99\App\Controller\OAuth'],
+            ["/authorize", 'Wwtg99\App\Controller\Authorize'],  //oauth server
+            ["/user", 'Wwtg99\App\Controller\User'],
+            //admin
+            ['/admin', 'Wwtg99\App\Controller\Admin\Admin'],
+            ["/admin/department", 'Wwtg99\App\Controller\Admin\Department', 'restful'],
+            ["/admin/role", 'Wwtg99\App\Controller\Admin\Role', 'restful'],
+            ["/admin/user", 'Wwtg99\App\Controller\Admin\User', 'restful'],
+            ["/admin/app", 'Wwtg99\App\Controller\Admin\App', 'restful'],
         ],
         /**
          * Override http method with header X-HTTP-Method-Override
@@ -117,7 +127,7 @@ return [
         'info'=>'auth/info',
         'change_password'=>'auth/password',
         'forget_password'=>'auth/forget_password',
-        'user_edit'=>'auth/user_edit',
+        'user_edit'=>'user/edit',
         'update_captcha'=>'auth/update_captcha',
         'user_center'=>'user/center',
         'admin'=>'admin/home',

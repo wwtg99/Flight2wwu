@@ -34,14 +34,14 @@ class DepartmentController extends ResourceAdminController
      */
     protected function storeParse()
     {
-        $id = self::checkInput('department_id');
+        $id = self::getRequest()->checkInput('department_id');
         if ($id instanceof Message) {
             $msg = $id->toArray();
             getOValue()->addOldOnce('msg', $msg);
             \Flight::redirect($this->baseRoute . '/create');
             return false;
         }
-        $name = self::checkInput('name');
+        $name = self::getRequest()->checkInput('name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);
@@ -57,14 +57,14 @@ class DepartmentController extends ResourceAdminController
      */
     protected function updateParse($id)
     {
-        $did = self::checkInput('department_id');
+        $did = self::getRequest()->checkInput('department_id');
         if ($did instanceof Message) {
             $msg = $did->toArray();
             getOValue()->addOldOnce('msg', $msg);
             \Flight::redirect($this->baseRoute . "/$id/edit");
             return false;
         }
-        $name = self::checkInput('name');
+        $name = self::getRequest()->checkInput('name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);

@@ -12,7 +12,7 @@ namespace Wwtg99\App\Controller;
 use Wwtg99\App\Model\Auth\OAuthServerUser;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
-use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 
 /**
  * Class AuthorizeController
@@ -26,13 +26,13 @@ class AuthorizeController extends BaseController
 
     public static function authorize()
     {
-        if (self::checkMethod('POST')) {
-            $username = self::getInput('username');
-            $pwd = self::getInput('password');
-            $scope = self::getInput('scope');
-            $cid = self::getInput('client_id');
-            $state = self::getInput('state');
-            $redirect_uri = self::getInput('redirect_uri');
+        if (self::getRequest()->checkMethod('POST')) {
+            $username = self::getRequest()->getInput('username');
+            $pwd = self::getRequest()->getInput('password');
+            $scope = self::getRequest()->getInput('scope');
+            $cid = self::getRequest()->getInput('client_id');
+            $state = self::getRequest()->getInput('state');
+            $redirect_uri = self::getRequest()->getInput('redirect_uri');
             if (!$cid) {
                 $msg = Message::getMessage(1008);
             } elseif (!$redirect_uri) {
@@ -77,17 +77,17 @@ class AuthorizeController extends BaseController
             \Flight::redirect($uri);
             return false;
         } else {
-            $rtype = self::getInput('response_type');
-            $cid = self::getInput('client_id');
-            $rurl = self::getInput('redirect_uri');
-            $state = self::getInput('state');
-            $scope = self::getInput('scope');
+            $rtype = self::getRequest()->getInput('response_type');
+            $cid = self::getRequest()->getInput('client_id');
+            $rurl = self::getRequest()->getInput('redirect_uri');
+            $state = self::getRequest()->getInput('state');
+            $scope = self::getRequest()->getInput('scope');
             if (!$rtype || $rtype != 'code') {
-                $redata = ['error'=>Message::getMessage(1004)];
+                $redata = Message::messageList(1004)->toApiArray();
             } elseif (!$cid) {
-                $redata = ['error'=>Message::getMessage(1008)];
+                $redata = Message::messageList(1008)->toApiArray();
             } elseif (!$rurl) {
-                $redata = ['error'=>Message::getMessage(1010)];
+                $redata = Message::messageList(1010)->toApiArray();
             } else {
                 $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
                 $app = $appmodel->getApp($cid, $rurl);
@@ -100,29 +100,28 @@ class AuthorizeController extends BaseController
                         $redata['scope'] = $scope;
                     }
                 } else {
-                    $redata = ['error'=>Message::getMessage(1005)];
+                    $redata = Message::messageList(1005)->toApiArray();
                 }
             }
-            getView()->render('oauth/login', $redata);
+            return self::getResponse()->setResType('view')->setView('oauth/login')->setData(TA($redata))->send();
         }
-        return false;
     }
 
     public static function token()
     {
-        $gtype = self::getInput('grant_type', 'authorization_code');
-        $cset = self::getInput('client_secret');
-        $code = self::getInput('code');
-        $rurl = self::getInput('redirect_uri');
-        $state = self::getInput('state');
+        $gtype = self::getRequest()->getInput('grant_type', 'authorization_code');
+        $cset = self::getRequest()->getInput('client_secret');
+        $code = self::getRequest()->getInput('code');
+        $rurl = self::getRequest()->getInput('redirect_uri');
+        $state = self::getRequest()->getInput('state');
         if (!$gtype || $gtype != 'authorization_code') {
-            $redata = ['error'=>Message::getMessage(1006)];
+            $redata = Message::messageList(1006)->toApiArray();
         } elseif (!$cset) {
-            $redata = ['error'=>Message::getMessage(1011)];
+            $redata = Message::messageList(1011)->toApiArray();
         } elseif (!$rurl) {
-            $redata = ['error'=>Message::getMessage(1010)];
+            $redata = Message::messageList(1010)->toApiArray();
         } elseif (!$code) {
-            $redata = ['error'=>Message::getMessage(1002)];
+            $redata = Message::messageList(1002)->toApiArray();
         } else {
             //OAuth server
             $u = new OAuthServerUser(null);
@@ -139,24 +138,25 @@ class AuthorizeController extends BaseController
                         $redata['state'] = $state;
                     }
                 } else {
-                    $redata = ['error'=>Message::getMessage(21, $u->getMessage(), 'danger')];
+                    $redata = New Message(21, $u->getMessage(), 'danger');
+                    $redata = $redata->toApiArray();
                 }
             } else {
-                $redata = ['error'=>Message::getMessage(1002)];
+                $redata = Message::messageList(1002)->toApiArray();
             }
         }
-        \Flight::json(TA($redata), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
+        self::getResponse()->setResType('json')->setData(TA($redata))->send();
         return false;
     }
 
     public static function user()
     {
-        $cid = self::getInput('client_id');
-        $token = self::getInput('access_token');
+        $cid = self::getRequest()->getInput('client_id');
+        $token = self::getRequest()->getInput('access_token');
         if (!$cid) {
-            $redata = ['error'=>Message::getMessage(1009)];
+            $redata = Message::messageList(1009)->toApiArray();
         } elseif (!$token) {
-            $redata = ['error'=>Message::getMessage(1012)];
+            $redata = Message::messageList(1012)->toApiArray();
         }  else {
             //OAuth server
             $u = new OAuthServerUser(null);
@@ -165,10 +165,10 @@ class AuthorizeController extends BaseController
             if ($re) {
                 $redata = $u->getUser()->getUser();
             } else {
-                $redata = ['error'=>Message::getMessage(1012)];
+                $redata = Message::messageList(1012)->toApiArray();
             }
         }
-        \Flight::json(TA($redata), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
+        self::getResponse()->setResType('json')->setData(TA($redata))->send();
         return false;
     }
 

@@ -21,10 +21,7 @@ abstract class RestfulController extends BaseController
      * Method: Get
      * @return mixed
      */
-    public function index()
-    {
-
-    }
+    abstract public function index();
 
     /**
      * Show specific item.
@@ -32,30 +29,21 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public function show($id)
-    {
-
-    }
+    abstract public function show($id);
 
     /**
      * Create new Item.
      * Method Get
      * @return mixed
      */
-    public function create()
-    {
-
-    }
+    abstract public function create();
 
     /**
      * Store new Item.
      * Method Post
      * @return mixed
      */
-    public function store()
-    {
-
-    }
+    abstract public function store();
 
     /**
      * Edit specific item.
@@ -63,10 +51,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public function edit($id)
-    {
-
-    }
+    abstract public function edit($id);
 
     /**
      * Update specific item.
@@ -74,10 +59,7 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public function update($id)
-    {
-
-    }
+    abstract public function update($id);
 
     /**
      * Destroy item.
@@ -85,8 +67,5 @@ abstract class RestfulController extends BaseController
      * @param $id
      * @return mixed
      */
-    public function destroy($id)
-    {
-
-    }
+    abstract public function destroy($id);
 }

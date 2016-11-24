@@ -48,6 +48,7 @@ return [
                 '/405' => 3,
                 '/admin/*' => 0,
                 '/auth/*' => 3,
+                '/user/*' => 3,
                 '/oauth/*' => 3,
                 '/changelog' => 1,
             ],
@@ -59,13 +60,13 @@ return [
     ],
     'login_method'=>'normal', //normal or oauth
     'oauth'=>[
-        'code_uri'=>'http://localhost:9111/authorize/authorize',
-        'token_uri'=>'http://localhost:9111/authorize/token',
+        'code_uri'=>'http://192.168.0.21:10002/authorize/authorize',
+        'token_uri'=>'http://192.168.0.21:10002/authorize/token',
         'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
-        'app_id'=>'0b442326cba19a891356a6288df4cc5a',
+        'app_id'=>'e5d02e8cb7d66b86e35e96aac961a707',
         'app_id_key'=>'client_id',
-        'app_secret'=>'c22c408bc8394d4d0ed2388457534fa1',
+        'app_secret'=>'94d222cfb9dfb0fb27b4eebddeea7fa7',
         'app_secret_key'=>'client_secret',
     ],
     "auth_cache"=>[

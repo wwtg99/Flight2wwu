@@ -54,6 +54,7 @@ class DefaultController extends BaseController
         }
         // last path
         $skip = [
+            '/oauth/redirect_login',
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout')),
             FormatUtils::formatWebPath(getConfig()->get('defined_routes.signup')),

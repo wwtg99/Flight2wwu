@@ -45,14 +45,14 @@ class AppController extends ResourceAdminController
      */
     protected function storeParse()
     {
-        $name = self::checkInput('app_name');
+        $name = self::getRequest()->checkInput('app_name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);
             \Flight::redirect($this->baseRoute . '/create');
             return false;
         }
-        $uri = self::checkInput('redirect_uri');
+        $uri = self::getRequest()->checkInput('redirect_uri');
         if ($uri instanceof Message) {
             $msg = $uri->toArray();
             getOValue()->addOldOnce('msg', $msg);

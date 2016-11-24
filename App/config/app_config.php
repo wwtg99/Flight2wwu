@@ -20,6 +20,8 @@ return [
     'debug'=>1,
     //Maintenance
     'maintain'=>0,
+    //Domain
+    'domain'=>'http://domain.com',
     //Base url
     'base_url'=>'/',
     //Log

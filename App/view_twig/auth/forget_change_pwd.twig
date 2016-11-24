@@ -13,9 +13,13 @@
                 </div>
             </div>
         {% elseif token is defined %}
-            <div class="row text-center">
-                <h4>{{ 'username'|T }}: {{ name }}</h4>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-4">
+                    <h4>{{ 'username'|T }}: {{ user.name }}</h4>
+                    <h4>{{ 'email'|T }}: {{ user.email }}</h4>
+                </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                     <form class="form-horizontal" role="form" id="form_pwd" method="post">
@@ -41,7 +45,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="token" value="{{ token }}">
-                        <input type="hidden" name="state" value="{{ state }}">
+                        <input type="hidden" name="csrf_code" value="{{ csrf_code }}">
                         <div class="form-group text-center">
                             <button class="btn btn-primary" type="submit" id="submit" tabindex="4">{{ 'Submit'|T }}</button>
                             <button class="btn btn-default" type="reset" id="reset" tabindex="5">{{ 'Reset'|T }}</button>

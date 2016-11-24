@@ -105,7 +105,7 @@ class Message
      */
     public function toApiArray()
     {
-        return ['error'=>$this->msg];
+        return ['error'=>$this->msg, 'code'=>$this->code];
     }
 
     /**

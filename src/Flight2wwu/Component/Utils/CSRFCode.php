@@ -18,7 +18,7 @@ class CSRFCode
     /**
      * @var string
      */
-    protected static $key = 'csrf_code';
+    public static $key = 'csrf_code';
 
     /**
      * @var int

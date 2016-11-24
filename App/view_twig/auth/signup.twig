@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-2"><span class="glyphicon glyphicon-certificate"></span></label>
                         <div class="col-md-5">
-                            <input class="form-control" type="text" name="captcha" placeholder="{{ 'Captcha'|T }}" tabindex="3" required>
+                            <input class="form-control" type="text" name="captcha" placeholder="{{ 'Captcha'|T }}" tabindex="5" required>
                         </div>
                         <div class="col-md-5">
                             <button class="btn btn-link" type="button" id="bt_refcap"><img src="{{ captcha.inline() }}"> <span class="glyphicon glyphicon-refresh"></span></button>
@@ -42,10 +42,10 @@
                     </div>
                     <div class="form-group">
                         <div class="col-md-5 col-md-offset-1">
-                            {{ 'aleady have account' }}? <a href="{{ getConfig('defined_routes.login')|U }}">{{ 'Login'|T }}</a>
+                            {{ 'already have account'|T }}? <a href="{{ getConfig('defined_routes.login')|U }}">{{ 'Login'|T }}</a>
                         </div>
                     </div>
-                    <input type="hidden" name="state" value="{{ state }}">
+                    <input type="hidden" name="csrf_code" value="{{ csrf_code }}">
                     <div class="form-group text-center">
                         <button class="btn btn-primary" type="submit" id="submit" tabindex="6">{{ 'Login'|T }}</button>
                     </div>

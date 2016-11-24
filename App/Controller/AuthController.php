@@ -12,13 +12,13 @@ namespace Wwtg99\App\Controller;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\DataPool\Utils\FieldFormatter;
-use Wwtg99\Flight2wwu\Common\BaseController;
+use Wwtg99\Flight2wwu\Component\Controller\BaseController;
+use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 use Wwtg99\PgAuth\Auth\IUser;
 
 class AuthController extends BaseController
 {
-
 
     /**
      * Login
@@ -27,7 +27,7 @@ class AuthController extends BaseController
      */
     public static function login()
     {
-        if (self::checkMethod('POST')) {
+        if (self::getRequest()->checkMethod('POST')) {
             self::postLogin();
         } else {
             self::getLogin();
@@ -53,7 +53,7 @@ class AuthController extends BaseController
      */
     public static function password()
     {
-        if (self::checkMethod('POST')) {
+        if (self::getRequest()->checkMethod('POST')) {
             AuthController::postChangePwd();
         } else {
             AuthController::getChangePwd();
@@ -79,25 +79,10 @@ class AuthController extends BaseController
      */
     public static function signup()
     {
-        if (self::checkMethod('POST')) {
+        if (self::getRequest()->checkMethod('POST')) {
             AuthController::postSignup();
         } else {
             AuthController::getSignup();
-        }
-        return false;
-    }
-
-    /**
-     * Edit user info
-     *
-     * @return bool
-     */
-    public static function user_edit()
-    {
-        if (self::checkMethod('POST')) {
-            AuthController::postEdit();
-        } else {
-            AuthController::getEdit();
         }
         return false;
     }
@@ -109,7 +94,7 @@ class AuthController extends BaseController
      */
     public static function forget_password()
     {
-        if (self::checkMethod('POST')) {
+        if (self::getRequest()->checkMethod('POST')) {
             AuthController::postForgetPassword();
         } else {
             AuthController::getForgetPassword();
@@ -124,7 +109,7 @@ class AuthController extends BaseController
      */
     public static function forget_change_password()
     {
-        if (self::checkMethod('POST')) {
+        if (self::getRequest()->checkMethod('POST')) {
             AuthController::postForgetChangePassword();
         } else {
             AuthController::getForgetChangePassword();
@@ -139,7 +124,7 @@ class AuthController extends BaseController
      */
     public static function update_captcha()
     {
-        $builder = self::generateCaptcha();
+        $builder = getCaptcha()->generateCaptcha();
         echo $builder->inline();
         return false;
     }
@@ -152,27 +137,31 @@ class AuthController extends BaseController
             $path = '/';
             \Flight::redirect($path);
         } else {
-            $state = self::generateCSRFState();
-            $builder = self::generateCaptcha();
-            getView()->render('auth/login', ['title'=>'Login', 'state'=>$state, 'captcha'=>$builder]);
+            $state = getCSRF()->generateCSRFCode();
+            $builder = getCaptcha()->generateCaptcha();
+            self::getResponse()
+                ->setResType('view')
+                ->setView('auth/login')
+                ->setData(['title'=>'Login', CSRFCode::$key=>$state, 'captcha'=>$builder])
+                ->send();
         }
     }
 
     private static function postLogin()
     {
-        $name = self::getPost('username');
-        $pwd = self::getPost('password');
-        $rem = self::getPost('remember');
+        $req = self::getRequest();
+        $name = $req->getPost('username');
+        $pwd = $req->getPost('password');
+        $rem = $req->getPost('remember');
         getOValue()->addOld('login_username', $name);
-        $state = self::getInput('state');
-        $phrase = self::getInput('captcha');
-        if (!self::verifyCSRFState($state)) {
+        $phrase = $req->getInput('captcha');
+        if (!CSRFCode::check()) {
             $msg = Message::getMessage(25);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.login'));
             \Flight::redirect($rpath);
             return;
-        } elseif (!self::verifyCaptcha($phrase)) {
+        } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
             $msg = Message::getMessage(27);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.login'));
@@ -197,17 +186,18 @@ class AuthController extends BaseController
     private static function getLogout()
     {
         getAuth()->logout();
-//        $c = getConfig();
         $path = '/';
-//        $path = U($c->get('defined_routes.login'));
         \Flight::redirect($path);
     }
 
     private static function getChangePwd()
     {
         if (getAuth()->isLogin()) {
-            $state = self::generateCSRFState();
-            getView()->render('auth/change_pwd', ['title'=>'Change Password', 'state'=>$state]);
+            $state = getCSRF()->generateCSRFCode();
+            self::getResponse()->setResType('view')
+                ->setView('auth/change_pwd')
+                ->setData(['title'=>'Change Password', CSRFCode::$key=>$state])
+                ->send();
         } else {
             \Flight::redirect(U(getConfig()->get('defined_routes.login')));
         }
@@ -215,11 +205,10 @@ class AuthController extends BaseController
 
     private static function postChangePwd()
     {
-        $old = self::getPost('old');
-        $new1 = self::getPost('new1');
-        $new2 = self::getPost('new2');
-        $state = self::getInput('state');
-        if (!self::verifyCSRFState($state)) {
+        $old = self::getRequest()->getPost('old');
+        $new1 = self::getRequest()->getPost('new1');
+        $new2 = self::getRequest()->getPost('new2');
+        if (!CSRFCode::check()) {
             $msg = Message::getMessage(25);
         } elseif (!$new1 || !$new2){
             $msg = Message::getMessage(15);
@@ -241,7 +230,7 @@ class AuthController extends BaseController
     private static function getInfo()
     {
         $user = getUser();
-        \Flight::json(FieldFormatter::formatDateTime($user), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
+        self::getResponse()->setResType('json')->setData($user)->send();
     }
 
     private static function getSignup()
@@ -250,29 +239,31 @@ class AuthController extends BaseController
             $path = '/';
             \Flight::redirect($path);
         } else {
-            $state = self::generateCSRFState();
-            $builder = self::generateCaptcha();
-            getView()->render('auth/signup', ['title'=>'Sign Up', 'state'=>$state, 'captcha'=>$builder]);
+            $state = getCSRF()->generateCSRFCode();
+            $builder = getCaptcha()->generateCaptcha();
+            self::getResponse()->setResType('view')
+                ->setView('auth/signup')
+                ->setData(['title'=>'Sign Up', CSRFCode::$key=>$state, 'captcha'=>$builder])
+                ->send();
         }
     }
 
     private static function postSignup()
     {
-        $name = self::getPost('username');
-        $email = self::getPost('email');
-        $pwd = self::getPost('password');
-        $pwd2 = self::getPost('password2');
-        $state = self::getInput('state');
-        $phrase = self::getInput('captcha');
+        $name = self::getRequest()->getPost('username');
+        $email = self::getRequest()->getPost('email');
+        $pwd = self::getRequest()->getPost('password');
+        $pwd2 = self::getRequest()->getPost('password2');
+        $phrase = self::getRequest()->getInput('captcha');
         getOValue()->addOld('signup_username', $name);
         getOValue()->addOld('signup_email', $email);
-        if (!self::verifyCSRFState($state)) {
+        if (!CSRFCode::check()) {
             $msg = Message::getMessage(25);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.signup'));
             \Flight::redirect($rpath);
             return;
-        } elseif (!self::verifyCaptcha($phrase)) {
+        } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
             $msg = Message::getMessage(27);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.signup'));
@@ -322,70 +313,38 @@ class AuthController extends BaseController
         }
     }
 
-    private static function getEdit()
-    {
-        $state = self::generateCSRFState();
-        $u = getUser();
-        getView()->render('auth/user_edit', ['user'=>FieldFormatter::formatDateTime($u), 'state'=>$state]);
-    }
-
-    private static function postEdit()
-    {
-        $label = self::getInput('label');
-        $email = self::getInput('email');
-        $des = self::getInput('descr');
-        $state = self::getInput('state');
-        $user = getAuth()->getUserObject();
-        $d = [IUser::FIELD_LABEL=>$label, IUser::FIELD_EMAIL=>$email, 'descr'=>$des];
-        //check email
-        $u = getDataPool()->getConnection('auth')->getMapper('User');
-        $emailexist = $u->has([IUser::FIELD_EMAIL=>$email]);
-        if (!self::verifyCSRFState($state)) {
-            $msg = Message::getMessage(25);
-        } elseif ($emailexist) {
-            $msg = Message::getMessage(29);
-        } elseif ($user && $user->changeInfo($d)) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
-            getAuth()->refreshSession();
-        } else {
-            $msg = Message::getMessage(13);
-        }
-        getOValue()->addOldOnce('msg', $msg);
-        $rpath = U(getConfig()->get('defined_routes.user_edit'));
-        \Flight::redirect($rpath);
-    }
-
     private static function getForgetPassword()
     {
         if (getAuth()->isLogin()) {
             $path = '/';
             \Flight::redirect($path);
         } else {
-            $state = self::generateCSRFState();
-            $builder = self::generateCaptcha();
-            getView()->render('auth/forget_pwd', ['title' => 'Forget Password', 'state' => $state, 'captcha' => $builder]);
+            $state = getCSRF()->generateCSRFCode();
+            $builder = getCaptcha()->generateCaptcha();
+            self::getResponse()->setResType('view')
+                ->setView('auth/forget_pwd')
+                ->setData(['title' => 'Forget Password', CSRFCode::$key => $state, 'captcha' => $builder])
+                ->send();
         }
     }
 
     private static function postForgetPassword()
     {
-        $uname = self::getPost('username');
-        $email = self::getPost('email');
-        $state = self::getInput('state');
-        $phrase = self::getInput('captcha');
-        if (!self::verifyCSRFState($state)) {
+        $email = self::getRequest()->getPost('email');
+        $phrase = self::getRequest()->getInput('captcha');
+        if (!CSRFCode::check()) {
             $msg = Message::getMessage(25);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.forget_password'));
             \Flight::redirect($rpath);
             return;
-        } elseif (!self::verifyCaptcha($phrase)) {
+        } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
             $msg = Message::getMessage(27);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.forget_password'));
             \Flight::redirect($rpath);
             return;
-        } elseif (!$uname || !$email){
+        } elseif (!$email){
             $msg = Message::getMessage(15);
             getOValue()->addOldOnce('msg', $msg);
             $rpath = U(getConfig()->get('defined_routes.forget_password'));
@@ -395,30 +354,37 @@ class AuthController extends BaseController
         $send = 0;
         //check
         $umodel = getDataPool()->getConnection('auth')->getMapper('User');
-        $re = $umodel->get(null, IUser::FIELD_USER_ID, ['AND'=>[IUser::FIELD_USER_NAME=>$uname, IUser::FIELD_EMAIL=>$email]]);
+        $re = $umodel->get(null, IUser::FIELD_USER_ID, ['AND'=>[IUser::FIELD_EMAIL=>$email]]);
         if ($re) {
-            $token = md5($uname . ':' . $email . ':' . FormatUtils::randStr(20) . time());
+            $token = md5($email . ':' . FormatUtils::randStr(20) . time());
             $token_ttl = 86400;
-            getCache()->set($token, ['name'=>$uname, 'email'=>$email], $token_ttl);
+            $u = getDataPool()->getConnection('auth')->getMapper('User')->get(null, [IUser::FIELD_USER_ID, IUser::FIELD_USER_NAME, IUser::FIELD_EMAIL], [IUser::FIELD_EMAIL=>$email]);
+            getCache()->set($token, $u, $token_ttl);
             //send email
-            $domain = '';
+            $domain = getConfig()->get('domain');
             $sub = '请及时修改您的密码';
             $body = "<p>请点击如下链接修改您的密码，如果无法打开，请复制链接在浏览器地址栏中。</p><p><a href='$domain/auth/forget_change_password?token=$token'>$domain/auth/forget_change_password?token=$token</a></p>";//TODO
             $mail = getMailer();
-            $mail->send(['subject'=>$sub, 'to'=>$email, 'from'=>'from@email.com', 'body'=>$body]);//TODO
+            $mail->send(['subject'=>$sub, 'to'=>$email, 'from'=>['test@email.com'=>'no-reply'], 'body'=>$body]);//TODO
             $send = 1;
         }
-        getView()->render('auth/forget_pwd', ['title'=>'Forget Password', 'email'=>$email, 'send'=>$send]);
+        self::getResponse()->setResType('view')
+            ->setView('auth/forget_pwd')
+            ->setData(['title'=>'Forget Password', 'email'=>$email, 'send'=>$send])
+            ->send();
     }
 
     private static function getForgetChangePassword()
     {
-        $token = self::getInput('token');
+        $token = self::getRequest()->getInput('token');
         if ($token && getCache()->has($token)) {
             $u = getCache()->get($token);
-            $state = self::generateCSRFState();
-            $builder = self::generateCaptcha();
-            getView()->render('auth/forget_change_pwd', ['title' => 'Reset Password', 'name' => $u['name'], 'state'=>$state, 'captcha'=>$builder, 'token'=>$token]);
+            $state = getCSRF()->generateCSRFCode();
+            $builder = getCaptcha()->generateCaptcha();
+            self::getResponse()->setResType('view')
+                ->setView('auth/forget_change_pwd')
+                ->setData(['title' => 'Reset Password', 'user' => $u, CSRFCode::$key=>$state, 'captcha'=>$builder, 'token'=>$token])
+                ->send();
         } else {
             \Flight::redirect(U('404'));
         }
@@ -426,35 +392,34 @@ class AuthController extends BaseController
 
     private static function postForgetChangePassword()
     {
-        $token = self::getInput('token');
+        $token = self::getRequest()->getInput('token');
         if ($token && getCache()->has($token)) {
-            $state = self::getInput('state');
-            $phrase = self::getInput('captcha');
-            $pwd1 = self::getInput('pwd1');
-            $pwd2 = self::getInput('pwd2');
-            if (!self::verifyCSRFState($state)) {
+            $phrase = self::getRequest()->getInput('captcha');
+            $pwd1 = self::getRequest()->getInput('pwd1');
+            $pwd2 = self::getRequest()->getInput('pwd2');
+            if (!CSRFCode::check()) {
                 $msg = Message::getMessage(25);
                 getOValue()->addOldOnce('msg', $msg);
-                $rpath = self::getRequest()->url;
+                $rpath = self::getRequest()->getRequest()->url;
                 \Flight::redirect($rpath);
                 return;
-            } elseif (!self::verifyCaptcha($phrase)) {
+            } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
                 $msg = Message::getMessage(27);
                 getOValue()->addOldOnce('msg', $msg);
-                $rpath = self::getRequest()->url;
+                $rpath = self::getRequest()->getRequest()->url;
                 \Flight::redirect($rpath);
                 return;
             } elseif ($pwd1 != $pwd2) {
                 $msg = Message::getMessage(22);
                 getOValue()->addOldOnce('msg', $msg);
-                $rpath = self::getRequest()->url;
+                $rpath = self::getRequest()->getRequest()->url;
                 \Flight::redirect($rpath);
                 return;
             } else {
                 $u = getCache()->get($token);
                 getCache()->delete($token);
-                $uname = $u['name'];
-                $email = $u['email'];
+                $uname = $u[IUser::FIELD_USER_NAME];
+                $email = $u[IUser::FIELD_EMAIL];
                 $umodel = getDataPool()->getConnection('auth')->getMapper('User');
                 $re = $umodel->get(null, IUser::FIELD_USER_ID, ['AND'=>[IUser::FIELD_USER_NAME=>$uname, IUser::FIELD_EMAIL=>$email]]);
                 if ($re) {
@@ -468,7 +433,10 @@ class AuthController extends BaseController
                     $msg = Message::getMessage(11);
                 }
             }
-            getView()->render('auth/forget_change_pwd', ['title' => 'Reset Password', 'name' => $uname, 'msg'=>$msg]);
+            self::getResponse()->setResType('view')
+                ->setView('auth/forget_change_pwd')
+                ->setData(['title' => 'Reset Password', 'name' => $uname, 'msg'=>$msg])
+                ->send();
         } else {
             \Flight::redirect(U('404'));
         }

@@ -95,7 +95,7 @@ class UserController extends ResourceAdminController
         $model = $this->getMapper();
         $re = $model->insert($d);
         //roles
-        $roles = self::getInput('roles');
+        $roles = self::getRequest()->getInput('roles');
         $re2 = true;
         if ($roles) {
             $rs = explode(',', $roles);
@@ -120,7 +120,7 @@ class UserController extends ResourceAdminController
      */
     protected function storeParse()
     {
-        $name = self::checkInput('name');
+        $name = self::getRequest()->checkInput('name');
         if ($name instanceof Message) {
             $msg = $name->toArray();
             getOValue()->addOldOnce('msg', $msg);
@@ -174,7 +174,7 @@ class UserController extends ResourceAdminController
         $model = $this->getMapper();
         $re = $model->update($d, null, $id);
         //roles
-        $roles = self::getInput('roles');
+        $roles = self::getRequest()->getInput('roles');
         $re2 = true;
         if ($roles) {
             $rs = explode(',', $roles);
@@ -228,7 +228,7 @@ class UserController extends ResourceAdminController
      */
     public function destroy($id)
     {
-        $active = self::getInput('active', false);
+        $active = self::getRequest()->getInput('active', false);
         $model = $this->getMapper();
         $re = $model->activeUser($id, $active);
         if ($re) {

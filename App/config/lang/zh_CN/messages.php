@@ -147,7 +147,6 @@ return [
     'redirect uri does not exists'=>'重定向网址不存在！',
     'app secret does not exists'=>'应用密钥不存在！',
     'invalid access_token'=>'无效的access_token！',
-
     'app_id'=>'应用ID',
     'app_name'=>'应用名称',
     'redirect_uri'=>'重定向地址',
@@ -155,10 +154,10 @@ return [
     'app_secret'=>'应用密钥',
     'Refresh app secret'=>'刷新应用密钥',
     'App Num'=>'应用数量',
-    'the user name and email is not exists'=>'用户名或邮箱不存在！',
+    'the email is not exists'=>'此邮箱不存在！',
     'please check your input'=>'请检查您的输入是否有误！',
     'An email was sent to'=>'一封邮件已发往',
     'please check your email'=>'请检查您的邮箱！',
     'Forget Password'=>'忘记密码',
-    'aleady have account'=>'已有帐号',
+    'already have account'=>'已有帐号',
 ];
