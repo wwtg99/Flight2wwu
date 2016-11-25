@@ -11,13 +11,8 @@ namespace Wwtg99\Flight2wwu\Component\Controller;
 
 use Wwtg99\App\Model\Message;
 
-abstract class RestfulAPIController extends RestfulController
+abstract class RestfulAPIController extends RestfulParserController
 {
-
-    /**
-     * @var array
-     */
-    protected $filterFields = [];
 
     /**
      * @var array
@@ -28,46 +23,6 @@ abstract class RestfulAPIController extends RestfulController
      * @var array
      */
     protected $updateFields = [];
-
-    /**
-     * @var string
-     */
-    protected $keyFields = 'fields';
-
-    /**
-     * @var string
-     */
-    protected $keyLimit = 'limit';
-
-    /**
-     * @var string
-     */
-    protected $keyOffset = 'offset';
-
-    /**
-     * @var string
-     */
-    protected $keyPage = 'page';
-
-    /**
-     * @var string
-     */
-    protected $keyPageSize = 'page_size';
-
-    /**
-     * @var string
-     */
-    protected $keySort = 'sort';
-
-    /**
-     * @var string
-     */
-    protected $viewCreate = '';
-
-    /**
-     * @var string
-     */
-    protected $viewEdit = '';
 
     /**
      * List resources.
@@ -93,7 +48,7 @@ abstract class RestfulAPIController extends RestfulController
      * Create resource.
      *
      * @param array $data
-     * @return Message|bool
+     * @return Message|array
      */
     abstract protected function createResource($data);
 
@@ -102,7 +57,7 @@ abstract class RestfulAPIController extends RestfulController
      *
      * @param $id
      * @param array $data
-     * @return Message|bool
+     * @return Message|array
      */
     abstract protected function updateResource($id, $data);
 
@@ -110,7 +65,7 @@ abstract class RestfulAPIController extends RestfulController
      * Delete resource.
      *
      * @param $id
-     * @return Message|bool
+     * @return Message|array
      */
     abstract protected function deleteResource($id);
 
@@ -121,61 +76,10 @@ abstract class RestfulAPIController extends RestfulController
      */
     public function index()
     {
-        //fields: comma to separate
-        $fields = self::getRequest()->getInput($this->keyFields);
-        //paging: use limit and offset or page and page size
-        $limit = self::getRequest()->getInput($this->keyLimit);
-        $offset = self::getRequest()->getInput($this->keyOffset);
-        $page = self::getRequest()->getInput($this->keyPage);
-        $pageSize = self::getRequest()->getInput($this->keyPageSize);
-        $paging = [];
-        if ($page) {
-            $paging = ['page'=>$page];
-            if ($pageSize) {
-                $paging['pageSize'] = $pageSize;
-            }
-        } elseif ($limit) {
-            $paging = ['limit'=>$limit];
-            if ($offset) {
-                $paging['offset'] = $offset;
-            }
-        }
-        //sort: use +field order by asc, -field order by desc, comma (,) to separate
-        $sortstr = self::getRequest()->getInput($this->keySort);
-        $sort = [];
-        if ($sortstr) {
-            $sortfs = explode(',', $sortstr);
-            foreach ($sortfs as $sortf) {
-                if (substr($sortf, 0, 1) == '+') {
-                    array_push($sort, [substr($sortf, 1) => 'ASC']);
-                } elseif (substr($sortf, 0, 1) == '-') {
-                    array_push($sort, [substr($sortf, 1) => 'DESC']);
-                }
-            }
-        }
-        //filter: key=value or key>=value or key<=value or key!=value
-        $filter = [];
-        foreach ($this->filterFields as $filterField) {
-            $veq = self::getRequest()->getInput($filterField);
-            if (!is_null($veq)) {
-                $filter[$filterField] = $veq;
-            }
-            $vgt = self::getRequest()->getInput($filterField . '>');
-            if (!is_null($vgt)) {
-                $filter[$filterField . '[>=]'] = $vgt;
-            }
-            $vlt = self::getRequest()->getInput($filterField . '<');
-            if (!is_null($vlt)) {
-                $filter[$filterField . '[<=]'] = $vlt;
-            }
-            $vne = self::getRequest()->getInput($filterField . '!');
-            if (!is_null($vne)) {
-                $filter[$filterField . '[!=]'] = $vne;
-            }
-        }
-        if ($filter) {
-            $filter = ['AND'=>$filter];
-        }
+        $fields = $this->parseFields();
+        $filter = $this->parseFilters();
+        $sort = $this->parseOrders();
+        $paging = $this->parsePaging();
         $data = $this->listResources($fields, $filter, $sort, $paging);
         return self::getResponse()->setResType('json')->setData($data)->send();
     }
@@ -188,8 +92,7 @@ abstract class RestfulAPIController extends RestfulController
      */
     public function show($id)
     {
-        //fields: comma to separate
-        $fields = self::getRequest()->getInput($this->keyFields);
+        $fields = $this->parseFields();
         $data = $this->getResource($id, $fields);
         return self::getResponse()->setResType('json')->setData($data)->send();
     }
@@ -201,7 +104,7 @@ abstract class RestfulAPIController extends RestfulController
      */
     public function create()
     {
-        return self::getResponse()->setResType('view')->setView($this->viewCreate)->send();
+        return false;
     }
 
     /**
@@ -215,14 +118,15 @@ abstract class RestfulAPIController extends RestfulController
             $d = self::getRequest()->getArrayInputN($this->createFields);
             $data = $this->createResource($d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(400)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+            } else {
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
             }
         } else {
             \Flight::redirect(U('405'));
         }
-        \Flight::redirect(U('404'));
         return false;
     }
 
@@ -234,8 +138,7 @@ abstract class RestfulAPIController extends RestfulController
      */
     public function edit($id)
     {
-        $data = $this->getResource($id);
-        return self::getResponse()->setResType('view')->setView($this->viewEdit)->setData($data)->send();
+        return false;
     }
 
     /**
@@ -250,22 +153,25 @@ abstract class RestfulAPIController extends RestfulController
             $d = self::getRequest()->getArrayInput($this->updateFields);
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(400)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+            } else {
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
             }
         } elseif (self::getRequest()->checkMethod('PATCH')) {
             $d = self::getRequest()->getArrayInputN($this->updateFields);
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(400)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+            } else {
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
             }
         } else {
             \Flight::redirect(U('405'));
         }
-        \Flight::redirect(U('404'));
         return false;
     }
 
@@ -280,14 +186,15 @@ abstract class RestfulAPIController extends RestfulController
         if (self::getRequest()->checkMethod('DELETE')) {
             $data = $this->deleteResource($id);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(400)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(204)->setData($data)->send();
+            } else {
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
             }
         } else {
             \Flight::redirect(U('405'));
         }
-        \Flight::redirect(U('404'));
         return false;
     }
 

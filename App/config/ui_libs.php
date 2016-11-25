@@ -70,6 +70,11 @@ return [
                 'css'=>['select2.min.css'],
                 'prefix'=>'assets/select2'
             ],
+            'validation'=>[
+                'depends'=>['jquery'],
+                'js'=>['jquery.validate.min.js', 'additional-methods.min.js'],
+                'prefix'=>'assets/jquery-validation'
+            ],
         ]
     ]
 ];

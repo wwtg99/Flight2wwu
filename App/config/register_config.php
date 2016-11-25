@@ -51,12 +51,14 @@ return [
          *
          * Restful Controller register methods:
          * GET route | index | List all objects
-         * GET route/create | create | show create view
          * POST route | store | create new object
          * GET route/@id | show | show one object
-         * GET route/@id/edit | edit | show edit view
          * PUT|PATCH route/@id | update | update object
          * DELETE route/@id | destroy | delete object
+         *
+         * If third param is restful+, two more routes will be registered
+         * GET route/create | create | show create view
+         * GET route/@id/edit | edit | show edit view
          */
         'path'=>[
             ["*", array('\\Wwtg99\\App\\Controller\\DefaultController', 'rbac')],
@@ -72,10 +74,10 @@ return [
             ["/user", 'Wwtg99\App\Controller\User'],
             //admin
             ['/admin', 'Wwtg99\App\Controller\Admin\Admin'],
-            ["/admin/department", 'Wwtg99\App\Controller\Admin\Department', 'restful'],
-            ["/admin/role", 'Wwtg99\App\Controller\Admin\Role', 'restful'],
-            ["/admin/user", 'Wwtg99\App\Controller\Admin\User', 'restful'],
-            ["/admin/app", 'Wwtg99\App\Controller\Admin\App', 'restful'],
+            ["/admin/departments", 'Wwtg99\App\Controller\Admin\Department', 'restful'],
+            ["/admin/roles", 'Wwtg99\App\Controller\Admin\Role', 'restful'],
+            ["/admin/users", 'Wwtg99\App\Controller\Admin\User', 'restful'],
+            ["/admin/apps", 'Wwtg99\App\Controller\Admin\App', 'restful+'],
         ],
         /**
          * Override http method with header X-HTTP-Method-Override

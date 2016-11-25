@@ -139,6 +139,29 @@ function getJsonLength(jsonData){
     return jsonLength;
 }
 
+function ajaxHttp(settings, method) {
+    if ('headers' in settings) {
+        var h = settings['headers'];
+        h['X-HTTP-Method-Override'] = method;
+    } else {
+        h = {'X-HTTP-Method-Override': method};
+    }
+    settings['headers'] = h;
+    $.ajax(settings)
+}
+
+function ajaxPut(settings) {
+    ajaxHttp(settings, 'PUT');
+}
+
+function ajaxPatch(settings) {
+    ajaxHttp(settings, 'PATCH');
+}
+
+function ajaxDelete(settings) {
+    ajaxHttp(settings, 'DELETE');
+}
+
 /**
  * Post data and redirect to url.
  *

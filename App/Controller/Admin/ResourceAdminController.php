@@ -105,19 +105,23 @@ abstract class ResourceAdminController extends RestfulController
      */
     public function store()
     {
-        $d = $this->storeParse();
-        if ($d === false) {
-            return false;
-        }
-        $model = $this->getMapper();
-        $re = $model->insert($d);
-        if ($re) {
-            $msg = Message::getMessage(0, 'create successfully', 'success');
+        if (self::getRequest()->checkMethod('POST')) {
+            $d = $this->storeParse();
+            if ($d === false) {
+                return false;
+            }
+            $model = $this->getMapper();
+            $re = $model->insert($d);
+            if ($re) {
+                $msg = Message::getMessage(0, 'create successfully', 'success');
+            } else {
+                $msg = Message::getMessage(12);
+            }
+            getOValue()->addOldOnce('msg', $msg);
+            \Flight::redirect($this->baseRoute);
         } else {
-            $msg = Message::getMessage(12);
+            \Flight::redirect(U('405'));
         }
-        getOValue()->addOldOnce('msg', $msg);
-        \Flight::redirect($this->baseRoute);
         return false;
     }
 
@@ -153,19 +157,23 @@ abstract class ResourceAdminController extends RestfulController
      */
     public function update($id)
     {
-        $d = $this->updateParse($id);
-        if ($d === false) {
-            return false;
-        }
-        $model = $this->getMapper();
-        $re = $model->update($d, null, $id);
-        if ($re) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
+        if (self::getRequest()->checkMethod('PUT', 'PATCH')) {
+            $d = $this->updateParse($id);
+            if ($d === false) {
+                return false;
+            }
+            $model = $this->getMapper();
+            $re = $model->update($d, null, $id);
+            if ($re) {
+                $msg = Message::getMessage(0, 'update successfully', 'success');
+            } else {
+                $msg = Message::getMessage(13);
+            }
+            getOValue()->addOldOnce('msg', $msg);
+            \Flight::redirect($this->baseRoute . "/$id/edit");
         } else {
-            $msg = Message::getMessage(13);
+            \Flight::redirect(U('405'));
         }
-        getOValue()->addOldOnce('msg', $msg);
-        \Flight::redirect($this->baseRoute . "/$id/edit");
         return false;
     }
 
@@ -187,14 +195,18 @@ abstract class ResourceAdminController extends RestfulController
      */
     public function destroy($id)
     {
-        $model = $this->getMapper();
-        $re = $model->delete($id);
-        if ($re) {
-            $msg = Message::getMessage(0, 'delete successfully', 'success');
+        if (self::getRequest()->checkMethod('DELETE')) {
+            $model = $this->getMapper();
+            $re = $model->delete($id);
+            if ($re) {
+                $msg = Message::getMessage(0, 'delete successfully', 'success');
+            } else {
+                $msg = Message::getMessage(14);
+            }
+            self::getResponse()->setResType('json')->setData(TA($msg))->send();
         } else {
-            $msg = Message::getMessage(14);
+            \Flight::redirect(U('405'));
         }
-        \Flight::json(TA($msg), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
         return false;
     }
 

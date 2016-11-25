@@ -73,10 +73,11 @@ class Router
      */
     public function registerStringRoute($path, $route, $option = null)
     {
-        if ($option) {
-            $rest = ($option == 'restful');
-        } else {
-            $rest = false;
+        $rest = false;
+        $restplus = false;
+        if ($option == 'restful' || $option == 'restful+') {
+            $rest = true;
+            $restplus = ($option == 'restful+');
         }
         $classname = $route . 'Controller';
         $ref = new \ReflectionClass($classname);
@@ -85,10 +86,12 @@ class Router
                 $ins = $ref->newInstance();
                 $path = rtrim($path, '/');
                 \Flight::route("GET $path", [$ins, 'index']);
-                \Flight::route("GET $path/create", [$ins, 'create']);
                 \Flight::route("POST $path", [$ins, 'store']);
+                if ($restplus) {
+                    \Flight::route("GET $path/create", [$ins, 'create']);
+                    \Flight::route("GET $path/@id/edit", [$ins, 'edit']);
+                }
                 \Flight::route("GET $path/@id", [$ins, 'show']);
-                \Flight::route("GET $path/@id/edit", [$ins, 'edit']);
                 if ($this->overrideHttpMethod) {
                     \Flight::route("POST|PUT|PATCH $path/@id", [$ins, 'update']);
                     \Flight::route("POST|DELETE $path/@id", [$ins, 'destroy']);
