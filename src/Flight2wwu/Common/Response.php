@@ -48,6 +48,11 @@ class Response
     protected $resCode = 200;
 
     /**
+     * @var array
+     */
+    protected $header = ['Cache-Control: no-cache', 'Pragma: no-cache'];
+
+    /**
      * Response constructor.
      */
     private function __construct()
@@ -66,10 +71,23 @@ class Response
     }
 
     /**
+     * Send header
+     */
+    public function sendHeader()
+    {
+        if ($this->header) {
+            foreach ($this->header as $head) {
+                header($head);
+            }
+        }
+    }
+
+    /**
      * @return bool
      */
     public function send()
     {
+        $this->sendHeader();
         switch ($this->resType) {
             case 'json': \Flight::json($this->data, $this->resCode, true, 'utf8', $this->jsonOptions); return false;
             case 'jsonp': \Flight::jsonp($this->data, $this->jsonpCallback, $this->resCode, true, 'utf8', $this->jsonOptions); return false;
@@ -202,5 +220,24 @@ class Response
         $this->view = $view;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getHeader()
+    {
+        return $this->header;
+    }
+
+    /**
+     * @param array $header
+     * @return Response
+     */
+    public function setHeader($header)
+    {
+        $this->header = $header;
+        return $this;
+    }
+
 
 }

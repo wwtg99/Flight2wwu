@@ -36,27 +36,39 @@
         }
 
         function createObject() {
-            var form = $('#form_edit');
-            if (form.valid()) {
-                var fd = new FormData(document.getElementById('form_edit'));
-                $.ajax({
-                    url: '{{ route }}',
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    type: 'POST',
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (data) {
-                        console.log(data);
+            postForm('form_edit', {
+                url: '{{ route }}',
+                success: function (data) {
+                    if ('error' in data) {
+                        BootstrapDialog.alert(data['error']);
+                    } else {
+                        BootstrapDialog.alert('{{ 'create successfully'|T }}', function(){
+                            location.href = '{{ route }}';
+                        });
                     }
-                });
-            }
+                },
+                error: function (data) {
+                    BootstrapDialog.alert(data);
+                }
+            });
         }
 
         function updateObject() {
-
+            patchForm('form_edit', {
+                url: '{{ route }}/{{ id }}',
+                success: function (data) {
+                    if ('error' in data) {
+                        BootstrapDialog.alert(data['error']);
+                    } else {
+                        BootstrapDialog.alert('{{ 'update successfully'|T }}', function(){
+                            location.href = '{{ route }}';
+                        });
+                    }
+                },
+                error: function (data) {
+                    BootstrapDialog.alert(data);
+                }
+            });
         }
 
     </script>

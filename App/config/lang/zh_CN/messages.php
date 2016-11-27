@@ -160,4 +160,5 @@ return [
     'please check your email'=>'请检查您的邮箱！',
     'Forget Password'=>'忘记密码',
     'already have account'=>'已有帐号',
+    'activate successfully'=>'激活成功！',
 ];

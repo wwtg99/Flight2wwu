@@ -11,6 +11,11 @@ namespace Wwtg99\Flight2wwu\Component\Controller;
 
 use Wwtg99\App\Model\Message;
 
+/**
+ * Class RestfulAPIController
+ * Implement restful API controller.
+ * @package Wwtg99\Flight2wwu\Component\Controller
+ */
 abstract class RestfulAPIController extends RestfulParserController
 {
 
@@ -118,11 +123,11 @@ abstract class RestfulAPIController extends RestfulParserController
             $d = self::getRequest()->getArrayInputN($this->createFields);
             $data = $this->createResource($d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));
@@ -153,21 +158,22 @@ abstract class RestfulAPIController extends RestfulParserController
             $d = self::getRequest()->getArrayInput($this->updateFields);
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } elseif (self::getRequest()->checkMethod('PATCH')) {
             $d = self::getRequest()->getArrayInputN($this->updateFields);
             $data = $this->updateResource($id, $d);
+            getLog()->warning('===' . print_r($data, true));
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));
@@ -186,11 +192,11 @@ abstract class RestfulAPIController extends RestfulParserController
         if (self::getRequest()->checkMethod('DELETE')) {
             $data = $this->deleteResource($id);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData($data->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
                 return self::getResponse()->setResType('json')->setResCode(204)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(Message::messageList(1)->toApiArray())->send();
+                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));

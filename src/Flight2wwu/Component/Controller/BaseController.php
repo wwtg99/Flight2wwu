@@ -16,7 +16,7 @@ use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 
 /**
  * Class BaseController
- * Controllers must extends
+ * Controllers must extend this class.
  * @package Flight2wwu\Common
  */
 abstract class BaseController
@@ -35,15 +35,6 @@ abstract class BaseController
     protected static function getResponse()
     {
         return Response::get();
-    }
-
-    /**
-     * default header
-     */
-    protected static function defaultHeader()
-    {
-        header('Cache-Control: no-cache');
-        header('Pragma: no-cache');
     }
 
 } 

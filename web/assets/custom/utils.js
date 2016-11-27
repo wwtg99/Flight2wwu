@@ -163,6 +163,69 @@ function ajaxDelete(settings) {
 }
 
 /**
+ *
+ * @param form_id
+ * @param ajax_settings
+ * @returns {boolean}
+ */
+function postForm(form_id, ajax_settings)
+{
+    var form = $('#' + form_id);
+    if (form.valid()) {
+        var fd = new FormData(document.getElementById(form_id));
+        var default_setting = {
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST'
+        };
+        ajax_settings = $.extend(default_setting, ajax_settings);
+        $.ajax(ajax_settings);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function putForm(form_id, ajax_settings)
+{
+    var form = $('#' + form_id);
+    if (form.valid()) {
+        var fd = new FormData(document.getElementById(form_id));
+        var default_setting = {
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST'
+        };
+        ajax_settings = $.extend(default_setting, ajax_settings);
+        ajaxPut(ajax_settings);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function patchForm(form_id, ajax_settings)
+{
+    var form = $('#' + form_id);
+    if (form.valid()) {
+        var fd = new FormData(document.getElementById(form_id));
+        var default_setting = {
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST'
+        };
+        ajax_settings = $.extend(default_setting, ajax_settings);
+        ajaxPatch(ajax_settings);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Post data and redirect to url.
  *
  * @param url

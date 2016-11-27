@@ -8,7 +8,11 @@
 
 namespace Wwtg99\Flight2wwu\Component\Controller;
 
-
+/**
+ * Class RestfulPlusController
+ * Add index, show, create, edit view to restful API controller.
+ * @package Wwtg99\Flight2wwu\Component\Controller
+ */
 abstract class RestfulPlusController extends RestfulAPIController
 {
 

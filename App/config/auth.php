@@ -73,7 +73,7 @@ return [
         "type"=>"redis",  //apcu, file, redis, memcache or no cache
         "options"=>[
             "schema"=>"tcp",
-            "host"=>"192.168.0.21",
+            "host"=>"192.168.6.131",
             "database"=>6
         ]
     ],

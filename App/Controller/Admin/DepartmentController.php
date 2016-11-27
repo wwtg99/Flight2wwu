@@ -12,97 +12,65 @@ namespace Wwtg99\App\Controller\Admin;
 use Wwtg99\App\Model\Message;
 
 
-class DepartmentController extends ResourceAdminController
+class DepartmentController extends AdminAPIController
 {
 
-    protected $indexFields = ['department_id', 'name', 'descr', 'created_at', 'updated_at'];
+    protected $defaultListFields = ['department_id', 'name', 'descr', 'created_at', 'updated_at'];
 
-    protected $showFields = ['department_id', 'name', 'descr', 'params', 'created_at', 'updated_at'];
+    protected $defaultShowFields = ['department_id', 'name', 'descr', 'params', 'created_at', 'updated_at'];
 
-    protected $storeFields = ['department_id', 'name', 'descr', 'params'];
+    protected $filterFields = ['department_id', 'name', 'descr'];
+
+    protected $createFields = ['department_id', 'name', 'descr', 'params'];
 
     protected $updateFields = ['department_id', 'name', 'descr', 'params'];
 
+    protected $viewList = 'admin/department_index';
+
+    protected $viewShow = 'admin/department_show';
+
+    protected $viewCreate = 'admin/department_edit';
+
+    protected $viewEdit = 'admin/department_edit';
+
     protected $title = 'Department Management';
 
-    protected $baseRoute = '/admin/department';
-
-    protected $templatePrefix = 'admin/department_';
+    protected $route = 'admin/departments';
 
     /**
-     * @return array|bool
+     * Create resource.
+     *
+     * @param array $data
+     * @return Message|array
      */
-    protected function storeParse()
+    protected function createResource($data)
     {
-        $id = self::getRequest()->checkInput('department_id');
-        if ($id instanceof Message) {
-            $msg = $id->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . '/create');
-            return false;
+        if (!isset($data['department_id'])) {
+            return new Message(11, 'invalid department_id');
         }
-        $name = self::getRequest()->checkInput('name');
-        if ($name instanceof Message) {
-            $msg = $name->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . '/create');
-            return false;
+        if (!isset($data['name'])) {
+            return new Message(11, 'invalid name');
         }
-        return parent::storeParse();
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
+        }
+        return parent::createResource($data);
     }
 
     /**
+     * Update resource.
+     *
      * @param $id
-     * @return array|bool
+     * @param array $data
+     * @return Message|array
      */
-    protected function updateParse($id)
+    protected function updateResource($id, $data)
     {
-        $did = self::getRequest()->checkInput('department_id');
-        if ($did instanceof Message) {
-            $msg = $did->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . "/$id/edit");
-            return false;
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
         }
-        $name = self::getRequest()->checkInput('name');
-        if ($name instanceof Message) {
-            $msg = $name->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . "/$id/edit");
-            return false;
-        }
-        $d = parent::updateParse($id);
-        if (isset($d['params']) && !$d['params']) {
-            $d['params'] = null;
-        }
-        return $d;
+        return parent::updateResource($id, $data);
     }
-
-    /**
-     * Update specific item.
-     * Method Post
-     * @param $id
-     * @return mixed
-     */
-    public function update($id)
-    {
-        $d = $this->updateParse($id);
-        if ($d === false) {
-            return false;
-        }
-        $model = $this->getMapper();
-        $re = $model->update($d, null, $id);
-        if ($re) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
-            $id = $d['department_id'];
-        } else {
-            $msg = Message::getMessage(13);
-        }
-        getOValue()->addOldOnce('msg', $msg);
-        \Flight::redirect($this->baseRoute . "/$id/edit");
-        return false;
-    }
-
 
     /**
      * @return \Wwtg99\DataPool\Common\IDataMapper

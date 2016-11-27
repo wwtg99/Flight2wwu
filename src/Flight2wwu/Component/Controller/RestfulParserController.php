@@ -8,7 +8,11 @@
 
 namespace Wwtg99\Flight2wwu\Component\Controller;
 
-
+/**
+ * Class RestfulParserController
+ * Add parse fields, paging, orders and filters.
+ * @package Wwtg99\Flight2wwu\Component\Controller
+ */
 abstract class RestfulParserController extends RestfulController
 {
 

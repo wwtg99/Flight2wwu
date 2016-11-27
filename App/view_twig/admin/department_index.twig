@@ -40,12 +40,20 @@
                         BootstrapDialog.confirm('{{ 'confirm to delete'|T }} ' + row['name'] + '?', function (result) {
                             if (result) {
                                 var id = row['department_id'];
-                                var url = '{{ route }}/' + id + '/destroy';
-                                $.post(url, {}, function (data) {
-                                    if (data.code == 0) {
-                                        location.reload();
-                                    } else {
-                                        BootstrapDialog.alert(data.message);
+                                var url = '{{ route }}/' + id;
+                                ajaxDelete({
+                                    url: url,
+                                    success: function(data, status, xhr) {
+                                        if (xhr.status == 204) {
+                                            location.reload();
+                                        } else if ('error' in data) {
+                                            BootstrapDialog.alert(data['error']);
+                                        } else {
+                                            BootstrapDialog.alert(data);
+                                        }
+                                    },
+                                    error: function(data) {
+                                        BootstrapDialog.alert(data);
                                     }
                                 });
                             }

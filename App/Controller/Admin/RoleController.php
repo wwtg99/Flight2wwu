@@ -11,56 +11,62 @@ namespace Wwtg99\App\Controller\Admin;
 
 use Wwtg99\App\Model\Message;
 
-class RoleController extends ResourceAdminController
+class RoleController extends AdminAPIController
 {
 
-    protected $indexFields = ['role_id', 'name', 'descr', 'created_at', 'updated_at'];
+    protected $defaultListFields = ['role_id', 'name', 'descr', 'created_at', 'updated_at'];
 
-    protected $showFields = ['role_id', 'name', 'descr', 'params', 'created_at', 'updated_at'];
+    protected $defaultShowFields = ['role_id', 'name', 'descr', 'params', 'created_at', 'updated_at'];
 
-    protected $storeFields = ['name', 'descr', 'params'];
+    protected $filterFields = ['role_id', 'name', 'descr'];
+
+    protected $createFields = ['name', 'descr', 'params'];
 
     protected $updateFields = ['name', 'descr', 'params'];
 
+    protected $viewList = 'admin/role_index';
+
+    protected $viewShow = 'admin/role_show';
+
+    protected $viewCreate = 'admin/role_edit';
+
+    protected $viewEdit = 'admin/role_edit';
+
     protected $title = 'Role Management';
 
-    protected $baseRoute = '/admin/role';
+    protected $route = 'admin/roles';
 
-    protected $templatePrefix = 'admin/role_';
 
     /**
-     * @return array|bool
+     * Create resource.
+     *
+     * @param array $data
+     * @return Message|array
      */
-    protected function storeParse()
+    protected function createResource($data)
     {
-        $name = self::getRequest()->checkInput('name');
-        if ($name instanceof Message) {
-            $msg = $name->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . '/create');
-            return false;
+        if (!isset($data['name'])) {
+            return new Message(11, 'invalid name');
         }
-        return parent::storeParse();
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
+        }
+        return parent::createResource($data);
     }
 
     /**
+     * Update resource.
+     *
      * @param $id
-     * @return array|bool
+     * @param array $data
+     * @return Message|array
      */
-    protected function updateParse($id)
+    protected function updateResource($id, $data)
     {
-        $name = self::getRequest()->checkInput('name');
-        if ($name instanceof Message) {
-            $msg = $name->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . "/$id/edit");
-            return false;
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
         }
-        $d = parent::updateParse($id);
-        if (isset($d['params']) && !$d['params']) {
-            $d['params'] = null;
-        }
-        return $d;
+        return parent::updateResource($id, $data);
     }
 
     /**

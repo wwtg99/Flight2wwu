@@ -25,10 +25,10 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="{{ '/admin/home'|U }}">{{ 'Home'|T }} <span class="sr-only">(current)</span></a></li>
-                        <li><a href="{{ '/admin/department'|U }}">{{ 'Department Management'|T }}</a></li>
-                        <li><a href="{{ '/admin/role'|U }}">{{ 'Role Management'|T }}</a></li>
-                        <li><a href="{{ '/admin/user'|U }}">{{ 'User Management'|T }}</a></li>
-                        <li><a href="{{ '/admin/app'|U }}">{{ 'App Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/departments'|U }}">{{ 'Department Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/roles'|U }}">{{ 'Role Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/users'|U }}">{{ 'User Management'|T }}</a></li>
+                        <li><a href="{{ '/admin/apps'|U }}">{{ 'App Management'|T }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if isLogin() %}
@@ -38,7 +38,7 @@
                                     {% if isSuperuser() %}
                                         <li><a href="{{ getConfig('defined_routes.admin')|U }}"><span class="glyphicon glyphicon-cog"></span> {{ 'Admin'|T }}</a></li>
                                     {% endif %}
-                                    <li><a href="{{ getConfig('defined_routes.user_home')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
+                                    <li><a href="{{ getConfig('defined_routes.user_center')|U }}"><span class="glyphicon glyphicon-user"></span> {{ 'User Center'|T }}</a></li>
                                     <li><a href="{{ getConfig('defined_routes.change_password')|U }}"><span class="glyphicon glyphicon-lock"></span> {{ 'Change Password'|T }}</a></li>
                                 </ul>
                             </li>

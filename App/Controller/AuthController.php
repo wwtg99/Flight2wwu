@@ -11,7 +11,6 @@ namespace Wwtg99\App\Controller;
 
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
-use Wwtg99\DataPool\Utils\FieldFormatter;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;

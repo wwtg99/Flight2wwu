@@ -10,61 +10,176 @@ namespace Wwtg99\App\Controller\Admin;
 
 
 use Wwtg99\App\Model\Message;
+use Wwtg99\DataPool\Mappers\ArrayMapper;
 use Wwtg99\DataPool\Utils\FieldFormatter;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\PgAuth\Auth\IUser;
 
-class UserController extends ResourceAdminController
+class UserController extends AdminAPIController
 {
 
-    protected $indexFields = ['user_id', 'name', 'label', 'email', 'department', 'roles', 'superuser', 'created_at', 'updated_at', 'deleted_at'];
+    protected $defaultListFields = ['user_id', 'name', 'label', 'email', 'department', 'roles', 'superuser', 'created_at', 'updated_at', 'deleted_at'];
 
-    protected $showFields = ['user_id', 'name', 'label', 'email', 'department_id', 'department', 'department_descr', 'roles', 'superuser', 'params', 'descr', 'created_at', 'updated_at', 'deleted_at'];
+    protected $defaultShowFields = ['user_id', 'name', 'label', 'email', 'department_id', 'department', 'department_descr', 'roles', 'superuser', 'params', 'descr', 'created_at', 'updated_at', 'deleted_at'];
 
-    protected $storeFields = ['name', 'label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params'];
+    protected $filterFields = ['name', 'label', 'email', 'department_id', 'descr'];
 
-    protected $updateFields = ['label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params'];
+    protected $createFields = ['name', 'label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params'];
+
+    protected $updateFields = ['label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params', 'roles', 'deleted_at'];
+
+    protected $viewList = 'admin/user_index';
+
+    protected $viewShow = 'admin/user_show';
+
+    protected $viewCreate = 'admin/user_edit';
+
+    protected $viewEdit = 'admin/user_edit';
 
     protected $title = 'User Management';
 
-    protected $baseRoute = '/admin/user';
-
-    protected $templatePrefix = 'admin/user_';
+    protected $route = 'admin/users';
 
     /**
-     * List all items.
-     * Method: Get
-     * @return mixed
+     * List resources.
+     *
+     * @param array $fields
+     * @param array $filter
+     * @param array $sort
+     * @param array $paging
+     * @return array
      */
-    public function index()
+    protected function listResources($fields = null, $filter = [], $sort = [], $paging = [])
     {
-        $model = $this->getMapper();
-        $re = $model->view($this->indexFields);
-        $re = FieldFormatter::formatDateTime($re);
-        getAssets()->addLibrary(['bootstrap-table', 'bootstrap-dialog']);
-        getView()->render($this->templatePrefix . 'index', ['data'=>$re, 'head'=>FormatUtils::formatHead($this->indexFields), 'title'=>$this->title, 'route'=>$this->baseRoute]);
-        return false;
-    }
-
-    /**
-     * Show specific item.
-     * Method Get
-     * @param $id
-     * @return mixed
-     */
-    public function show($id)
-    {
-        $model = $this->getMapper();
-        $re = $model->view($this->showFields, ['user_id'=>$id]);
-        if (isset($re[0])) {
-            $re = $re[0];
-        } else {
-            $re = [];
+        if (!$fields) {
+            $fields = $this->defaultListFields;
         }
-        $re = FieldFormatter::formatDateTime($re);
-        getView()->render($this->templatePrefix . 'show', ['data'=>$re, 'title'=>$this->title, 'route'=>$this->baseRoute]);
-        return false;
+        $mapper = $this->getMapper();
+        $context = [];
+        if ($paging) {
+            $context = $paging;
+        }
+        if ($sort) {
+            $context[ArrayMapper::CONTEXT_ORDER] = $sort;
+        }
+        if ($context) {
+            $mapper->setContext($context);
+        }
+        $data = $mapper->view($fields, $filter);
+        $head = FormatUtils::formatHead($fields);
+        return ['data'=>FieldFormatter::formatDateTime($data), 'head'=>$head, 'route'=>U($this->route)];
     }
 
+    /**
+     * Get one resource.
+     *
+     * @param $id
+     * @param array $fields
+     * @return array
+     */
+    protected function getResource($id, $fields = [])
+    {
+        if (!$fields) {
+            $fields = $this->defaultShowFields;
+        }
+        $mapper = $this->getMapper();
+        $data = $mapper->view($fields, [IUser::FIELD_USER_ID=>$id]);
+        if ($data) {
+            $data = $data[0];
+            $data = FieldFormatter::formatDateTime($data);
+        }
+        return ['data'=>$data, 'route'=>U($this->route), 'id'=>$id];
+    }
+
+    /**
+     * Create resource.
+     *
+     * @param array $data
+     * @return Message|array
+     */
+    protected function createResource($data)
+    {
+        if (!isset($data['name'])) {
+            return new Message(11, 'invalid name');
+        }
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
+        }
+        $roles = isset($data['roles']) ? $data['roles'] : null;
+        unset($data['roles']);
+        $re = parent::createResource($data);
+        if ($re instanceof Message) {
+            return $re;
+        }
+        if (!is_null($roles)) {
+            $rs = explode(',', $roles);
+            $roles = [];
+            foreach ($rs as $r) {
+                array_push($roles, ['role_name'=>$r]);
+            }
+            $model = $this->getMapper();
+            $re2 = $model->changeRoles($re, $roles);
+            if (!$re2) {
+                $re = Message::messageList(13);
+            }
+        }
+        return $re;
+    }
+
+    /**
+     * Update resource.
+     *
+     * @param $id
+     * @param array $data
+     * @return Message|array
+     */
+    protected function updateResource($id, $data)
+    {
+        if (isset($data['params']) && !$data['params']) {
+            $data['params'] = null;
+        }
+        if (isset($data['password']) && $data['password']) {
+            $data['password'] = password_hash($data['password'], CRYPT_BLOWFISH);
+        } else {
+            unset($data['password']);
+        }
+        if (isset($data['deleted_at']) && !$data['deleted_at']) {
+            $data['deleted_at'] = null;
+        }
+        $roles = isset($data['roles']) ? $data['roles'] : null;
+        unset($data['roles']);
+        $re = parent::updateResource($id, $data);
+        if ($re instanceof Message) {
+            return $re;
+        }
+        if (!is_null($roles)) {
+            $rs = explode(',', $roles);
+            $roles = [];
+            foreach ($rs as $r) {
+                array_push($roles, ['role_name'=>$r]);
+            }
+            $model = $this->getMapper();
+            $re2 = $model->changeRoles($id, $roles);
+            if (!$re2) {
+                $re = Message::messageList(13);
+            }
+        }
+        return $re;
+    }
+
+    /**
+     * Delete resource.
+     *
+     * @param $id
+     * @return Message|array
+     */
+    protected function deleteResource($id)
+    {
+        $model = $this->getMapper();
+        $re = $model->activeUser($id, false);
+        return $re;
+
+    }
 
     /**
      * Create new Item.
@@ -77,61 +192,12 @@ class UserController extends ResourceAdminController
         $deps = $dep->select(['department_id', 'name']);
         $rol = getDataPool()->getConnection('auth')->getMapper('Role');
         $roles = $rol->select(['role_id', 'name']);
-        getAssets()->addLibrary(['select2']);
-        getView()->render('admin/user_edit', ['departments'=>$deps, 'roles'=>$roles, 'title'=>$this->title, 'route'=>$this->baseRoute]);
-    }
-
-    /**
-     * Store new Item.
-     * Method Post
-     * @return mixed
-     */
-    public function store()
-    {
-        $d = $this->storeParse();
-        if ($d === false) {
-            return false;
-        }
-        $model = $this->getMapper();
-        $re = $model->insert($d);
-        //roles
-        $roles = self::getRequest()->getInput('roles');
-        $re2 = true;
-        if ($roles) {
-            $rs = explode(',', $roles);
-            $roles = [];
-            foreach ($rs as $r) {
-                array_push($roles, ['role_name'=>$r]);
-            }
-            $re2 = $model->changeRoles($re, $roles);
-        }
-        if ($re && $re2) {
-            $msg = Message::getMessage(0, 'create successfully', 'success');
-        } else {
-            $msg = Message::getMessage(12);
-        }
-        getOValue()->addOldOnce('msg', $msg);
-        \Flight::redirect($this->baseRoute);
-        return false;
-    }
-
-    /**
-     * @return array|bool
-     */
-    protected function storeParse()
-    {
-        $name = self::getRequest()->checkInput('name');
-        if ($name instanceof Message) {
-            $msg = $name->toArray();
-            getOValue()->addOldOnce('msg', $msg);
-            \Flight::redirect($this->baseRoute . "/create");
-            return false;
-        }
-        $d = parent::storeParse();
-        if (isset($d['password'])) {
-            $d['password'] = password_hash($d['password'], PASSWORD_BCRYPT);
-        }
-        return $d;
+        getAssets()->addLibrary(['validation', 'bootstrap-dialog', 'select2']);
+        $data = ['title'=>$this->title, 'route'=>U($this->route), 'departments'=>$deps, 'roles'=>$roles];
+        return self::getResponse()->setResType('view')
+            ->setView($this->viewCreate)
+            ->setData($data)
+            ->send();
     }
 
     /**
@@ -158,86 +224,12 @@ class UserController extends ResourceAdminController
             $user_role = explode(',', $re['roles']);
         }
         $re = FieldFormatter::formatDateTime($re);
-        getAssets()->addLibrary(['select2']);
-        getView()->render('admin/user_edit', ['data'=>$re, 'user_role'=>$user_role, 'departments'=>$deps, 'roles'=>$roles, 'title'=>$this->title, 'route'=>$this->baseRoute]);
-    }
-
-    /**
-     * Update specific item.
-     * Method Post
-     * @param $id
-     * @return mixed
-     */
-    public function update($id)
-    {
-        $d = $this->updateParse($id);
-        $model = $this->getMapper();
-        $re = $model->update($d, null, $id);
-        //roles
-        $roles = self::getRequest()->getInput('roles');
-        $re2 = true;
-        if ($roles) {
-            $rs = explode(',', $roles);
-            $roles = [];
-            foreach ($rs as $r) {
-                array_push($roles, ['role_name'=>$r]);
-            }
-            $re2 = $model->changeRoles($id, $roles);
-        }
-        if ($re && $re2) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
-        } else {
-            $msg = Message::getMessage(13);
-        }
-        getOValue()->addOldOnce('msg', $msg);
-        \Flight::redirect($this->baseRoute . "/$id/edit");
-        return false;
-    }
-
-    /**
-     * @param $id
-     * @return array|bool
-     */
-    protected function updateParse($id)
-    {
-        $d = parent::updateParse($id);
-        if (isset($d['password']) && $d['password']) {
-            $d['password'] = password_hash($d['password'], PASSWORD_BCRYPT);
-        } else {
-            unset($d['password']);
-        }
-        if (isset($d['department_id']) && !$d['department_id']) {
-            $d['department_id'] = null;
-        }
-        if (isset($d['params']) && !$d['params']) {
-            $d['params'] = null;
-        }
-        if (isset($d['superuser']) && $d['superuser']) {
-            $d['superuser'] = 'true';
-        } else {
-            $d['superuser'] = 'false';
-        }
-        return $d;
-    }
-
-    /**
-     * Destroy item.
-     * Method Post
-     * @param $id
-     * @return mixed
-     */
-    public function destroy($id)
-    {
-        $active = self::getRequest()->getInput('active', false);
-        $model = $this->getMapper();
-        $re = $model->activeUser($id, $active);
-        if ($re) {
-            $msg = Message::getMessage(0, 'delete successfully', 'success');
-        } else {
-            $msg = Message::getMessage(14);
-        }
-        \Flight::json(TA($msg), 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
-        return false;
+        getAssets()->addLibrary(['validation', 'bootstrap-dialog', 'select2']);
+        $data = ['data'=>$re, 'id'=>$id, 'user_role'=>$user_role, 'departments'=>$deps, 'roles'=>$roles, 'title'=>$this->title, 'route'=>U($this->route)];
+        return self::getResponse()->setResType('view')
+            ->setView($this->viewEdit)
+            ->setData($data)
+            ->send();
     }
 
     /**

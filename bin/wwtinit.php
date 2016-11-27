@@ -256,9 +256,9 @@ function installAdmin($dir, $package_dir)
             'Controller'=>[
                 'Admin'=>[
                     'AdminController.php',
+                    'AdminAPIController.php',
                     'AppController.php',
                     'DepartmentController.php',
-                    'ResourceAdminController.php',
                     'RoleController.php',
                     'UserController.php',
                 ]

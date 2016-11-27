@@ -6,11 +6,7 @@
         </div>
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                {% set msg = old('msg') %}
-                {% if msg %}
-                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
-                {% endif %}
-                <form method="post" {% if data is defined %} action="{{ route }}/{{ data.role_id }}" {% else %} action="{{ route }}" {% endif %}>
+                <form id="form_edit">
                     <div class="form-group">
                         <label class="control-label">{{ 'role_name'|T }}</label>
                         <input class="form-control" type="text" name="name" value="{{ data.name }}" required>
@@ -23,7 +19,7 @@
                         <label class="control-label">{{ 'params'|T }}</label>
                         <textarea class="form-control" name="params">{{ data.params }}</textarea>
                     </div>
-                    <button class="btn btn-primary" type="submit">{{ 'Submit'|T }}</button>
+                    <button class="btn btn-primary" type="button" id="bt_submit">{{ 'Submit'|T }}</button>
                     <button class="btn btn-default" type="reset">{{ 'Reset'|T }}</button>
                     <a href="{{ route }}" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
                 </form>
@@ -32,7 +28,47 @@
     </div>
     <script>
         function init_center() {
+            {% if data is defined %}
+            $('#bt_submit').click(updateObject);
+            {% else %}
+            $('#bt_submit').click(createObject);
+            {% endif %}
+        }
 
+        function createObject() {
+            postForm('form_edit', {
+                url: '{{ route }}',
+                success: function (data) {
+                    if ('error' in data) {
+                        BootstrapDialog.alert(data['error']);
+                    } else {
+                        BootstrapDialog.alert('{{ 'create successfully'|T }}', function(){
+                            location.href = '{{ route }}';
+                        });
+                    }
+                },
+                error: function (data) {
+                    BootstrapDialog.alert(data);
+                }
+            });
+        }
+
+        function updateObject() {
+            patchForm('form_edit', {
+                url: '{{ route }}/{{ id }}',
+                success: function (data) {
+                    if ('error' in data) {
+                        BootstrapDialog.alert(data['error']);
+                    } else {
+                        BootstrapDialog.alert('{{ 'update successfully'|T }}', function(){
+                            location.href = '{{ route }}';
+                        });
+                    }
+                },
+                error: function (data) {
+                    BootstrapDialog.alert(data);
+                }
+            });
         }
     </script>
 {% endblock %}

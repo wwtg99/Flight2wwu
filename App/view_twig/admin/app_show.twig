@@ -50,9 +50,19 @@
             $('#bt_refresh').click(function () {
                 BootstrapDialog.confirm('{{ 'Refresh app secret'|T }}?', function (result) {
                     if (result) {
-                        var url = '{{ route }}/{{ data.app_id }}';
-                        $.post(url, {app_secret: '1'}, function (data) {
-                            location.reload();
+                        ajaxPatch({
+                            url: '{{ route }}/{{ data.app_id }}',
+                            data: {app_secret: '1'},
+                            success: function(data) {
+                                if ('error' in data) {
+                                    BootstrapDialog.alert(data['error']);
+                                } else {
+                                    location.reload();
+                                }
+                            },
+                            error: function(data) {
+                                BootstrapDialog.alert(data);
+                            }
                         });
                     }
                 });
