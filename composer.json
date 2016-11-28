@@ -51,10 +51,6 @@
     "repositories": [
         {
             "type": "git",
-            "url": "git@github.com:wwtg99/class_loader.git"
-        },
-        {
-            "type": "git",
             "url": "git@github.com:wwtg99/data_pool.git"
         },
         {

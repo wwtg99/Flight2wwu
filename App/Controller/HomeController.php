@@ -26,7 +26,6 @@ class HomeController extends BaseController
      */
     public static function changelog()
     {
-        self::defaultHeader();
         $f = ROOT . DIRECTORY_SEPARATOR . 'CHANGELOG.md';
         if (file_exists($f)) {
             $md = new \Parsedown();
