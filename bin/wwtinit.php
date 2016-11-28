@@ -189,22 +189,12 @@ function installCore($dir, $package_dir)
                 'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthClientUser.php']
             ],
             'Plugin'=>['PHPInterpreter.php'],
-            'view_twig'=>[
+            'view'=>[
                 'layout.twig',
                 'home.twig',
                 'error'=>['403.twig', '404.twig', '500.twig'],
                 'auth'=>['login.twig', 'change_pwd.twig', 'signup.twig', 'user_info.twig', 'user_edit.twig', 'forget_pwd.twig', 'forget_change_pwd.twig']
             ],
-            'view'=>[
-                'border_layout.php',
-                'border_head.php',
-                'border_foot.php',
-                'border_left.php',
-                'border_right.php',
-                'home.php',
-                'error'=>['403.php', '404.php', '500.php'],
-                'auth'=>['login.php', 'logout.php', 'change_pwd.php']
-            ]
         ],
     ];
     $re = copyFiles($mfiles, $package_dir, $dir);
@@ -232,7 +222,7 @@ function installOAuth($dir, $package_dir)
             'Model'=>[
                 'Auth'=>['OAuthServerUser.php']
             ],
-            'view_twig'=>[
+            'view'=>[
                 'oauth'=>['login.twig']
             ],
         ],
@@ -263,7 +253,7 @@ function installAdmin($dir, $package_dir)
                     'UserController.php',
                 ]
             ],
-            'view_twig'=>[
+            'view'=>[
                 'admin'=>[
                     'admin_home.twig',
                     'admin_layout.twig',

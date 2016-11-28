@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.3.0
+    - Support restful API
+    - Unify routes
+    - Add resquest and response
+    - Remove unnessary files
+
 ## 0.2.10
     - Add login method
 

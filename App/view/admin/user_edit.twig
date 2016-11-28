@@ -77,6 +77,10 @@
         }
 
         function createObject() {
+            if (!$('#txt_roles').val()) {
+                BootstrapDialog.alert('{{ 'must specify roles'|T }}');
+                return;
+            }
             postForm('form_edit', {
                 url: '{{ route }}',
                 success: function (data) {
@@ -95,10 +99,13 @@
         }
 
         function updateObject() {
+            if (!$('#txt_roles').val()) {
+                BootstrapDialog.alert('{{ 'must specify roles'|T }}');
+                return;
+            }
             patchForm('form_edit', {
                 url: '{{ route }}/{{ id }}',
                 success: function (data) {
-                    console.log(data);
                     if ('error' in data) {
                         BootstrapDialog.alert(data['error']);
                     } else {

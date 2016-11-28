@@ -154,6 +154,8 @@ class Message
             case 30: $msg = ['message'=>'invalid username', 'type'=>'danger']; break;
             case 31: $msg = ['message'=>'user info changed', 'type'=>'success']; break;
             case 32: $msg = ['message'=>'user info changed failed', 'type'=>'danger']; break;
+            case 33: $msg = ['message'=>'duplicated name', 'type'=>'danger']; break;
+            case 34: $msg = ['message'=>'duplicated id or name', 'type'=>'danger']; break;
             // oauth error
             case 1001: $msg = ['message'=>'oauth login failed', 'type'=>'danger']; break;
             case 1002: $msg = ['message'=>'invalid code', 'type'=>'danger']; break;

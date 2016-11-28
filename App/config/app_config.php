@@ -84,9 +84,9 @@ return [
                 'database'=>[
                     'driver'=>'pgsql',
                     'dbname'=>'auth_test',
-                    'host'=>'192.168.6.131',
-                    'username'=>'wwu',
-                    'password'=>'1',
+                    'host'=>'192.168.0.21',
+                    'username'=>'genobase',
+                    'password'=>'genobase',
                     'port'=>5432
                 ],
                 'logger'=>[
@@ -99,7 +99,7 @@ return [
     ],
     //View
     'view'=>[
-        'view_dir'=>APP . 'view_twig',
+        'view_dir'=>APP . 'view',
     ],
     //Locale
     'locale'=>[

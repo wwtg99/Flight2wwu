@@ -17,7 +17,6 @@ return [
         'Timer' => 'Wwtg99\Flight2wwu\Component\Utils\Timer',
         'Router' => 'Wwtg99\Flight2wwu\Common\Router',
         'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RoleAuth',
-//        'View' => 'Wwtg99\Flight2wwu\Component\View\BorderView',
         'View' => 'Wwtg99\Flight2wwu\Component\View\TwigView',
         'Log' => 'Wwtg99\Flight2wwu\Component\Log\Monolog',
         'DB' => 'Wwtg99\Flight2wwu\Component\Database\MedooDB',
@@ -69,9 +68,10 @@ return [
             ["/home", array('\\Wwtg99\\App\\Controller\\HomeController', 'home')],
             ["/changelog", array('\\Wwtg99\\App\\Controller\\HomeController', 'changelog')],
             ["/auth", 'Wwtg99\App\Controller\Auth'],
-            ["/oauth", 'Wwtg99\App\Controller\OAuth'],
-            ["/authorize", 'Wwtg99\App\Controller\Authorize'],  //oauth server
             ["/user", 'Wwtg99\App\Controller\User'],
+            ["/oauth", 'Wwtg99\App\Controller\OAuth'],
+            //oauth server
+            ["/authorize", 'Wwtg99\App\Controller\Authorize'],
             //admin
             ['/admin', 'Wwtg99\App\Controller\Admin\Admin'],
             ["/admin/departments", 'Wwtg99\App\Controller\Admin\Department', 'restful+'],
@@ -84,39 +84,6 @@ return [
          * All non-GET method will redirect to POST, get http method from X-HTTP-Method-Override
          */
         'override_http_method'=>true,
-        /**
-         * Register whole controller class with static public functions
-         * full class name (without Controller) => prefix
-         * All public static functions will register routes by /prefix/function
-         * Controller must extends BaseController
-         */
-        'controller'=>[
-            'Wwtg99\App\Controller\Auth'=>'/auth',
-            'Wwtg99\App\Controller\OAuth'=>'/oauth',
-            'Wwtg99\App\Controller\User'=>'/user',
-//            'Wwtg99\App\Controller\Authorize'=>'/authorize', //oauth server
-//            'Wwtg99\App\Controller\Admin\Admin'=>'/admin', //admin
-        ],
-        'restful'=>[
-            /**
-             * Register restful controller class
-             * full class name (without Controller) => prefix
-             * Class must extend Wwtg99\Flight2wwu\Common\RestfulController and overrides its methods.
-             * Register 7 routes:
-             * Method    Route                Action    Method name
-             * Get       /prefix              index     index
-             * Get       /prefix/create       create    create
-             * Post      /prefix              store     store
-             * Get       /prefix/id           show      show
-             * Get       /prefix/edit/id      edit      edit
-             * Post      /prefix/id           update    update
-             * Post      /prefix/destroy/id   destroy   destroy
-             */
-//            'Wwtg99\App\Controller\Admin\Department'=>'/admin/department',//admin
-//            'Wwtg99\App\Controller\Admin\Role'=>'/admin/role',//admin
-//            'Wwtg99\App\Controller\Admin\User'=>'/admin/user',//admin
-//            'Wwtg99\App\Controller\Admin\App'=>'/admin/app',//admin
-        ]
     ],
     /**
      * Special routes (login, logout, admin) defined here.

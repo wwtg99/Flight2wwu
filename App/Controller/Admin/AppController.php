@@ -50,6 +50,11 @@ class AppController extends AdminAPIController
         if (!isset($data['app_name'])) {
             return new Message(11, 'invalid app_name');
         }
+        $model = $this->getMapper();
+        $a = $model->get(null, null, ['app_name'=>$data['app_name']]);
+        if ($a) {
+            return Message::messageList(33);
+        }
         if (!isset($data['redirect_uri'])) {
             return new Message(11, 'invalid redirect_uri');
         }

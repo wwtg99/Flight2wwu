@@ -161,4 +161,7 @@ return [
     'Forget Password'=>'忘记密码',
     'already have account'=>'已有帐号',
     'activate successfully'=>'激活成功！',
+    'duplicated name'=>'名称已存在！',
+    'duplicated id or name'=>'ID或名称已存在！',
+    'must specify roles'=>'请指定用户角色！',
 ];

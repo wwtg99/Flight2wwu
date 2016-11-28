@@ -24,7 +24,7 @@ class UserController extends AdminAPIController
 
     protected $filterFields = ['name', 'label', 'email', 'department_id', 'descr'];
 
-    protected $createFields = ['name', 'label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params'];
+    protected $createFields = ['name', 'label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params', 'roles'];
 
     protected $updateFields = ['label', 'password', 'email', 'descr', 'department_id', 'superuser', 'params', 'roles', 'deleted_at'];
 
@@ -102,8 +102,18 @@ class UserController extends AdminAPIController
         if (!isset($data['name'])) {
             return new Message(11, 'invalid name');
         }
+        $model = $this->getMapper();
+        $u = $model->get(null, null, [IUser::FIELD_USER_NAME=>$data['name']]);
+        if ($u) {
+            return Message::messageList(28);
+        }
         if (isset($data['params']) && !$data['params']) {
             $data['params'] = null;
+        }
+        if (isset($data['password']) && $data['password']) {
+            $data['password'] = password_hash($data['password'], CRYPT_BLOWFISH);
+        } else {
+            unset($data['password']);
         }
         $roles = isset($data['roles']) ? $data['roles'] : null;
         unset($data['roles']);
@@ -117,8 +127,7 @@ class UserController extends AdminAPIController
             foreach ($rs as $r) {
                 array_push($roles, ['role_name'=>$r]);
             }
-            $model = $this->getMapper();
-            $re2 = $model->changeRoles($re, $roles);
+            $re2 = $model->changeRoles($re['id'], $roles);
             if (!$re2) {
                 $re = Message::messageList(13);
             }
@@ -145,6 +154,12 @@ class UserController extends AdminAPIController
         }
         if (isset($data['deleted_at']) && !$data['deleted_at']) {
             $data['deleted_at'] = null;
+        }
+        if (!isset($data['superuser'])) {
+            $data['superuser'] = 'false';
+        }
+        if (isset($data['department_id']) && !$data['department_id']) {
+            $data['department_id'] = null;
         }
         $roles = isset($data['roles']) ? $data['roles'] : null;
         unset($data['roles']);

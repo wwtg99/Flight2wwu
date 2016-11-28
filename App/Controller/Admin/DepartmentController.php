@@ -51,6 +51,11 @@ class DepartmentController extends AdminAPIController
         if (!isset($data['name'])) {
             return new Message(11, 'invalid name');
         }
+        $model = $this->getMapper();
+        $d = $model->get(null, null, ['OR'=>['department_id'=>$data['department_id'], 'name'=>$data['name']]]);
+        if ($d) {
+            return Message::messageList(34);
+        }
         if (isset($data['params']) && !$data['params']) {
             $data['params'] = null;
         }

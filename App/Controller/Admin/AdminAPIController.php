@@ -94,6 +94,7 @@ abstract class AdminAPIController extends RestfulPlusController
         $model = $this->getMapper();
         $re = $model->insert($data);
         if ($re) {
+            $data['id'] = $re;
             return $data;
         }
         return Message::messageList(12);

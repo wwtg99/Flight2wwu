@@ -48,6 +48,11 @@ class RoleController extends AdminAPIController
         if (!isset($data['name'])) {
             return new Message(11, 'invalid name');
         }
+        $model = $this->getMapper();
+        $r = $model->get(null, null, ['name'=>$data['name']]);
+        if ($r) {
+            return Message::messageList(33);
+        }
         if (isset($data['params']) && !$data['params']) {
             $data['params'] = null;
         }
