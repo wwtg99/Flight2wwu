@@ -155,7 +155,19 @@ abstract class RestfulAPIController extends RestfulParserController
     public function update($id)
     {
         if (self::getRequest()->checkMethod('PUT')) {
-            $d = self::getRequest()->getArrayInput($this->updateFields);
+            $dd = json_decode(self::getRequest()->getBody(), true);
+            $d = [];
+            if ($this->updateFields) {
+                foreach ($this->updateFields as $f) {
+                    if (array_key_exists($f, $dd)) {
+                        $d[$f] = $dd[$f];
+                    } else {
+                        $d[$f] = null;
+                    }
+                }
+            } else {
+                $d = $dd;
+            }
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
                 return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
@@ -165,9 +177,15 @@ abstract class RestfulAPIController extends RestfulParserController
                 return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } elseif (self::getRequest()->checkMethod('PATCH')) {
-            $d = self::getRequest()->getArrayInputN($this->updateFields);
+            $d = json_decode(self::getRequest()->getBody(), true);
+            if ($this->updateFields) {
+                foreach ($d as $k => $v) {
+                    if (!in_array($k, $this->updateFields)) {
+                        unset($d[$k]);
+                    }
+                }
+            }
             $data = $this->updateResource($id, $d);
-            getLog()->warning('===' . print_r($data, true));
             if ($data instanceof Message) {
                 return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {

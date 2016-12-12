@@ -52,6 +52,14 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->request->getBody();
+    }
+
+    /**
      * @param string $name
      * @param $default
      * @return mixed
@@ -212,11 +220,10 @@ class Request
         return $this->request->ajax;
     }
 
-
     /**
      * @return bool
      */
-    function isMobile()
+    public function isMobile()
     {
         // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
         if (isset ($_SERVER['HTTP_X_WAP_PROFILE']))

@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.3.1
+    - Add getBody() in Request
+    - Update update method in RestfulAPIController
+
 ## 0.3.0
     - Support restful API
     - Unify routes
