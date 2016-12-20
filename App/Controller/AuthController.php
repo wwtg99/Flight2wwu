@@ -139,6 +139,7 @@ class AuthController extends BaseController
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
             self::getResponse()
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setResType('view')
                 ->setView('auth/login')
                 ->setData(['title'=>'Login', CSRFCode::$key=>$state, 'captcha'=>$builder])
@@ -194,6 +195,7 @@ class AuthController extends BaseController
         if (getAuth()->isLogin()) {
             $state = getCSRF()->generateCSRFCode();
             self::getResponse()->setResType('view')
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/change_pwd')
                 ->setData(['title'=>'Change Password', CSRFCode::$key=>$state])
                 ->send();
@@ -241,6 +243,7 @@ class AuthController extends BaseController
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
             self::getResponse()->setResType('view')
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/signup')
                 ->setData(['title'=>'Sign Up', CSRFCode::$key=>$state, 'captcha'=>$builder])
                 ->send();
@@ -321,6 +324,7 @@ class AuthController extends BaseController
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
             self::getResponse()->setResType('view')
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/forget_pwd')
                 ->setData(['title' => 'Forget Password', CSRFCode::$key => $state, 'captcha' => $builder])
                 ->send();
@@ -368,6 +372,7 @@ class AuthController extends BaseController
             $send = 1;
         }
         self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView('auth/forget_pwd')
             ->setData(['title'=>'Forget Password', 'email'=>$email, 'send'=>$send])
             ->send();
@@ -381,6 +386,7 @@ class AuthController extends BaseController
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
             self::getResponse()->setResType('view')
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/forget_change_pwd')
                 ->setData(['title' => 'Reset Password', 'user' => $u, CSRFCode::$key=>$state, 'captcha'=>$builder, 'token'=>$token])
                 ->send();
@@ -433,6 +439,7 @@ class AuthController extends BaseController
                 }
             }
             self::getResponse()->setResType('view')
+                ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/forget_change_pwd')
                 ->setData(['title' => 'Reset Password', 'name' => $uname, 'msg'=>$msg])
                 ->send();

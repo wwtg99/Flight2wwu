@@ -9,6 +9,7 @@
 namespace Wwtg99\App\Controller\Admin;
 
 
+use Wwtg99\App\Controller\DefaultController;
 use Wwtg99\App\Model\Message;
 use Wwtg99\DataPool\Mappers\ArrayMapper;
 use Wwtg99\DataPool\Utils\FieldFormatter;
@@ -154,6 +155,7 @@ abstract class AdminAPIController extends RestfulPlusController
     {
         getAssets()->addLibrary(['validation', 'bootstrap-dialog']);
         return self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView($this->viewCreate)
             ->setData(['title'=>$this->title, 'route'=>U($this->route)])
             ->send();

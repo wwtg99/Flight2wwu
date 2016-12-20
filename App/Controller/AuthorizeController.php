@@ -103,7 +103,7 @@ class AuthorizeController extends BaseController
                     $redata = Message::messageList(1005)->toApiArray();
                 }
             }
-            return self::getResponse()->setResType('view')->setView('oauth/login')->setData(TA($redata))->send();
+            return self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('view')->setView('oauth/login')->setData(TA($redata))->send();
         }
     }
 
@@ -145,7 +145,7 @@ class AuthorizeController extends BaseController
                 $redata = Message::messageList(1002)->toApiArray();
             }
         }
-        self::getResponse()->setResType('json')->setData(TA($redata))->send();
+        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
         return false;
     }
 
@@ -168,7 +168,7 @@ class AuthorizeController extends BaseController
                 $redata = Message::messageList(1012)->toApiArray();
             }
         }
-        self::getResponse()->setResType('json')->setData(TA($redata))->send();
+        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
         return false;
     }
 

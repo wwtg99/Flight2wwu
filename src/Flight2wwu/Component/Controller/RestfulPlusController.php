@@ -7,6 +7,7 @@
  */
 
 namespace Wwtg99\Flight2wwu\Component\Controller;
+use Wwtg99\App\Controller\DefaultController;
 
 /**
  * Class RestfulPlusController
@@ -57,6 +58,7 @@ abstract class RestfulPlusController extends RestfulAPIController
             $data['title'] = $this->title;
         }
         return self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView($this->viewList)
             ->setData($data)
             ->send();
@@ -76,6 +78,7 @@ abstract class RestfulPlusController extends RestfulAPIController
             $data['title'] = $this->title;
         }
         return self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView($this->viewShow)
             ->setData($data)
             ->send();
@@ -89,6 +92,7 @@ abstract class RestfulPlusController extends RestfulAPIController
     public function create()
     {
         return self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView($this->viewCreate)
             ->setData(['title'=>$this->title])
             ->send();
@@ -107,6 +111,7 @@ abstract class RestfulPlusController extends RestfulAPIController
             $data['title'] = $this->title;
         }
         return self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView($this->viewEdit)
             ->setData($data)
             ->send();

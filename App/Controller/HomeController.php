@@ -18,7 +18,7 @@ class HomeController extends BaseController
      */
     public static function home()
     {
-        return self::getResponse()->setResType('view')->setView('home')->send();
+        return self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('view')->setView('home')->send();
     }
 
     /**

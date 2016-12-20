@@ -27,6 +27,7 @@ class UserController extends BaseController
     {
         $u = getUser();
         self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView('auth/user_info')
             ->setData(['title'=>'User Center', 'user'=>$u])
             ->send();
@@ -53,6 +54,7 @@ class UserController extends BaseController
         $state = getCSRF()->generateCSRFCode();
         $u = getUser();
         self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView('auth/user_edit')
             ->setData(['user'=>FieldFormatter::formatDateTime($u), CSRFCode::$key=>$state])
             ->send();

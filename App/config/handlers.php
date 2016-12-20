@@ -37,15 +37,18 @@ if (isDebug()) {
     }
     $msg = sprintf('<h1>500 Internal Server Error</h1><h3>%s (%s)</h3>', $m, $ex->getCode());
     try {
+        $res = \Wwtg99\Flight2wwu\Common\Response::get()->setResCode(500);
         if (Flight::request()->ajax) {
-            \Flight::json(['error'=>['message' => T($m), 'code'=>$ex->getCode()]], 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
+            $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultApiHeaders)
+                ->setResType('json')
+                ->setData(['error'=>T($m), 'code'=>$ex->getCode()])
+                ->send();
         } else {
-            $v = getView();
-            if ($v) {
-                $v->render('error/500', ['message' => $m, 'code' => $ex->getCode(), 'title' => 'Error']);
-            } else {
-                echo T($msg);
-            }
+            $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultViewHeaders)
+                ->setResType('view')
+                ->setView('error/500')
+                ->setData(['message' => $m, 'code' => $ex->getCode(), 'title' => 'Error'])
+                ->send();
         }
     } catch (\Exception $e) {
         exit($msg);
@@ -54,15 +57,18 @@ if (isDebug()) {
 
 // not found
 \Flight::map('notFound', function() {
+    $res = \Wwtg99\Flight2wwu\Common\Response::get()->setResCode(404);
     if (Flight::request()->ajax) {
-        Flight::json(['error'=>['message'=>T('page not found'), 'code'=>404]], 200, true, 'utf8', JSON_UNESCAPED_UNICODE);
+        $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultApiHeaders)
+            ->setResType('json')
+            ->setData(['error'=>T('page not found'), 'code'=>404])
+            ->send();
     } else {
-        $v = getView();
-        if ($v) {
-            $v->render('error/404', ['title' => 'page not found']);
-        } else {
-            echo T('page not found');
-        }
+        $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultViewHeaders)
+            ->setResType('view')
+            ->setView('error/404')
+            ->setData(['title' => 'page not found'])
+            ->send();
     }
 });
 

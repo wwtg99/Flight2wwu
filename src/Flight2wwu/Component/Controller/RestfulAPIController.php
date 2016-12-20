@@ -9,6 +9,7 @@
 namespace Wwtg99\Flight2wwu\Component\Controller;
 
 
+use Wwtg99\App\Controller\DefaultController;
 use Wwtg99\App\Model\Message;
 
 /**
@@ -86,7 +87,7 @@ abstract class RestfulAPIController extends RestfulParserController
         $sort = $this->parseOrders();
         $paging = $this->parsePaging();
         $data = $this->listResources($fields, $filter, $sort, $paging);
-        return self::getResponse()->setResType('json')->setData($data)->send();
+        return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($data)->send();
     }
 
     /**
@@ -99,7 +100,7 @@ abstract class RestfulAPIController extends RestfulParserController
     {
         $fields = $this->parseFields();
         $data = $this->getResource($id, $fields);
-        return self::getResponse()->setResType('json')->setData($data)->send();
+        return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($data)->send();
     }
 
     /**
@@ -123,11 +124,11 @@ abstract class RestfulAPIController extends RestfulParserController
             $d = self::getRequest()->getArrayInputN($this->createFields);
             $data = $this->createResource($d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
-                return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));
@@ -170,11 +171,11 @@ abstract class RestfulAPIController extends RestfulParserController
             }
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
-                return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } elseif (self::getRequest()->checkMethod('PATCH')) {
             $d = json_decode(self::getRequest()->getBody(), true);
@@ -187,11 +188,11 @@ abstract class RestfulAPIController extends RestfulParserController
             }
             $data = $this->updateResource($id, $d);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
-                return self::getResponse()->setResType('json')->setResCode(201)->setData($data)->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(201)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));
@@ -210,11 +211,11 @@ abstract class RestfulAPIController extends RestfulParserController
         if (self::getRequest()->checkMethod('DELETE')) {
             $data = $this->deleteResource($id);
             if ($data instanceof Message) {
-                return self::getResponse()->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(200)->setData(TA($data->toApiArray()))->send();
             } elseif ($data) {
-                return self::getResponse()->setResType('json')->setResCode(204)->setData($data)->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(204)->setData($data)->send();
             } else {
-                return self::getResponse()->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
+                return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
             \Flight::redirect(U('405'));

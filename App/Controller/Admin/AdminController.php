@@ -22,6 +22,7 @@ class AdminController extends BaseController
         $user_num = $db->getMapper('User')->count();
         $app_num = $db->getMapper('App')->count();
         self::getResponse()->setResType('view')
+            ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView('admin/admin_home')
             ->setData(['department_num'=>$dep_num, 'role_num'=>$role_num, 'user_num'=>$user_num, 'app_num'=>$app_num, 'title'=>'Admin'])
             ->send();

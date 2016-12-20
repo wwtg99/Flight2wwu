@@ -11,13 +11,28 @@ namespace Wwtg99\App\Controller;
 
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\Request;
-use Wwtg99\Flight2wwu\Common\Response;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 use Wwtg99\PgAuth\Auth\IUser;
 
 class DefaultController extends BaseController
 {
+
+    /**
+     * @var array
+     */
+    public static $defaultApiHeaders = [
+        'Access-Control-Allow-Origin: *',
+        'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, PATCH, DELETE',
+        'Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept',
+    ];
+
+    /**
+     * @var array
+     */
+    public static $defaultViewHeaders = [
+
+    ];
 
     /**
      * Switch language
@@ -88,20 +103,13 @@ class DefaultController extends BaseController
      */
     public static function forbidden()
     {
+        $res = self::getResponse()->setResCode(403);
         if (Request::get()->isAjax()) {
             $msg = new Message(403, 'forbidden', 'info');
-            $res = Response::get();
-            $res->setResCode(403)->setResType('json')->setData($msg->toApiArray());
-            return $res->send();
+            return $res->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($msg->toApiArray())->send();
         } else {
-            $v = getView();
-            if ($v) {
-                $v->render('error/403', ['title'=>'authentication failed']);
-            } else {
-                echo T('forbidden');
-            }
+            return $res->setHeader(DefaultController::$defaultViewHeaders)->setResType('view')->setView('error/403')->setData(['title'=>'authentication failed'])->send();
         }
-        return false;
     }
 
     /**
@@ -110,11 +118,10 @@ class DefaultController extends BaseController
      */
     public static function methodNotAllowed()
     {
+        $res = self::getResponse()->setResCode(405);
         if (Request::get()->isAjax()) {
             $msg = new Message(405, 'Method not allowed', 'info');
-            $res = Response::get();
-            $res->setResCode(405)->setResType('json')->setData($msg->toApiArray());
-            return $res->send();
+            return $res->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($msg->toApiArray())->send();
         } else {
             \Flight::halt(405, 'Method not allowed');
         }
