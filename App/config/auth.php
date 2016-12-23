@@ -10,7 +10,12 @@ return [
          * 0: forbidden
          * 1: GET access or enable
          * 2: POST access
-         * 3: 1 | 2
+         * 4: PUT | PATCH access
+         * 8: DELETE access
+         * 16: OPTIONS access
+         * 32: HEAD access
+         *
+         * 63: for all access
          *
          * For path
          * 1. check exact same path

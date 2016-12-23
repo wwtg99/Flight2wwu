@@ -33,6 +33,11 @@ class AuthKey
     public function access($method = 'GET')
     {
         switch (strtoupper($method)) {
+            case 'HEAD': $v = self::isEnabled($this->auth, 32); break;
+            case 'OPTIONS': $v = self::isEnabled($this->auth, 16); break;
+            case 'DELETE': $v = self::isEnabled($this->auth, 8); break;
+            case 'PUT':
+            case 'PATCH': $v = self::isEnabled($this->auth, 4); break;
             case 'POST': $v = self::isEnabled($this->auth, 2); break;
             case 'GET':
             default: $v = self::isEnabled($this->auth, 1); break;

@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.3
+    - Add put, patch, delete, options, head access in auth
+
 ## 0.3.2
     - Add default headers in api and view response
 
