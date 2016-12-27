@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.3.4
+    - Add response type raw, string
+    - Add request input for put, patch and delete
+
 ## 0.3.3
     - Add put, patch, delete, options, head access in auth
 
