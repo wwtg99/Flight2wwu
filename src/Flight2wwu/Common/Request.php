@@ -72,6 +72,15 @@ class Request
         if (isset($this->request->query[$name])) {
             return $this->request->query[$name];
         }
+        if ($this->checkMethod('PUT', 'PATCH', 'DELETE')) {
+            $d = $this->getBody();
+            if ($d) {
+                $d = json_decode($d, true);
+                if ($d && array_key_exists($name, $d)) {
+                    return $d[$name];
+                }
+            }
+        }
         return $default;
     }
 

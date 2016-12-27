@@ -92,6 +92,8 @@ class Response
             case 'json': \Flight::json($this->data, $this->resCode, true, 'utf8', $this->jsonOptions); return false;
             case 'jsonp': \Flight::jsonp($this->data, $this->jsonpCallback, $this->resCode, true, 'utf8', $this->jsonOptions); return false;
             case 'view': getView()->render($this->view, $this->data); return false;
+            case 'string':
+            case 'raw': echo (is_array($this->data) ? json_encode($this->data, $this->jsonOptions) : $this->data); return false;
             case 'filter': return true;
         }
         return false;
