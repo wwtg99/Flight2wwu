@@ -101,8 +101,8 @@ Example: ?limit=100&offset=10
 
 Order:
 
-Use sort parameter， +field to sort by field ascending, -field to sort by field descending, use comma (,) to separate fields,
-Example: ?sort=+name,-age
+Use sort parameter， >field to sort by field ascending, <field to sort by field descending, use comma (,) to separate fields,
+Example: ?sort=>name,<age
 
 Filters:
 

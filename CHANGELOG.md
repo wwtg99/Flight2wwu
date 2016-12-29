@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.5
+    - Fix paging bugs
+
 ## 0.3.4
     - Add response type raw, string
     - Add request input for put, patch and delete

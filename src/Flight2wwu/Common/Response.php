@@ -38,6 +38,8 @@ class Response
     protected $view = '';
 
     /**
+     * json, jsonp, view, string, raw, filter
+     *
      * @var string
      */
     protected $resType = 'string';

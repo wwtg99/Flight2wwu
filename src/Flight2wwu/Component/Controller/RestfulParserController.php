@@ -7,6 +7,7 @@
  */
 
 namespace Wwtg99\Flight2wwu\Component\Controller;
+use Wwtg99\DataPool\Mappers\ArrayMapper;
 
 /**
  * Class RestfulParserController
@@ -76,21 +77,21 @@ abstract class RestfulParserController extends RestfulController
         $pageSize = self::getRequest()->getInput($this->keyPageSize);
         $paging = [];
         if ($page) {
-            $paging = ['page'=>$page];
+            $paging = [ArrayMapper::CONTEXT_PAGE=>$page];
             if ($pageSize) {
-                $paging['pageSize'] = $pageSize;
+                $paging[ArrayMapper::CONTEXT_PAGE_SIZE] = $pageSize;
             }
         } elseif ($limit) {
-            $paging = ['limit'=>$limit];
+            $paging = [ArrayMapper::CONTEXT_LIMIT=>$limit];
             if ($offset) {
-                $paging['offset'] = $offset;
+                $paging[ArrayMapper::CONTEXT_OFFSET] = $offset;
             }
         }
         return $paging;
     }
 
     /**
-     * Use +field order by asc, -field order by desc, comma (,) to separate
+     * Use >field order by asc, <field order by desc, comma (,) to separate
      * @return string|null
      */
     protected function parseOrders()

@@ -42,8 +42,8 @@ return [
                 '/ajax_json'=>3,
             ],
             'admin' => [
-                '*' => 3,
-                '/admin/*' => 3,
+                '*' => 63,
+                '/admin/*' => 63,
             ],
             'common_user' => [
                 '*' => 0,
