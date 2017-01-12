@@ -9,12 +9,11 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
-use Wwtg99\Flight2wwu\Component\Auth\IAuth;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
 
 class AuthController extends BaseController
@@ -158,7 +157,7 @@ class AuthController extends BaseController
             return;
         }
         $redirectPath = '/';
-        $u = [\Wwtg99\PgAuth\Auth\IAuth::KEY_USERNAME=>$name, \Wwtg99\PgAuth\Auth\IAuth::KEY_PASSWORD=>$pwd];
+        $u = [IAuth::KEY_USERNAME=>$name, IAuth::KEY_PASSWORD=>$pwd];
         $user = getAuth()->login($u);
         if ($user) {
             $path = getOValue()->getOldOnce('last_path');
@@ -207,7 +206,7 @@ class AuthController extends BaseController
         } elseif ($new1 != $new2) {
             $msg = Message::getMessage(22);
         } else {
-            if (getAuth()->getAuth()->verify([\Wwtg99\PgAuth\Auth\IAuth::KEY_USERNAME=>getUser(IUser::FIELD_USER_NAME), \Wwtg99\PgAuth\Auth\IAuth::KEY_PASSWORD=>$old])) {
+            if (getAuth()->getAuth()->verify([IAuth::KEY_USERNAME=>getUser(IUser::FIELD_USER_NAME), IAuth::KEY_PASSWORD=>$old])) {
                 $user = getAuth()->getUser();
                 if ($user && $user->changePassword($new1)) {
                     $msg = Message::getMessage(23);

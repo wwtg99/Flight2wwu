@@ -72,16 +72,16 @@ return [
 //        'token_only'=>true,  //enable access_token login, default false for normal login, true for oauth login
     ],
     'login_method'=>'normal',  //normal or oauth
-    'access_token_login'=>false,  //enable login by access_token, usually for API
+    'access_token_login'=>false,  //enable login by access_token, usually for API and oauth server
     'access_token_key'=>'access_token',  //the key for access_token if enabled
     'oauth'=>[
-        'code_uri'=>'http://192.168.0.21:10002/authorize/authorize',
-        'token_uri'=>'http://192.168.0.21:10002/authorize/token',
+        'code_uri'=>'http://localhost:8680/authorize/authorize',
+        'token_uri'=>'http://localhost:8680/authorize/token',
         'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
-        'app_id'=>'e5d02e8cb7d66b86e35e96aac961a707',
+        'app_id'=>'e94562cb12c6a74c2fe7b047d6995d70',
         'app_id_key'=>'client_id',
-        'app_secret'=>'94d222cfb9dfb0fb27b4eebddeea7fa7',
+        'app_secret'=>'0e880f562e68eab825308f8921b3ac44',
         'app_secret_key'=>'client_secret',
     ],
 ];

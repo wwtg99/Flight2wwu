@@ -13,6 +13,7 @@ use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\Request;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
+use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
 
 class DefaultController extends BaseController
@@ -82,7 +83,7 @@ class DefaultController extends BaseController
         if ($tokenLogin) {
             $tokenKey = getConfig()->get('access_token_key');
             $token = self::getRequest()->getInput($tokenKey);
-            if (getAuth()->getAuth()->verify([\Wwtg99\PgAuth\Auth\IAuth::KEY_TOKEN=>$token])) {
+            if (getAuth()->getAuth()->verify([IAuth::KEY_TOKEN=>$token])) {
                 getAuth()->setUser(getAuth()->getAuth()->getUser());
             }
         }

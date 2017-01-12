@@ -13,6 +13,7 @@ use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\FWException;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
+use Wwtg99\PgAuth\Auth\IAuth;
 
 class OAuthController extends BaseController
 {
@@ -27,7 +28,6 @@ class OAuthController extends BaseController
             $state = getCSRF()->generateCSRFCode();
             $params = ['state'=>$state, 'response_type'=>'code']; //TODO use state and response_type
             $uri = self::getAuthorizeUri($params);
-//            echo $uri;
             if ($uri) {
                 \Flight::redirect($uri);
             } else {
@@ -49,7 +49,9 @@ class OAuthController extends BaseController
             $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO use state and grant_type
             $token = self::getAccessToken($code, $params);
             if (isset($token['access_token'])) {
-                if (getAuth()->attempt($token)) {
+                $u = [IAuth::KEY_TOKEN=>$token['access_token']];
+                $user = getAuth()->login($u);
+                if ($user) {
                     $redirectPath = '/';
                     $path = getOValue()->getOldOnce('last_path');
                     if ($path) {

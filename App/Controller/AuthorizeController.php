@@ -9,10 +9,10 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\App\Model\Auth\OAuthServerUser;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
+use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
 
 /**
@@ -42,9 +42,10 @@ class AuthorizeController extends BaseController
                 if (!$username || !$pwd) {
                     $msg = Message::getMessage(21);
                 } else {
-                    $u = [IUser::FIELD_USER_NAME=>$username, IUser::FIELD_PASSWORD=>$pwd];
+                    $u = [IAuth::KEY_USERNAME=>$username, IAuth::KEY_PASSWORD=>$pwd];
+                    $auth = UserFactory::getOAuthServer();
                     //generate code
-                    $code = getAuth()->getAuth()->getCode($cid, $redirect_uri, $u);
+                    $code = $auth->getCode($cid, $redirect_uri, $u);
                     if ($code) {
                         $q = ['code'=>$code];
                         if ($state) {
@@ -111,21 +112,20 @@ class AuthorizeController extends BaseController
         $gtype = self::getRequest()->getInput('grant_type', 'authorization_code');
         $cset = self::getRequest()->getInput('client_secret');
         $code = self::getRequest()->getInput('code');
-        $rurl = self::getRequest()->getInput('redirect_uri');
         $state = self::getRequest()->getInput('state');
         if (!$gtype || $gtype != 'authorization_code') {
             $redata = Message::messageList(1006)->toApiArray();
         } elseif (!$cset) {
             $redata = Message::messageList(1011)->toApiArray();
-        } elseif (!$rurl) {
-            $redata = Message::messageList(1010)->toApiArray();
         } elseif (!$code) {
             $redata = Message::messageList(1002)->toApiArray();
         } else {
             //verify code
             $u = [UserFactory::KEY_CODE=>$code, UserFactory::KEY_APP_SECRET=>$cset];
-            $user = getAuth()->login($u);
+            $auth = UserFactory::getOAuthServer();
+            $user = $auth->signIn($u);
             if ($user) {
+                getAuth()->setUser($user);
                 $us = $user->getUser();
                 if (isset($us[IUser::FIELD_TOKEN])) {
                     $token = $us[IUser::FIELD_TOKEN];
@@ -145,29 +145,6 @@ class AuthorizeController extends BaseController
         self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData(TA($redata))->send();
         return false;
     }
-//
-//    public static function user()
-//    {
-//        $cid = self::getRequest()->getInput('client_id');
-//        $token = self::getRequest()->getInput('access_token');
-//        if (!$cid) {
-//            $redata = Message::messageList(1009)->toApiArray();
-//        } elseif (!$token) {
-//            $redata = Message::messageList(1012)->toApiArray();
-//        }  else {
-//            //OAuth server
-//            $u = new OAuthServerUser(null);
-//            $user = [IUser::FIELD_TOKEN=>$token, UserFactory::KEY_APP_ID=>$cid];
-//            $re = $u->verify($user);
-//            if ($re) {
-//                $redata = $u->getUser()->getUser();
-//            } else {
-//                $redata = Message::messageList(1012)->toApiArray();
-//            }
-//        }
-//        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
-//        return false;
-//    }
 
     /**
      * @param $uri

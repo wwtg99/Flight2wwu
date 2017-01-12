@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.3.7
+    - Fix OAuth bugs
+    - Remove unused files
+
 ## 0.3.6
     - Update and simplify auth logic
 
