@@ -186,7 +186,7 @@ function installCore($dir, $package_dir)
             ],
             'Model'=>[
                 'Message.php',
-                'Auth'=>['UserFactory.php', 'NormalUser.php', 'OAuthClientUser.php']
+                'Auth'=>['UserFactory.php']
             ],
             'Plugin'=>['PHPInterpreter.php'],
             'view'=>[
@@ -219,9 +219,9 @@ function installOAuth($dir, $package_dir)
             'Controller'=>[
                 'AuthorizeController.php',
             ],
-            'Model'=>[
-                'Auth'=>['OAuthServerUser.php']
-            ],
+//            'Model'=>[
+//                'Auth'=>['OAuthServerUser.php']
+//            ],
             'view'=>[
                 'oauth'=>['login.twig']
             ],

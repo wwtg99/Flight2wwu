@@ -14,6 +14,7 @@ use Wwtg99\PgAuth\Auth\IAuth as A;
 use Wwtg99\PgAuth\Auth\IUser;
 
 /**
+ * @Deprecated
  * Class PgAuthUser
  * Wrapper for Wwtg99\PgAuth\Auth\IUser
  * @package Wwtg99\Flight2wwu\Component\Auth
@@ -95,7 +96,7 @@ abstract class PgAuthUser implements IAuthUser
     {
         if ($this->auth) {
             if ($this->user) {
-                $u = [UserFactory::KEY_USER_NAME => $this->user->getUser()[IUser::FIELD_USER_NAME], UserFactory::KEY_USER_PASSWORD => $old];
+                $u = [IUser::FIELD_USER_NAME => $this->user->getUser()[IUser::FIELD_USER_NAME], UserFactory::KEY_USER_PASSWORD => $old];
                 $re = $this->auth->verify($u);
                 if ($re) {
                     return $this->user->changePassword($new);

@@ -35,6 +35,20 @@ class UserController extends BaseController
     }
 
     /**
+     * Get user info
+     *
+     * @return bool
+     */
+    public static function info()
+    {
+        $u = getUser();
+        if (!$u) {
+            $u = [];
+        }
+        return self::getResponse()->setResType('json')->setHeader(DefaultController::$defaultApiHeaders)->setData($u)->send();
+    }
+
+    /**
      * Edit user info, should not available for oauth login
      *
      * @return bool
@@ -65,7 +79,6 @@ class UserController extends BaseController
         $label = self::getRequest()->getInput('label');
         $email = self::getRequest()->getInput('email');
         $des = self::getRequest()->getInput('descr');
-        $user = getAuth()->getUserObject();
         $d = [IUser::FIELD_LABEL=>$label, IUser::FIELD_EMAIL=>$email, 'descr'=>$des];
         //check email
         $u = getDataPool()->getConnection('auth')->getMapper('User');
@@ -74,9 +87,8 @@ class UserController extends BaseController
             $msg = Message::getMessage(25);
         } elseif ($emailnum > 1) {
             $msg = Message::getMessage(29);
-        } elseif ($user && $user->changeInfo($d)) {
+        } elseif (getAuth()->getUser() && getAuth()->getUser()->changeInfo($d)) {
             $msg = Message::getMessage(0, 'update successfully', 'success');
-            getAuth()->refreshSession();
         } else {
             $msg = Message::getMessage(13);
         }

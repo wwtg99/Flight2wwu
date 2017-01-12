@@ -9,6 +9,7 @@
 namespace Wwtg99\App\Controller\Admin;
 
 
+use Wwtg99\App\Controller\DefaultController;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 
 class AdminController extends BaseController

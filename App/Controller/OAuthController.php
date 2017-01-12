@@ -13,7 +13,6 @@ use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\FWException;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\AjaxRequest;
-use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 
 class OAuthController extends BaseController
 {

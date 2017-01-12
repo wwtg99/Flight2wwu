@@ -1,5 +1,6 @@
 <?php
 /**
+ * @Deprecated
  * Created by PhpStorm.
  * User: wuwentao
  * Date: 2015/9/23
@@ -12,6 +13,11 @@ namespace Wwtg99\Flight2wwu\Component\Auth;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\PgAuth\Auth\IUser;
 
+/**
+ * @Deprecated
+ * Class RoleAuth
+ * @package Wwtg99\Flight2wwu\Component\Auth
+ */
 class RoleAuth implements IAuth
 {
 

@@ -15,6 +15,14 @@ vendor/bin/wwtinit <project_dir>
 #### Config Apache
 Set web directory to web and set AllowOverride to All.
 
+#### Config Nginx
+Add in server 
+```
+location / {
+    try_files $uri $uri/ /index.php;
+}
+```
+
 #### Config framework
 Change conf files in App/config. At most time only change app_config.php.
 
@@ -25,7 +33,6 @@ Change conf files in App/config. At most time only change app_config.php.
     - Controller: controller class
     - Model: model class
     - view: view templates
-    - view_twig: twig view templates
     - Plugin: plugin class
  - bootstrap: bootstrap scripts
  - storage: storage directory, write access
@@ -83,7 +90,7 @@ Implement all functions in RestfulController, all functions will return by view.
 |DELETE  |/zoos/{id}  |delete resource by id |
 
 #### Paging、Order and Filters
-Get resource list support paging, order and fileters.
+Get resource list support paging, order and filters.
 
 Paging：
 

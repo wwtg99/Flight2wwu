@@ -16,7 +16,8 @@ return [
     'services'=>[
         'Timer' => 'Wwtg99\Flight2wwu\Component\Utils\Timer',
         'Router' => 'Wwtg99\Flight2wwu\Common\Router',
-        'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RoleAuth',
+//        'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RoleAuth',
+        'Auth' => 'Wwtg99\Flight2wwu\Component\Auth\RBACAuth',
         'View' => 'Wwtg99\Flight2wwu\Component\View\TwigView',
         'Log' => 'Wwtg99\Flight2wwu\Component\Log\Monolog',
         'DB' => 'Wwtg99\Flight2wwu\Component\Database\MedooDB',
@@ -73,11 +74,11 @@ return [
             //oauth server
 //            ["/authorize", 'Wwtg99\App\Controller\Authorize'],
             //admin
-//            ['/admin', 'Wwtg99\App\Controller\Admin\Admin'],
-//            ["/admin/departments", 'Wwtg99\App\Controller\Admin\Department', 'restful+'],
-//            ["/admin/roles", 'Wwtg99\App\Controller\Admin\Role', 'restful+'],
-//            ["/admin/users", 'Wwtg99\App\Controller\Admin\User', 'restful+'],
-//            ["/admin/apps", 'Wwtg99\App\Controller\Admin\App', 'restful+'],
+            ['/admin', 'Wwtg99\App\Controller\Admin\Admin'],
+            ["/admin/departments", 'Wwtg99\App\Controller\Admin\Department', 'restful+'],
+            ["/admin/roles", 'Wwtg99\App\Controller\Admin\Role', 'restful+'],
+            ["/admin/users", 'Wwtg99\App\Controller\Admin\User', 'restful+'],
+            ["/admin/apps", 'Wwtg99\App\Controller\Admin\App', 'restful+'],
         ],
         /**
          * Override http method with header X-HTTP-Method-Override

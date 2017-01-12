@@ -13,6 +13,7 @@ use Wwtg99\App\Model\Auth\OAuthServerUser;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
+use Wwtg99\PgAuth\Auth\IUser;
 
 /**
  * Class AuthorizeController
@@ -41,11 +42,9 @@ class AuthorizeController extends BaseController
                 if (!$username || !$pwd) {
                     $msg = Message::getMessage(21);
                 } else {
-                    $user = [UserFactory::KEY_USER_NAME=>$username, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_APP_ID=>$cid, UserFactory::KEY_APP_REDIRECT_URI=>$redirect_uri];
-                    //OAuth server
-                    $u = new OAuthServerUser(null);
+                    $u = [IUser::FIELD_USER_NAME=>$username, IUser::FIELD_PASSWORD=>$pwd];
                     //generate code
-                    $code = $u->getCode($user);
+                    $code = getAuth()->getAuth()->getCode($cid, $redirect_uri, $u);
                     if ($code) {
                         $q = ['code'=>$code];
                         if ($state) {
@@ -55,7 +54,7 @@ class AuthorizeController extends BaseController
                         \Flight::redirect($uri);
                         return false;
                     } else {
-                        $msg = Message::getMessage(21, $u->getMessage(), 'danger');
+                        $msg = Message::getMessage(21, getAuth()->getAuth()->getMessage(), 'danger');
                         getOValue()->addOldOnce('msg', $msg);
                     }
                 }
@@ -123,54 +122,52 @@ class AuthorizeController extends BaseController
         } elseif (!$code) {
             $redata = Message::messageList(1002)->toApiArray();
         } else {
-            //OAuth server
-            $u = new OAuthServerUser(null);
             //verify code
-            $user = [UserFactory::KEY_CODE=>$code, UserFactory::KEY_APP_SECRET=>$cset];
-            $re = $u->login($user);
-            if ($re) {
-                $us = $u->getUser()->getUser();
-                if (isset($us[UserFactory::KEY_USER_TOKEN])) {
-                    $token = $us[UserFactory::KEY_USER_TOKEN];
-                    $ttl = getConfig()->get('token_ttl');
+            $u = [UserFactory::KEY_CODE=>$code, UserFactory::KEY_APP_SECRET=>$cset];
+            $user = getAuth()->login($u);
+            if ($user) {
+                $us = $user->getUser();
+                if (isset($us[IUser::FIELD_TOKEN])) {
+                    $token = $us[IUser::FIELD_TOKEN];
+                    $ttl = getConfig()->get('auth.token_ttl');
                     $redata = ['access_token'=>$token, 'expires_in'=>time() + $ttl];
                     if ($state) {
                         $redata['state'] = $state;
                     }
                 } else {
-                    $redata = New Message(21, $u->getMessage(), 'danger');
+                    $redata = New Message(21, getAuth()->getAuth()->getMessage(), 'danger');
                     $redata = $redata->toApiArray();
                 }
             } else {
                 $redata = Message::messageList(1002)->toApiArray();
             }
         }
-        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
+        self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData(TA($redata))->send();
         return false;
     }
-
-    public static function user()
-    {
-        $cid = self::getRequest()->getInput('client_id');
-        $token = self::getRequest()->getInput('access_token');
-        if (!$cid) {
-            $redata = Message::messageList(1009)->toApiArray();
-        } elseif (!$token) {
-            $redata = Message::messageList(1012)->toApiArray();
-        }  else {
-            //OAuth server
-            $u = new OAuthServerUser(null);
-            $user = [UserFactory::KEY_USER_TOKEN=>$token, UserFactory::KEY_APP_ID=>$cid];
-            $re = $u->verify($user);
-            if ($re) {
-                $redata = $u->getUser()->getUser();
-            } else {
-                $redata = Message::messageList(1012)->toApiArray();
-            }
-        }
-        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
-        return false;
-    }
+//
+//    public static function user()
+//    {
+//        $cid = self::getRequest()->getInput('client_id');
+//        $token = self::getRequest()->getInput('access_token');
+//        if (!$cid) {
+//            $redata = Message::messageList(1009)->toApiArray();
+//        } elseif (!$token) {
+//            $redata = Message::messageList(1012)->toApiArray();
+//        }  else {
+//            //OAuth server
+//            $u = new OAuthServerUser(null);
+//            $user = [IUser::FIELD_TOKEN=>$token, UserFactory::KEY_APP_ID=>$cid];
+//            $re = $u->verify($user);
+//            if ($re) {
+//                $redata = $u->getUser()->getUser();
+//            } else {
+//                $redata = Message::messageList(1012)->toApiArray();
+//            }
+//        }
+//        self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('json')->setData(TA($redata))->send();
+//        return false;
+//    }
 
     /**
      * @param $uri

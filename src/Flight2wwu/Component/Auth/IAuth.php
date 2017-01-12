@@ -8,7 +8,11 @@
 
 namespace Wwtg99\Flight2wwu\Component\Auth;
 
-
+/**
+ * @Deprecated
+ * Interface IAuth
+ * @package Wwtg99\Flight2wwu\Component\Auth
+ */
 interface IAuth
 {
 

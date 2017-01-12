@@ -24,7 +24,7 @@ return [
          */
         'rbac'=>[
             'anonymous'=>[
-                '*' => 3,
+                '*' => 0,
                 '/' => 3,
                 '/403' => 3,
                 '/404' => 3,
@@ -58,12 +58,22 @@ return [
                 '/changelog' => 1,
             ],
         ],
-        'session'=>true, //use session to store user info
-        'session_expires'=>30, // seconds for auth session expires
         'cookie'=>true, //use cookie to store token
         'cookie_expires'=>86400, // seconds for auth cookies expires
+        "cache"=>[
+            "type"=>"redis",  //apcu, file, redis, memcache or no cache
+            "options"=>[
+                "schema"=>"tcp",
+                "host"=>"192.168.0.21",
+                "database"=>6
+            ]
+        ],
+        'token_ttl'=>7200,  // seconds for access_token expires
+//        'token_only'=>true,  //enable access_token login, default false for normal login, true for oauth login
     ],
-    'login_method'=>'normal', //normal or oauth
+    'login_method'=>'normal',  //normal or oauth
+    'access_token_login'=>false,  //enable login by access_token, usually for API
+    'access_token_key'=>'access_token',  //the key for access_token if enabled
     'oauth'=>[
         'code_uri'=>'http://192.168.0.21:10002/authorize/authorize',
         'token_uri'=>'http://192.168.0.21:10002/authorize/token',
@@ -74,13 +84,4 @@ return [
         'app_secret'=>'94d222cfb9dfb0fb27b4eebddeea7fa7',
         'app_secret_key'=>'client_secret',
     ],
-    "auth_cache"=>[
-        "type"=>"redis",  //apcu, file, redis, memcache or no cache
-        "options"=>[
-            "schema"=>"tcp",
-            "host"=>"192.168.0.21",
-            "database"=>6
-        ]
-    ],
-    'token_ttl'=>7200  // seconds for access_token expires
 ];

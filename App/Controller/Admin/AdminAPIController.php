@@ -114,7 +114,12 @@ abstract class AdminAPIController extends RestfulPlusController
         $re = $model->update($data, null, $id);
         if ($re) {
             $d = $model->get($id);
-            return FieldFormatter::formatDateTime($d);
+            if ($d) {
+                $d = FieldFormatter::formatDateTime($d);
+            } else {
+                $d = $data;
+            }
+            return $d;
         }
         return Message::messageList(13);
     }

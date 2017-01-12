@@ -8,7 +8,6 @@
 
 namespace Wwtg99\Flight2wwu\Component\Controller;
 
-use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\Request;
 use Wwtg99\Flight2wwu\Common\Response;
 

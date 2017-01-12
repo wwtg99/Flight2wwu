@@ -138,7 +138,7 @@ function getAssets()
 }
 
 /**
- * @return \Wwtg99\Flight2wwu\Component\Auth\IAuth
+ * @return \Wwtg99\Flight2wwu\Component\Auth\RBACAuth
  */
 function getAuth()
 {
@@ -151,16 +151,19 @@ function getAuth()
  */
 function getUser($key = '')
 {
-    if ($key) {
-        $user = Flight::Auth()->getUser();
-        if ($user && array_key_exists($key, $user)) {
-            return $user[$key];
-        } else {
-            return '';
+    $u = Flight::Auth()->getUser();
+    if ($u) {
+        $user = $u->getUser();
+        if ($key) {
+            if ($user && array_key_exists($key, $user)) {
+                return $user[$key];
+            } else {
+                return '';
+            }
         }
-    } else {
-        return Flight::Auth()->getUser();
+        return $user;
     }
+    return '';
 }
 
 /**

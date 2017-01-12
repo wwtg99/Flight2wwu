@@ -11,6 +11,7 @@ namespace Wwtg99\App\Controller;
 
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\App\Model\Message;
+use Wwtg99\Flight2wwu\Component\Auth\IAuth;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Utils\CSRFCode;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
@@ -57,17 +58,6 @@ class AuthController extends BaseController
         } else {
             AuthController::getChangePwd();
         }
-        return false;
-    }
-
-    /**
-     * Get user info
-     *
-     * @return bool
-     */
-    public static function info()
-    {
-        AuthController::getInfo();
         return false;
     }
 
@@ -152,7 +142,6 @@ class AuthController extends BaseController
         $req = self::getRequest();
         $name = $req->getPost('username');
         $pwd = $req->getPost('password');
-        $rem = $req->getPost('remember');
         getOValue()->addOld('login_username', $name);
         $phrase = $req->getInput('captcha');
         if (!CSRFCode::check()) {
@@ -169,7 +158,9 @@ class AuthController extends BaseController
             return;
         }
         $redirectPath = '/';
-        if (getAuth()->attempt([UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, 'remember'=>$rem])) {
+        $u = [\Wwtg99\PgAuth\Auth\IAuth::KEY_USERNAME=>$name, \Wwtg99\PgAuth\Auth\IAuth::KEY_PASSWORD=>$pwd];
+        $user = getAuth()->login($u);
+        if ($user) {
             $path = getOValue()->getOldOnce('last_path');
             if ($path) {
                 $redirectPath = $path;
@@ -216,9 +207,13 @@ class AuthController extends BaseController
         } elseif ($new1 != $new2) {
             $msg = Message::getMessage(22);
         } else {
-            $user = getAuth()->getUserObject();
-            if ($user && $user->changePassword($old, $new1)) {
-                $msg = Message::getMessage(23);
+            if (getAuth()->getAuth()->verify([\Wwtg99\PgAuth\Auth\IAuth::KEY_USERNAME=>getUser(IUser::FIELD_USER_NAME), \Wwtg99\PgAuth\Auth\IAuth::KEY_PASSWORD=>$old])) {
+                $user = getAuth()->getUser();
+                if ($user && $user->changePassword($new1)) {
+                    $msg = Message::getMessage(23);
+                } else {
+                    $msg = Message::getMessage(24);
+                }
             } else {
                 $msg = Message::getMessage(24);
             }
@@ -226,12 +221,6 @@ class AuthController extends BaseController
         getOValue()->addOldOnce('msg', $msg);
         $rpath = U(getConfig()->get('defined_routes.change_password'));
         \Flight::redirect($rpath);
-    }
-
-    private static function getInfo()
-    {
-        $user = getUser();
-        self::getResponse()->setResType('json')->setData($user)->send();
     }
 
     private static function getSignup()
@@ -302,10 +291,10 @@ class AuthController extends BaseController
             return;
         }
         $redirectPath = '/';
-        $user = UserFactory::getUser();
-        $u = [UserFactory::KEY_USER_NAME=>$name, UserFactory::KEY_USER_PASSWORD=>$pwd, UserFactory::KEY_USER_EMAIL=>$email];
-        if ($user->signUp($u)) {
-            getAuth()->login($u);
+        $defaultRoles = 'common_user';
+        $u = [IUser::FIELD_USER_NAME=>$name, IUser::FIELD_PASSWORD=>$pwd, IUser::FIELD_EMAIL=>$email, IUser::FIELD_ROLES=>$defaultRoles];
+        $user = getAuth()->signup($u);
+        if ($user) {
             \Flight::redirect($redirectPath);
         } else {
             $msg = Message::getMessage(26);

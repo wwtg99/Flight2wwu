@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.6
+    - Update and simplify auth logic
+
 ## 0.3.5
     - Fix paging bugs
 

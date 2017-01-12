@@ -99,6 +99,55 @@ class AjaxRequest
     }
 
     /**
+     * @param $uri
+     * @param array $data
+     * @param array $options
+     * @return \Psr\Http\Message\ResponseInterface|string
+     */
+    public function put($uri, $data = [], $options = [])
+    {
+        $options['headers'] = $this->headers;
+        $options['json'] = $data;
+        if ($this->cookies) {
+            $options['cookies'] = new CookieJar(false, $this->cookies);
+        }
+        $res = $this->cli->put($uri, $options);
+        return $this->response($res);
+    }
+
+    /**
+     * @param $uri
+     * @param array $data
+     * @param array $options
+     * @return \Psr\Http\Message\ResponseInterface|string
+     */
+    public function patch($uri, $data = [], $options = [])
+    {
+        $options['headers'] = $this->headers;
+        $options['json'] = $data;
+        if ($this->cookies) {
+            $options['cookies'] = new CookieJar(false, $this->cookies);
+        }
+        $res = $this->cli->patch($uri, $options);
+        return $this->response($res);
+    }
+
+    /**
+     * @param $uri
+     * @param array $options
+     * @return \Psr\Http\Message\ResponseInterface|string
+     */
+    public function delete($uri, $options = [])
+    {
+        $options['headers'] = $this->headers;
+        if ($this->cookies) {
+            $options['cookies'] = new CookieJar(false, $this->cookies);
+        }
+        $res = $this->cli->delete($uri, $options);
+        return $this->response($res);
+    }
+
+    /**
      * @return Client
      */
     public function getClient()
