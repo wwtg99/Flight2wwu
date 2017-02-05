@@ -12,6 +12,7 @@ namespace Wwtg99\App\Controller;
 use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\Request;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
+use Wwtg99\Flight2wwu\Component\Controller\Internal\DefaultFilter;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
 use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
@@ -42,15 +43,7 @@ class DefaultController extends BaseController
     public static function language()
     {
         $locale = Request::get()->getInput('language');
-        if ($locale) {
-            \Flight::Locale()->setLocale($locale);
-            getOValue()->addOld('language', $locale);
-        } else {
-            $locale = getOValue()->getOld('language');
-            if ($locale) {
-                \Flight::Locale()->setLocale($locale);
-            }
-        }
+        DefaultFilter::changeLanguage($locale);
         return true;
     }
 
@@ -63,47 +56,22 @@ class DefaultController extends BaseController
         $ip = Request::get()->getRequest()->ip;
         $url = Request::get()->getRequest()->url;
         $method = Request::get()->getRequest()->method;
-        $path = parse_url($url, PHP_URL_PATH);
-        // skip /403 and /404
-        if ($path == '/403' || $path == '/404') {
+        $tokenKey = getConfig()->get('access_token_key');
+        $token = self::getRequest()->getInput($tokenKey);
+        $re = DefaultFilter::roleBasedAccessControl($ip, $url, $method, $token);
+        if ($re) {
+            // last path
+            $skip = [
+                '/oauth/redirect_login',
+                FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
+                FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout')),
+                FormatUtils::formatWebPath(getConfig()->get('defined_routes.signup')),
+            ];
+            DefaultFilter::changeLastPath($url, $skip);
             return true;
-        }
-        // last path
-        $skip = [
-            '/oauth/redirect_login',
-            FormatUtils::formatWebPath(getConfig()->get('defined_routes.login')),
-            FormatUtils::formatWebPath(getConfig()->get('defined_routes.logout')),
-            FormatUtils::formatWebPath(getConfig()->get('defined_routes.signup')),
-        ];
-        if (!in_array($path, $skip) && !Request::get()->isAjax()) {
-            getOValue()->addOldOnce('last_path', $path);
-        }
-        //login by access_token
-        $tokenLogin = getConfig()->get('access_token_login');
-        if ($tokenLogin) {
-            $tokenKey = getConfig()->get('access_token_key');
-            $token = self::getRequest()->getInput($tokenKey);
-            if (getAuth()->getAuth()->verify([IAuth::KEY_TOKEN=>$token])) {
-                getAuth()->setUser(getAuth()->getAuth()->getUser());
-            }
-        }
-        // get user
-        if (getAuth()->isLogin()) {
-            $user = getUser()[IUser::FIELD_USER_NAME];
         } else {
-            $user = 'anonymous';
-        }
-        $logger = getLog();
-        // log access
-        if (!getAuth()->accessPath($path)->access(Request::get()->getMethod())) {
-            $logger->changeLogger('access')->info("forbidden from $ip by $user for $path method $method");
-            $logger->changeLogger('main');
             return self::forbidden();
-        } else {
-            $logger->changeLogger('access')->info("Access from $ip by $user for $url method $method");
-            $logger->changeLogger('main');
         }
-        return true;
     }
 
     /**

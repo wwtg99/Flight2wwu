@@ -286,6 +286,42 @@ class RBACAuth
     }
 
     /**
+     * @return boolean
+     */
+    public function isUseCookie()
+    {
+        return $this->use_cookie;
+    }
+
+    /**
+     * @param boolean $use_cookie
+     * @return RBACAuth
+     */
+    public function setUseCookie($use_cookie)
+    {
+        $this->use_cookie = $use_cookie;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCookieExpires()
+    {
+        return $this->cookieExpires;
+    }
+
+    /**
+     * @param int $cookieExpires
+     * @return RBACAuth
+     */
+    public function setCookieExpires($cookieExpires)
+    {
+        $this->cookieExpires = $cookieExpires;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     private function getRoles()

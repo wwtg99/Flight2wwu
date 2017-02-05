@@ -9,8 +9,6 @@
 namespace Wwtg99\Flight2wwu\Common;
 
 
-use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
-
 class Register
 {
 

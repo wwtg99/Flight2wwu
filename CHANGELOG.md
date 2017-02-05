@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.3.10
+    - Update internal controllers to non-static
+    - Add DefaultFilter
+
 ## 0.3.9
     - Add internal default controllers
 

@@ -20,27 +20,27 @@ use Wwtg99\PgAuth\Auth\IUser;
 class DefaultAuthController extends BaseController
 {
 
-    public static $forgetEmailSubject = '请及时修改您的密码';
+    public $forgetEmailSubject = '请及时修改您的密码';
 
     /**
      * Replace $domain$ with domain, $token$ with token
      * @var string
      */
-    public static $forgetEmailBody = '<p>请点击如下链接修改您的密码，如果无法打开，请复制链接在浏览器地址栏中。</p><p><a href="$domain$/auth/forget_change_password?token=$token$">$domain/auth/forget_change_password?token=$token$</a></p>';
+    public $forgetEmailBody = '<p>请点击如下链接修改您的密码，如果无法打开，请复制链接在浏览器地址栏中。</p><p><a href="$domain$/auth/forget_change_password?token=$token$">$domain/auth/forget_change_password?token=$token$</a></p>';
 
-    public static $formatEmailFrom = ['test@email.com'=>'no-reply'];
+    public $formatEmailFrom = ['test@email.com'=>'no-reply'];
 
     /**
      * Login
      *
      * @return bool
      */
-    public static function login()
+    public function login()
     {
         if (self::getRequest()->checkMethod('POST')) {
-            return self::postLogin();
+            return $this->postLogin();
         } else {
-            return self::getLogin();
+            return $this->getLogin();
         }
     }
 
@@ -49,9 +49,9 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function logout()
+    public function logout()
     {
-        return self::getLogout();
+        return $this->getLogout();
     }
 
     /**
@@ -59,12 +59,12 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function password()
+    public function password()
     {
         if (self::getRequest()->checkMethod('POST')) {
-            return self::postChangePwd();
+            return $this->postChangePwd();
         } else {
-            return self::getChangePwd();
+            return $this->getChangePwd();
         }
     }
 
@@ -73,12 +73,12 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function signup()
+    public function signup()
     {
         if (self::getRequest()->checkMethod('POST')) {
-            return self::postSignup();
+            return $this->postSignup();
         } else {
-            return self::getSignup();
+            return $this->getSignup();
         }
     }
 
@@ -87,12 +87,12 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function forget_password()
+    public function forget_password()
     {
         if (self::getRequest()->checkMethod('POST')) {
-            return self::postForgetPassword();
+            return $this->postForgetPassword();
         } else {
-            return self::getForgetPassword();
+            return $this->getForgetPassword();
         }
     }
 
@@ -101,12 +101,12 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function forget_change_password()
+    public function forget_change_password()
     {
         if (self::getRequest()->checkMethod('POST')) {
-            return self::postForgetChangePassword();
+            return $this->postForgetChangePassword();
         } else {
-            return self::getForgetChangePassword();
+            return $this->getForgetChangePassword();
         }
     }
 
@@ -115,7 +115,7 @@ class DefaultAuthController extends BaseController
      *
      * @return bool
      */
-    public static function update_captcha()
+    public function update_captcha()
     {
         $builder = getCaptcha()->generateCaptcha();
         echo $builder->inline();
@@ -124,7 +124,7 @@ class DefaultAuthController extends BaseController
 
 
 
-    private static function getLogin()
+    protected function getLogin()
     {
         if (getAuth()->isLogin()) {
             $path = '/';
@@ -142,7 +142,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function postLogin()
+    protected function postLogin()
     {
         $req = self::getRequest();
         $name = $req->getPost('username');
@@ -180,7 +180,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function getLogout()
+    protected function getLogout()
     {
         getAuth()->logout();
         $path = '/';
@@ -188,7 +188,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function getChangePwd()
+    protected function getChangePwd()
     {
         if (getAuth()->isLogin()) {
             $state = getCSRF()->generateCSRFCode();
@@ -203,7 +203,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function postChangePwd()
+    protected function postChangePwd()
     {
         $old = self::getRequest()->getPost('old');
         $new1 = self::getRequest()->getPost('new1');
@@ -232,7 +232,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function getSignup()
+    protected function getSignup()
     {
         if (getAuth()->isLogin()) {
             $path = '/';
@@ -249,7 +249,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function postSignup()
+    protected function postSignup()
     {
         $name = self::getRequest()->getPost('username');
         $email = self::getRequest()->getPost('email');
@@ -305,6 +305,8 @@ class DefaultAuthController extends BaseController
         $u = [IUser::FIELD_USER_NAME=>$name, IUser::FIELD_PASSWORD=>$pwd, IUser::FIELD_EMAIL=>$email, IUser::FIELD_ROLES=>$defaultRoles];
         $user = getAuth()->signup($u);
         if ($user) {
+            getOValue()->deleteOld('signup_username');
+            getOValue()->deleteOld('signup_email');
             \Flight::redirect($redirectPath);
         } else {
             $msg = Message::getMessage(26);
@@ -315,7 +317,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function getForgetPassword()
+    protected function getForgetPassword()
     {
         if (getAuth()->isLogin()) {
             $path = '/';
@@ -332,7 +334,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function postForgetPassword()
+    protected function postForgetPassword()
     {
         $email = self::getRequest()->getPost('email');
         $phrase = self::getRequest()->getInput('captcha');
@@ -366,9 +368,9 @@ class DefaultAuthController extends BaseController
             getCache()->set($token, $u, $token_ttl);
             //send email
             $domain = getConfig()->get('domain');
-            $body = str_replace(['$domain$', '$token$'], [$domain, $token], self::$forgetEmailBody);
+            $body = str_replace(['$domain$', '$token$'], [$domain, $token], $this->forgetEmailBody);
             $mail = getMailer();
-            $mail->send(['subject'=>self::$forgetEmailSubject, 'to'=>$email, 'from'=>self::$formatEmailFrom, 'body'=>$body]);
+            $mail->send(['subject'=>$this->forgetEmailSubject, 'to'=>$email, 'from'=>$this->formatEmailFrom, 'body'=>$body]);
             $send = 1;
         }
         self::getResponse()->setResType('view')
@@ -379,7 +381,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function getForgetChangePassword()
+    protected function getForgetChangePassword()
     {
         $token = self::getRequest()->getInput('token');
         if ($token && getCache()->has($token)) {
@@ -397,7 +399,7 @@ class DefaultAuthController extends BaseController
         return false;
     }
 
-    private static function postForgetChangePassword()
+    protected function postForgetChangePassword()
     {
         $token = self::getRequest()->getInput('token');
         if ($token && getCache()->has($token)) {

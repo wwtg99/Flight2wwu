@@ -18,7 +18,7 @@ use Wwtg99\PgAuth\Auth\IAuth;
 class DefaultOAuthController extends BaseController
 {
 
-    public static function login()
+    public function login()
     {
         if (getAuth()->isLogin()) {
             $uri = U(getConfig()->get('defined_routes.logout'));
@@ -37,7 +37,7 @@ class DefaultOAuthController extends BaseController
         return false;
     }
 
-    public static function redirect_login()
+    public function redirect_login()
     {
         $code = self::getRequest()->getInput('code');
         $state = self::getRequest()->getInput('state');
@@ -73,7 +73,7 @@ class DefaultOAuthController extends BaseController
      * @param array $params
      * @return string
      */
-    private static function getAuthorizeUri($params = [])
+    protected function getAuthorizeUri($params = [])
     {
         $oauth = getConfig()->get('oauth');
         $appid = isset($oauth['app_id']) ? $oauth['app_id'] : '';
@@ -102,7 +102,7 @@ class DefaultOAuthController extends BaseController
      * @return array
      * @throws FWException
      */
-    private static function getAccessToken($code, $params = [])
+    protected function getAccessToken($code, $params = [])
     {
         $oauth = getConfig()->get('oauth');
         $server_uri = $oauth['token_uri'];

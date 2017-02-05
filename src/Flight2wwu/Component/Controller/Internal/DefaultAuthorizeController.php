@@ -19,7 +19,7 @@ use Wwtg99\PgAuth\Auth\IUser;
 class DefaultAuthorizeController extends BaseController
 {
 
-    public static function authorize()
+    public function authorize()
     {
         if (self::getRequest()->checkMethod('POST')) {
             $username = self::getRequest()->getInput('username');
@@ -101,7 +101,7 @@ class DefaultAuthorizeController extends BaseController
         }
     }
 
-    public static function token()
+    public function token()
     {
         $gtype = self::getRequest()->getInput('grant_type', 'authorization_code');
         $cset = self::getRequest()->getInput('client_secret');
@@ -145,7 +145,7 @@ class DefaultAuthorizeController extends BaseController
      * @param array $query
      * @return string
      */
-    private static function createUri($uri, $query = [])
+    protected function createUri($uri, $query = [])
     {
         $p = [];
         foreach ($query as $k => $v) {
