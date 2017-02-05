@@ -64,7 +64,7 @@ class RBACAuth
     }
 
     /**
-     * Save user to session and cookie
+     * Save user to cookie
      */
     public function save()
     {
@@ -124,7 +124,7 @@ class RBACAuth
     public function isSuperuser()
     {
         if ($this->isLogin()) {
-            $su = isset($this->user->getUser()['superuser']) ? $this->user->getUser()['superuser'] : false;
+            $su = isset($this->user->getUser()[IUser::FIELD_SUPERUSER]) ? $this->user->getUser()[IUser::FIELD_SUPERUSER] : false;
             if ($su) {
                 return true;
             }

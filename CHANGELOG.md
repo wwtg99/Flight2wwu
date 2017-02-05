@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.8
+    - Update pg_auth
+
 ## 0.3.7
     - Fix OAuth bugs
     - Remove unused files
