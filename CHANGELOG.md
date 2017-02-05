@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.9
+    - Add internal default controllers
+
 ## 0.3.8
     - Update pg_auth
 
