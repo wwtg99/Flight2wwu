@@ -163,7 +163,9 @@ class RBACAuth
      */
     public function logout()
     {
-        $this->auth->signOut($this->user->getUser());
+        if ($this->user) {
+            $this->auth->signOut($this->user->getUser());
+        }
         $this->user = null;
         $this->deleteCookie();
     }

@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.11
+    - Fix logout bugs when not login
+
 ## 0.3.10
     - Update internal controllers to non-static
     - Add DefaultFilter
