@@ -48,7 +48,7 @@ class CookieUtil implements IAttribute
         }
         $this->prefix = isset($conf['prefix']) ? $conf['prefix'] . '_' : '';
         $this->path = isset($conf['cookie_path']) ? $conf['cookie_path'] : '/';
-        $this->domain = isset($conf['domain']) ? $conf['domain'] : null;
+        $this->domain = isset($conf['cookie_domain']) ? $conf['cookie_domain'] : null;
         $enabled = isset($conf['cookie']) ? $conf['cookie'] : false;
         if ($enabled) {
             $this->enabled = true;

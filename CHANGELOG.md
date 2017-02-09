@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.12
+    - Fix cookie bugs
+
 ## 0.3.11
     - Fix logout bugs when not login
 

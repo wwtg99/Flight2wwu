@@ -21,7 +21,7 @@ class DefaultOAuthController extends BaseController
     public function login()
     {
         if (getAuth()->isLogin()) {
-            $uri = U(getConfig()->get('defined_routes.logout'));
+            $uri = U(getConfig()->get('defined_routes.user_center'));
             \Flight::redirect($uri);
         } else {
 //            $scope = ['get_user_info']; //TODO request scope
