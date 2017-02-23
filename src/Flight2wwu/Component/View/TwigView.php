@@ -177,7 +177,7 @@ class TwigView extends AbstractView
         $this->twig->addFunction($func);
         // getUser
         $func = new \Twig_SimpleFunction('getUser', function() {
-            return getAuth()->getUser()->getUser();
+            return getAuth()->getUser()->getUserArray();
         });
         $this->twig->addFunction($func);
         // old value

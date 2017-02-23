@@ -37,18 +37,9 @@
                         </div>
                     </div>
                     <input type="hidden" name="csrf_code" value="{{ csrf_code }}">
-                    {#<div class="checkbox text-center">#}
-                        {#<label><input type="checkbox" name="remember">{{ 'Remember me'|T }}</label>#}
-                    {#</div>#}
                     <div class="form-group text-center">
-                        <button class="btn btn-primary" type="submit" id="submit" tabindex="3">{{ 'Login'|T }}</button>
+                        <button class="btn btn-primary" type="button" id="submit" tabindex="4">{{ 'Login'|T }}</button>
                     </div>
-                    {% set msg = old('msg') %}
-                    {% if msg %}
-                    <div class="alert alert-danger text-center">
-                        {{ msg.message|T }}
-                    </div>
-                    {% endif %}
                 </form>
             </div>
         </div>
@@ -58,6 +49,33 @@
             $('#bt_refcap').click(function() {
                 $.get('{{ getConfig('defined_routes.update_captcha')|U }}', {}, function (data) {
                     $('#bt_refcap img').attr('src', data);
+                });
+            });
+            $('#form_login').bindEnter(function() {
+                $("#submit").click();
+            });
+            $('#submit').click(function() {
+                var fd = new FormData(document.getElementById('form_login'));
+                $.ajax({
+                    url: '{{ getConfig('defined_routes.login')|U }}',
+                    type: 'POST',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var url = '/';
+                        if (data.code == 0) {
+                            if (data.redirect_uri) {
+                                url = data.redirect_uri;
+                            }
+                            location.href = url;
+                        } else {
+                            BootstrapDialog.alert(data.error);
+                        }
+                    },
+                    error: function(data) {
+                        BootstrapDialog.alert('{{ 'Error'|T }}');
+                    }
                 });
             });
         }

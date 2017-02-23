@@ -64,7 +64,7 @@ return [
             "type"=>"redis",  // apcu, file, redis, memcache or no cache
             "options"=>[
                 "schema"=>"tcp",
-                "host"=>"192.168.0.21",
+                "host"=>"192.168.83.128",
                 "database"=>6
             ]
         ],
@@ -72,16 +72,15 @@ return [
         'auth_method'=>3,  // auth method for pg_auth
     ],
     'login_method'=>'normal',  // normal or oauth
-    'access_token_login'=>false,  // enable login by access_token, usually for API and oauth server
     'access_token_key'=>'access_token',  // the key for access_token if enabled
     'oauth'=>[
-        'code_uri'=>'http://localhost:8680/authorize/authorize',
-        'token_uri'=>'http://localhost:8680/authorize/token',
-        'redirect_uri'=>'http://localhost:8880/oauth/redirect_login',
+        'code_uri'=>'http://localhost:8080/authorize/authorize',
+        'token_uri'=>'http://localhost:8080/authorize/token',
+        'redirect_uri'=>'http://localhost:8080/oauth/redirect_login',
         'redirect_uri_key'=>'redirect_uri',
-        'app_id'=>'e94562cb12c6a74c2fe7b047d6995d70',
+        'app_id'=>'9249c2841f5c50ac306da2d4052f86d1',
         'app_id_key'=>'client_id',
-        'app_secret'=>'0e880f562e68eab825308f8921b3ac44',
+        'app_secret'=>'76fd8e0c0b4da82966c7c73691923056',
         'app_secret_key'=>'client_secret',
     ],
 ];

@@ -20,6 +20,7 @@ class DefaultOAuthController extends BaseController
 
     public function login()
     {
+        session_start();
         if (getAuth()->isLogin()) {
             $uri = U(getConfig()->get('defined_routes.user_center'));
             \Flight::redirect($uri);
@@ -27,7 +28,7 @@ class DefaultOAuthController extends BaseController
 //            $scope = ['get_user_info']; //TODO request scope
             $state = getCSRF()->generateCSRFCode();
             $params = ['state'=>$state, 'response_type'=>'code']; //TODO use state and response_type
-            $uri = self::getAuthorizeUri($params);
+            $uri = $this->getAuthorizeUri($params);
             if ($uri) {
                 \Flight::redirect($uri);
             } else {
@@ -39,6 +40,7 @@ class DefaultOAuthController extends BaseController
 
     public function redirect_login()
     {
+        session_start();
         $code = self::getRequest()->getInput('code');
         $state = self::getRequest()->getInput('state');
         if (!getCSRF()->verifyCSRFCode($state)) {
@@ -47,7 +49,7 @@ class DefaultOAuthController extends BaseController
         if ($code) {
             $state = getCSRF()->generateCSRFCode();
             $params = ['state'=>$state, 'grant_type'=>'authorization_code']; //TODO use state and grant_type
-            $token = self::getAccessToken($code, $params);
+            $token = $this->getAccessToken($code, $params);
             if (isset($token['access_token'])) {
                 $u = [IAuth::KEY_TOKEN=>$token['access_token']];
                 $user = getAuth()->login($u);
@@ -118,7 +120,7 @@ class DefaultOAuthController extends BaseController
             if ($appsec && $appsec_key) {
                 $params[$appsec_key] = $appsec;
             }
-            $client = new AjaxRequest([], 'json');
+            $client = new AjaxRequest(['http_errors'=>false, 'timeout'=>10], 'json');
             $res = $client->get($server_uri, $params);
             if ($res) {
                 if (isset($res['error'])) {

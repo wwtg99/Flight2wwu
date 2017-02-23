@@ -61,10 +61,11 @@
         function rollToNum(ele, num, milisecond) {
             var n = 0;
             var id = setInterval(function () {
-                n++;
-                ele.text(n);
                 if (n >= num) {
                     clearInterval(id);
+                } else {
+                    n++;
+                    ele.text(n);
                 }
             }, milisecond)
         }

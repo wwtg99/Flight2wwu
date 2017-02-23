@@ -153,7 +153,7 @@ function getUser($key = '')
 {
     $u = Flight::Auth()->getUser();
     if ($u) {
-        $user = $u->getUser();
+        $user = $u->getUserArray();
         if ($key) {
             if ($user && array_key_exists($key, $user)) {
                 return $user[$key];

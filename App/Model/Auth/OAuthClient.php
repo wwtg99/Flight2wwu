@@ -63,7 +63,7 @@ class OAuthClient extends NormalAuth
     {
         if (isset($user[IAuth::KEY_TOKEN])) {
             $token = $user[IAuth::KEY_TOKEN];
-            $api = new AjaxRequest();
+            $api = new AjaxRequest(['http_errors'=>false, 'timeout'=>10]);
             $res = $api->get($this->verifyUri, ['access_token'=>$token]);
             if ($res && $res->getStatusCode() == 200) {
                 $u = \GuzzleHttp\json_decode($res->getBody(), true);

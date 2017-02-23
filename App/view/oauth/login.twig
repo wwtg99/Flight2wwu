@@ -92,7 +92,7 @@
                     <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
                     <input type="hidden" name="scope" value="{{ scope }}">
                     <input type="hidden" name="state" value="{{ state }}">
-                    <button class="btn btn-success btn-group-justified">{{ 'Login'|T }}</button>
+                    <button class="btn btn-success btn-group-justified" type="submit">{{ 'Login'|T }}</button>
                 </form>
                 <br>
                 {% set msg = old('msg') %}
@@ -117,7 +117,6 @@
                 <div class="row lwhite">
                     <div class="col-md-5 col-md-offset-1">
                         <h4>{{ 'Copyright' }}:</h4>
-                        <p>Genowise</p>
                     </div>
                 </div>
             </div>

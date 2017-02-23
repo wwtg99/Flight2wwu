@@ -83,10 +83,10 @@ return [
                 'mapper_path'=>'Wwtg99\\PgAuth\\Mapper',
                 'database'=>[
                     'driver'=>'pgsql',
-                    'dbname'=>'auth_test',
-                    'host'=>'192.168.0.21',
-                    'username'=>'genobase',
-                    'password'=>'genobase',
+                    'dbname'=>'test1',
+                    'host'=>'192.168.83.128',
+                    'username'=>'wwu',
+                    'password'=>'1',
                     'port'=>5432
                 ],
                 'logger'=>[
@@ -122,4 +122,8 @@ return [
         'cookie_domain'=>null, //domain for cookies
         'old_value'=>'session', //storage method for old_value: cache, session
     ],
+    //Captcha
+    'captcha_ttl'=>600,
+    //CSRF
+    'csrf_ttl'=>600,
 ];

@@ -131,7 +131,7 @@ abstract class RestfulAPIController extends RestfulParserController
                 return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
-            \Flight::redirect(U('405'));
+            \Flight::methodNotAllowed();
         }
         return false;
     }
@@ -176,7 +176,7 @@ abstract class RestfulAPIController extends RestfulParserController
                 return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
-            \Flight::redirect(U('405'));
+            \Flight::methodNotAllowed();
         }
         return false;
     }
@@ -199,7 +199,7 @@ abstract class RestfulAPIController extends RestfulParserController
                 return self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setResCode(500)->setData(TA(Message::messageList(1)->toApiArray()))->send();
             }
         } else {
-            \Flight::redirect(U('405'));
+            \Flight::methodNotAllowed();
         }
         return false;
     }

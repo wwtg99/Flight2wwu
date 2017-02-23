@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 0.3.13
+    - Disable start session by default
+    - Change CSRF and captcha to use session instead of cache
+    - Update medoo to 1.2
+    - Update pgauth and data_pool
+    - Change forbidden and method not allowed to flight map
+    - Change default auth post to api
+
 ## 0.3.12
     - Fix cookie bugs
 

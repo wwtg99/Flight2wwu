@@ -11,7 +11,6 @@ namespace Wwtg99\App\Model\Auth;
 
 use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\NormalAuth;
-use Wwtg99\PgAuth\Auth\OAuthServer;
 
 class UserFactory
 {
@@ -36,19 +35,6 @@ class UserFactory
         } else {
             return new NormalAuth($conn, $conf);
         }
-    }
-
-    /**
-     * @param array $conf
-     * @return OAuthServer
-     */
-    public static function getOAuthServer($conf = [])
-    {
-        $conn = getDataPool()->getConnection('auth');
-        if (!$conf) {
-            $conf = \Flight::get('config')->get('auth');
-        }
-        return new OAuthServer($conn, $conf);
     }
 
     /**

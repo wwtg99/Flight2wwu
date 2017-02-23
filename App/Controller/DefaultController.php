@@ -9,13 +9,11 @@
 namespace Wwtg99\App\Controller;
 
 
-use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Common\Request;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\Flight2wwu\Component\Controller\Internal\DefaultFilter;
 use Wwtg99\Flight2wwu\Component\Utils\FormatUtils;
-use Wwtg99\PgAuth\Auth\IAuth;
-use Wwtg99\PgAuth\Auth\IUser;
+
 
 class DefaultController extends BaseController
 {
@@ -70,39 +68,9 @@ class DefaultController extends BaseController
             DefaultFilter::changeLastPath($url, $skip);
             return true;
         } else {
-            return self::forbidden();
+            \Flight::forbidden();
+            return false;
         }
-    }
-
-    /**
-     * Forbidden, error 403
-     * @return bool
-     */
-    public static function forbidden()
-    {
-        $res = self::getResponse()->setResCode(403);
-        if (Request::get()->isAjax()) {
-            $msg = new Message(403, 'forbidden', 'info');
-            return $res->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($msg->toApiArray())->send();
-        } else {
-            return $res->setHeader(DefaultController::$defaultViewHeaders)->setResType('view')->setView('error/403')->setData(['title'=>'authentication failed'])->send();
-        }
-    }
-
-    /**
-     * Method not allowed, error 405
-     * @return bool
-     */
-    public static function methodNotAllowed()
-    {
-        $res = self::getResponse()->setResCode(405);
-        if (Request::get()->isAjax()) {
-            $msg = new Message(405, 'Method not allowed', 'info');
-            return $res->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData($msg->toApiArray())->send();
-        } else {
-            \Flight::halt(405, 'Method not allowed');
-        }
-        return false;
     }
 
 }

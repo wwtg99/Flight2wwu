@@ -101,6 +101,7 @@ return [
     'User Number'=>'用户数量',
     'Role Number'=>'角色数量',
     'Sign Up'=>'注册',
+    'Sign Up Successfully'=>'注册成功！',
     'Email'=>'电子邮箱',
     'Captcha'=>'验证码',
     'userlabel'=>'用户昵称',

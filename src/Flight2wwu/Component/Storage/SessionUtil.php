@@ -18,11 +18,6 @@ class SessionUtil implements IAttribute
     private $enabled = false;
 
     /**
-     * @var array
-     */
-    private $session = [];
-
-    /**
      * @var string
      */
     private $prefix;
@@ -37,11 +32,7 @@ class SessionUtil implements IAttribute
             $conf = \Flight::get('config')->get('storage');
         }
         $this->prefix = isset($conf['prefix']) ? $conf['prefix'] . '_' : '';
-        $enabled = isset($conf['session']) ? $conf['session'] : '';
-        if ($enabled) {
-            $this->enabled = true;
-            $this->session = &$_SESSION;
-        }
+        $this->enabled = isset($conf['session']) ? $conf['session'] : '';
     }
 
     /**
@@ -51,7 +42,7 @@ class SessionUtil implements IAttribute
     public function get($name)
     {
         if ($this->has($name)) {
-            return $this->session[$this->prefix . $name][0];
+            return $_SESSION[$this->getSessionName($name)][0];
         }
         return null;
     }
@@ -65,7 +56,7 @@ class SessionUtil implements IAttribute
     public function set($name, $val, $expire = 0)
     {
         if ($this->enabled) {
-            $this->session[$this->prefix . $name] = [$val, $this->calExpireSeconds($expire)];
+            $_SESSION[$this->getSessionName($name)] = [$val, $this->calExpireSeconds($expire)];
         }
         return $this;
     }
@@ -77,10 +68,11 @@ class SessionUtil implements IAttribute
     public function has($name)
     {
         if ($this->enabled) {
-            $name = $this->prefix . $name;
-            if (isset($this->session[$name])) {
-                if (isset($this->session[$name][1]) && $this->session[$name][1] && $this->session[$name][1] < time()) {
-                    unset($this->session[$name]);
+            $nm = $this->getSessionName($name);
+            if (isset($_SESSION[$nm])) {
+                $obj = $_SESSION[$nm];
+                if (isset($obj[1]) && $obj[1] && $obj[1] < time()) {
+                    unset($_SESSION[$nm]);
                 } else {
                     return true;
                 }
@@ -95,9 +87,25 @@ class SessionUtil implements IAttribute
      */
     public function delete($name)
     {
-        if ($this->has($name)) {
-            unset($this->session[$this->prefix . $name]);
-        }
+        unset($_SESSION[$this->getSessionName($name)]);
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return string
+     */
+    public function getSessionName($name)
+    {
+        return $this->prefix . $name;
+    }
+
+    /**
+     * @return $this
+     */
+    public function start()
+    {
+        session_start();
         return $this;
     }
 
@@ -127,4 +135,5 @@ class SessionUtil implements IAttribute
     {
         return ($sec > 0) ? time() + $sec : 0;
     }
+
 }

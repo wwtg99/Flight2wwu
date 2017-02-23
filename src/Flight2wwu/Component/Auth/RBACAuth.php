@@ -12,19 +12,15 @@ namespace Wwtg99\Flight2wwu\Component\Auth;
 use Wwtg99\App\Model\Auth\UserFactory;
 use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
+use Wwtg99\PgAuth\Auth\NormalUser;
 
 class RBACAuth
 {
 
     /**
-     * @var IUser
-     */
-    protected $user = null;
-
-    /**
      * @var bool
      */
-    protected $use_cookie = true;
+    protected $useCookie = true;
 
     /**
      * @var array
@@ -68,7 +64,7 @@ class RBACAuth
      */
     public function save()
     {
-        if ($this->use_cookie) {
+        if ($this->useCookie) {
             $this->saveCookie();
         }
     }
@@ -78,7 +74,7 @@ class RBACAuth
      */
     public function deleteCookie()
     {
-        if ($this->use_cookie) {
+        if ($this->useCookie) {
             getCookie()->delete($this->cookieUserKey);
             getCookie()->delete($this->cookieTokenKey);
         }
@@ -89,8 +85,8 @@ class RBACAuth
      */
     public function saveCookie()
     {
-        if ($this->user) {
-            $u = $this->user->getUser();
+        if ($this->auth->getUser()) {
+            $u = $this->auth->getUser()->getUserArray();
             if (isset($u[IUser::FIELD_TOKEN]) && isset($u[IUser::FIELD_USER_NAME])) {
                 $cookie_token = $u[IUser::FIELD_TOKEN];
                 $cookie_user = $u[IUser::FIELD_USER_NAME];
@@ -105,15 +101,16 @@ class RBACAuth
      */
     public function isLogin()
     {
-        if ($this->user && $this->user->getId()) {
+        if ($this->auth->getUser() && $this->auth->getUser()->getId()) {
             return true;
         }
         //check cookies
-        $uname = getCookie()->get($this->cookieUserKey);
-        $token = getCookie()->get($this->cookieTokenKey);
-        if ($uname && $token && $this->auth->verify([IAuth::KEY_USERNAME=>$uname, IAuth::KEY_TOKEN=>$token])) {
-            $this->user = $this->auth->getUser();
-            return true;
+        if ($this->useCookie) {
+            $uname = getCookie()->get($this->cookieUserKey);
+            $token = getCookie()->get($this->cookieTokenKey);
+            if ($uname && $token && $this->auth->verify([IAuth::KEY_USERNAME => $uname, IAuth::KEY_TOKEN => $token])) {
+                return true;
+            }
         }
         return false;
     }
@@ -124,7 +121,8 @@ class RBACAuth
     public function isSuperuser()
     {
         if ($this->isLogin()) {
-            $su = isset($this->user->getUser()[IUser::FIELD_SUPERUSER]) ? $this->user->getUser()[IUser::FIELD_SUPERUSER] : false;
+            $u = $this->getAuth()->getUser()->getUserArray();
+            $su = isset($u[IUser::FIELD_SUPERUSER]) ? $u[IUser::FIELD_SUPERUSER] : false;
             if ($su) {
                 return true;
             }
@@ -142,9 +140,18 @@ class RBACAuth
      */
     public function signup($user)
     {
-        $this->user = $this->auth->signUp($user);
+        $u = $this->auth->signUp($user);
         $this->save();
-        return $this->user;
+        return $u;
+    }
+
+    /**
+     * @param $user
+     * @return bool
+     */
+    public function verify($user)
+    {
+        return $this->auth->verify($user);
     }
 
     /**
@@ -153,9 +160,9 @@ class RBACAuth
      */
     public function login($user)
     {
-        $this->user = $this->auth->signIn($user);
+        $u = $this->auth->signIn($user);
         $this->save();
-        return $this->user;
+        return $u;
     }
 
     /**
@@ -163,10 +170,9 @@ class RBACAuth
      */
     public function logout()
     {
-        if ($this->user) {
-            $this->auth->signOut($this->user->getUser());
+        if ($this->auth->getUser()) {
+            $this->auth->signOut($this->auth->getUser()->getUserArray());
         }
-        $this->user = null;
         $this->deleteCookie();
     }
 
@@ -176,17 +182,9 @@ class RBACAuth
     public function getUser()
     {
         if ($this->isLogin()) {
-            return $this->user;
+            return $this->auth->getUser();
         }
         return null;
-    }
-
-    /**
-     * @param IUser $user
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
     }
 
     /**
@@ -292,7 +290,7 @@ class RBACAuth
      */
     public function isUseCookie()
     {
-        return $this->use_cookie;
+        return $this->useCookie;
     }
 
     /**
@@ -301,7 +299,7 @@ class RBACAuth
      */
     public function setUseCookie($use_cookie)
     {
-        $this->use_cookie = $use_cookie;
+        $this->useCookie = $use_cookie;
         return $this;
     }
 
@@ -329,11 +327,10 @@ class RBACAuth
     private function getRoles()
     {
         $r = [];
-        if ($this->user) {
-            $u = $this->user->getUser();
-            $r = isset($u[IUser::FIELD_ROLES]) ? $u[IUser::FIELD_ROLES] : '';
-            if ($r && !is_array($r)) {
-                $r = explode(',', $r);
+        $u = $this->auth->getUser();
+        if ($u) {
+            if ($u instanceof NormalUser) {
+                $r = $u->getRoles();
             }
         }
         if (!$r) {
@@ -347,7 +344,7 @@ class RBACAuth
      */
     private function loadConfig(array $arr)
     {
-        $this->use_cookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
+        $this->useCookie = isset($arr['cookie']) ? boolval($arr['cookie']) : false;
         if (isset($arr['rbac']) && is_array($arr['rbac'])) {
             $this->rbac = $arr['rbac'];
         }

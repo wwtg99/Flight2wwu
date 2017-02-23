@@ -55,6 +55,7 @@ class UserController extends BaseController
      */
     public static function edit()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             self::postEdit();
         } else {
@@ -67,6 +68,7 @@ class UserController extends BaseController
     {
         $state = getCSRF()->generateCSRFCode();
         $u = getUser();
+        getAssets()->addLibrary(['bootstrap-dialog']);
         self::getResponse()->setResType('view')
             ->setHeader(DefaultController::$defaultViewHeaders)
             ->setView('auth/user_edit')
@@ -84,17 +86,16 @@ class UserController extends BaseController
         $u = getDataPool()->getConnection('auth')->getMapper('User');
         $emailnum = $u->count(null, ['AND'=>[IUser::FIELD_EMAIL=>$email]]);
         if (!CSRFCode::check()) {
-            $msg = Message::getMessage(25);
+            $msg = Message::messageList(25);
         } elseif ($emailnum > 1) {
-            $msg = Message::getMessage(29);
+            $msg = Message::messageList(29);
         } elseif (getAuth()->getUser() && getAuth()->getUser()->changeInfo($d)) {
-            $msg = Message::getMessage(0, 'update successfully', 'success');
+            getAuth()->getAuth()->saveCache();
+            $msg = new Message(0, 'update successfully', 'success');
         } else {
-            $msg = Message::getMessage(13);
+            $msg = Message::messageList(13);
         }
-        getOValue()->addOldOnce('msg', $msg);
-        $rpath = U(getConfig()->get('defined_routes.user_edit'));
-        \Flight::redirect($rpath);
+        return self::getResponse()->setResType('json')->setData(TA($msg->toApiArray()))->send();
     }
 
 }

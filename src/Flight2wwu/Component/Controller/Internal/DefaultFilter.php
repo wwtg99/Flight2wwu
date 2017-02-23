@@ -48,10 +48,7 @@ class DefaultFilter
         }
         //login by access_token
         if ($token) {
-            getAuth()->getAuth()->tokenTtl = 0;
-            getAuth()->setUseCookie(false);
-            $user = getAuth()->login([IAuth::KEY_TOKEN => $token]);
-            getAuth()->setUseCookie(true);
+            getAuth()->verify([IAuth::KEY_TOKEN => $token]);
         }
         // get user
         if (getAuth()->isLogin()) {
@@ -61,13 +58,13 @@ class DefaultFilter
         }
         $logger = getLog();
         // log access
-        if (!getAuth()->accessPath($path)->access($method)) {
+        if (getAuth()->isSuperuser() || getAuth()->accessPath($path)->access($method)) {
+            $logger->changeLogger('access')->info("Access from $ip by $username for $path method $method");
+            $logger->changeLogger('main');
+        } else {
             $logger->changeLogger('access')->info("forbidden from $ip by $username for $path method $method");
             $logger->changeLogger('main');
             return false;
-        } else {
-            $logger->changeLogger('access')->info("Access from $ip by $username for $path method $method");
-            $logger->changeLogger('main');
         }
         return true;
     }

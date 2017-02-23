@@ -15,89 +15,19 @@ use Wwtg99\App\Model\Message;
 use Wwtg99\Flight2wwu\Component\Controller\BaseController;
 use Wwtg99\PgAuth\Auth\IAuth;
 use Wwtg99\PgAuth\Auth\IUser;
+use Wwtg99\PgAuth\Utils\AppUtils;
+use Wwtg99\PgAuth\Utils\OAuthUtils;
 
 class DefaultAuthorizeController extends BaseController
 {
 
     public function authorize()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
-            $username = self::getRequest()->getInput('username');
-            $pwd = self::getRequest()->getInput('password');
-            $scope = self::getRequest()->getInput('scope');
-            $cid = self::getRequest()->getInput('client_id');
-            $state = self::getRequest()->getInput('state');
-            $redirect_uri = self::getRequest()->getInput('redirect_uri');
-            if (!$cid) {
-                $msg = Message::getMessage(1008);
-            } elseif (!$redirect_uri) {
-                $msg = Message::getMessage(1010);
-            } else {
-                if (!$username || !$pwd) {
-                    $msg = Message::getMessage(21);
-                } else {
-                    $u = [IAuth::KEY_USERNAME=>$username, IAuth::KEY_PASSWORD=>$pwd];
-                    $auth = UserFactory::getOAuthServer();
-                    //generate code
-                    $code = $auth->getCode($cid, $redirect_uri, $u);
-                    if ($code) {
-                        $q = ['code'=>$code];
-                        if ($state) {
-                            $q['state'] = $state;
-                        }
-                        $uri = self::createUri($redirect_uri, $q);
-                        \Flight::redirect($uri);
-                        return false;
-                    } else {
-                        $msg = Message::getMessage(21, getAuth()->getAuth()->getMessage(), 'danger');
-                        getOValue()->addOldOnce('msg', $msg);
-                    }
-                }
-            }
-            getOValue()->addOldOnce('msg', $msg);
-            $q = [
-                'response_type'=>'code',
-                'client_id'=>$cid,
-                'redirect_uri'=>$redirect_uri
-            ];
-            if ($state) {
-                $q['state'] = $state;
-            }
-            if ($scope) {
-                $q['scope'] = $scope;
-            }
-            $uri = '/authorize/authorize';
-            $uri = self::createUri($uri, $q);
-            \Flight::redirect($uri);
-            return false;
+            return $this->postAuthorize();
         } else {
-            $rtype = self::getRequest()->getInput('response_type');
-            $cid = self::getRequest()->getInput('client_id');
-            $rurl = self::getRequest()->getInput('redirect_uri');
-            $state = self::getRequest()->getInput('state');
-            $scope = self::getRequest()->getInput('scope');
-            if (!$rtype || $rtype != 'code') {
-                $redata = Message::messageList(1004)->toApiArray();
-            } elseif (!$cid) {
-                $redata = Message::messageList(1008)->toApiArray();
-            } elseif (!$rurl) {
-                $redata = Message::messageList(1010)->toApiArray();
-            } else {
-                $appmodel = getDataPool()->getConnection('auth')->getMapper('App');
-                $app = $appmodel->getApp($cid, $rurl);
-                if ($app) {
-                    $redata = ['app'=>$app, 'redirect_uri'=>$rurl];
-                    if ($state) {
-                        $redata['state'] = $state;
-                    }
-                    if ($scope) {
-                        $redata['scope'] = $scope;
-                    }
-                } else {
-                    $redata = Message::messageList(1005)->toApiArray();
-                }
-            }
-            return self::getResponse()->setHeader(DefaultController::$defaultViewHeaders)->setResType('view')->setView('oauth/login')->setData(TA($redata))->send();
+            return $this->getAuthorize();
         }
     }
 
@@ -108,35 +38,144 @@ class DefaultAuthorizeController extends BaseController
         $code = self::getRequest()->getInput('code');
         $state = self::getRequest()->getInput('state');
         if (!$gtype || $gtype != 'authorization_code') {
-            $redata = Message::messageList(1006)->toApiArray();
+            $msg = Message::messageList(1006);
+            $redata = $msg->toApiArray();
         } elseif (!$cset) {
-            $redata = Message::messageList(1011)->toApiArray();
+            $msg = Message::messageList(1011);
+            $redata = $msg->toApiArray();
         } elseif (!$code) {
-            $redata = Message::messageList(1002)->toApiArray();
+            $msg = Message::messageList(1002);
+            $redata = $msg->toApiArray();
         } else {
             //verify code
-            $u = [UserFactory::KEY_CODE=>$code, UserFactory::KEY_APP_SECRET=>$cset];
-            $auth = UserFactory::getOAuthServer();
-            $user = $auth->signIn($u);
+            $oauth = new OAuthUtils(getConfig()->get('auth'));
+            $appu = new AppUtils(getDataPool()->getConnection('auth'));
+            $user = $oauth->verifyCode($code);
             if ($user) {
-                getAuth()->setUser($user);
-                $us = $user->getUser();
-                if (isset($us[IUser::FIELD_TOKEN])) {
-                    $token = $us[IUser::FIELD_TOKEN];
-                    $ttl = getConfig()->get('auth.token_ttl');
-                    $redata = ['access_token'=>$token, 'expires_in'=>time() + $ttl];
-                    if ($state) {
-                        $redata['state'] = $state;
+                $cid = $user[AppUtils::FIELD_APP_ID];
+                if ($appu->verifySecret($cid, $cset)) {
+                    if (isset($user[IUser::FIELD_TOKEN])) {
+                        $token = $user[IUser::FIELD_TOKEN];
+                        $ttl = getConfig()->get('auth.token_ttl');
+                        $redata = ['access_token'=>$token, 'expires_in'=>time() + $ttl];
+                        if ($state) {
+                            $redata['state'] = $state;
+                        }
+                    } else {
+                        $msg = Message::messageList(1001);
+                        $redata = $msg->toApiArray();
                     }
                 } else {
-                    $redata = New Message(21, getAuth()->getAuth()->getMessage(), 'danger');
-                    $redata = $redata->toApiArray();
+                    $msg = Message::messageList(1007);
+                    $redata = $msg->toApiArray();
                 }
             } else {
-                $redata = Message::messageList(1002)->toApiArray();
+                $msg = Message::messageList(1002);
+                $redata = $msg->toApiArray();
             }
         }
         self::getResponse()->setHeader(DefaultController::$defaultApiHeaders)->setResType('json')->setData(TA($redata))->send();
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAuthorize()
+    {
+        $rtype = self::getRequest()->getInput('response_type');
+        $cid = self::getRequest()->getInput('client_id');
+        $rurl = self::getRequest()->getInput('redirect_uri');
+        $state = self::getRequest()->getInput('state');
+        $scope = self::getRequest()->getInput('scope');
+        if (!$rtype || $rtype != 'code') {
+            $msg = Message::messageList(1004);
+            $redata = $msg->toArray();
+        } elseif (!$cid) {
+            $msg = Message::messageList(1008);
+            $redata = $msg->toArray();
+        } elseif (!$rurl) {
+            $msg = Message::messageList(1010);
+            $redata = $msg->toArray();
+        } else {
+            //verify app
+            $appu = new AppUtils(getDataPool()->getConnection('auth'));
+            $app = $appu->verifyAppIdUri($cid, $rurl);
+            if ($app) {
+                $redata = ['app'=>$app, 'redirect_uri'=>$rurl];
+                if ($state) {
+                    $redata['state'] = $state;
+                }
+                if ($scope) {
+                    $redata['scope'] = $scope;
+                }
+            } else {
+                $msg = Message::messageList(1005);
+                $redata = $msg->toArray();
+            }
+        }
+        return self::getResponse()
+            ->setHeader(DefaultController::$defaultViewHeaders)
+            ->setResType('view')
+            ->setView('oauth/login')
+            ->setData(TA($redata))
+            ->send();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function postAuthorize()
+    {
+        $username = self::getRequest()->getInput('username');
+        $pwd = self::getRequest()->getInput('password');
+        $scope = self::getRequest()->getInput('scope');
+        $cid = self::getRequest()->getInput('client_id');
+        $state = self::getRequest()->getInput('state');
+        $redirect_uri = self::getRequest()->getInput('redirect_uri');
+        if (!$cid) {
+            $msg = Message::messageList(1008);
+        } elseif (!$redirect_uri) {
+            $msg = Message::messageList(1010);
+        } elseif (!$username || !$pwd) {
+            $msg = Message::messageList(21);
+        } else {
+            $u = [IAuth::KEY_USERNAME=>$username, IAuth::KEY_PASSWORD=>$pwd];
+            $oauth = new OAuthUtils(getConfig()->get('auth'));
+            $user = getAuth()->login($u);
+            if ($user) {
+                //generate code
+                $code = $oauth->generateCode($user->getUserArray(), $cid, $redirect_uri);
+                if ($code) {
+                    $q = ['code' => $code];
+                    if ($state) {
+                        $q['state'] = $state;
+                    }
+                    $uri = $this->createUri($redirect_uri, $q);
+                    \Flight::redirect($uri);
+                    return false;
+                } else {
+                    $msg = Message::messageList(1001);
+                }
+            } else {
+                $msg = Message::messageList(21);
+            }
+        }
+        getOValue()->addOldOnce('msg', $msg->toArray());
+        $q = [
+            'response_type'=>'code',
+            'client_id'=>$cid,
+            'redirect_uri'=>$redirect_uri
+        ];
+        if ($state) {
+            $q['state'] = $state;
+        }
+        if ($scope) {
+            $q['scope'] = $scope;
+        }
+        $uri = '/authorize/authorize';
+        $uri = $this->createUri($uri, $q);
+        \Flight::redirect($uri);
         return false;
     }
 

@@ -31,12 +31,18 @@ class DefaultAuthController extends BaseController
     public $formatEmailFrom = ['test@email.com'=>'no-reply'];
 
     /**
+     * @var string
+     */
+    protected $loginRedirectTo = '/';
+
+    /**
      * Login
      *
      * @return bool
      */
     public function login()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             return $this->postLogin();
         } else {
@@ -61,6 +67,7 @@ class DefaultAuthController extends BaseController
      */
     public function password()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             return $this->postChangePwd();
         } else {
@@ -75,6 +82,7 @@ class DefaultAuthController extends BaseController
      */
     public function signup()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             return $this->postSignup();
         } else {
@@ -89,6 +97,7 @@ class DefaultAuthController extends BaseController
      */
     public function forget_password()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             return $this->postForgetPassword();
         } else {
@@ -103,6 +112,7 @@ class DefaultAuthController extends BaseController
      */
     public function forget_change_password()
     {
+        session_start();
         if (self::getRequest()->checkMethod('POST')) {
             return $this->postForgetChangePassword();
         } else {
@@ -117,6 +127,7 @@ class DefaultAuthController extends BaseController
      */
     public function update_captcha()
     {
+        session_start();
         $builder = getCaptcha()->generateCaptcha();
         echo $builder->inline();
         return false;
@@ -127,11 +138,11 @@ class DefaultAuthController extends BaseController
     protected function getLogin()
     {
         if (getAuth()->isLogin()) {
-            $path = '/';
-            \Flight::redirect($path);
+            \Flight::redirect($this->loginRedirectTo);
         } else {
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
+            getAssets()->addLibrary(['bootstrap-dialog']);
             self::getResponse()
                 ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setResType('view')
@@ -150,34 +161,29 @@ class DefaultAuthController extends BaseController
         getOValue()->addOld('login_username', $name);
         $phrase = $req->getInput('captcha');
         if (!CSRFCode::check()) {
-            $msg = Message::getMessage(25);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.login'));
-            \Flight::redirect($rpath);
-            return false;
+            $msg = Message::messageList(25);
+            $d = $msg->toApiArray();
         } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
-            $msg = Message::getMessage(27);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.login'));
-            \Flight::redirect($rpath);
-            return false;
-        }
-        $redirectPath = '/';
-        $u = [IAuth::KEY_USERNAME=>$name, IAuth::KEY_PASSWORD=>$pwd];
-        $user = getAuth()->login($u);
-        if ($user) {
-            $path = getOValue()->getOldOnce('last_path');
-            if ($path) {
-                $redirectPath = $path;
-            }
-            \Flight::redirect($redirectPath);
+            $msg = Message::messageList(27);
+            $d = $msg->toApiArray();
         } else {
-            $msg = Message::getMessage(21);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.login'));
-            \Flight::redirect($rpath);
+            $redirectPath = $this->loginRedirectTo;
+            $u = [IAuth::KEY_USERNAME => $name, IAuth::KEY_PASSWORD => $pwd];
+            $user = getAuth()->login($u);
+            if ($user) {
+                $msg = Message::messageList(0);
+                $d = $msg->toApiArray();
+                $path = getOValue()->getOldOnce('last_path');
+                if ($path) {
+                    $redirectPath = $path;
+                }
+                $d['redirect_uri'] = $redirectPath;
+            } else {
+                $msg = Message::messageList(21);
+                $d = $msg->toApiArray();
+            }
         }
-        return false;
+        return self::getResponse()->setResType('json')->setData(TA($d))->send();
     }
 
     protected function getLogout()
@@ -192,6 +198,7 @@ class DefaultAuthController extends BaseController
     {
         if (getAuth()->isLogin()) {
             $state = getCSRF()->generateCSRFCode();
+            getAssets()->addLibrary(['bootstrap-dialog']);
             self::getResponse()->setResType('view')
                 ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/change_pwd')
@@ -209,37 +216,38 @@ class DefaultAuthController extends BaseController
         $new1 = self::getRequest()->getPost('new1');
         $new2 = self::getRequest()->getPost('new2');
         if (!CSRFCode::check()) {
-            $msg = Message::getMessage(25);
+            $msg = Message::messageList(25);
+            $d = $msg->toApiArray();
         } elseif (!$new1 || !$new2){
-            $msg = Message::getMessage(15);
+            $msg = Message::messageList(15);
+            $d = $msg->toApiArray();
         } elseif ($new1 != $new2) {
-            $msg = Message::getMessage(22);
+            $msg = Message::messageList(22);
+            $d = $msg->toApiArray();
         } else {
             if (getAuth()->getAuth()->verify([IAuth::KEY_USERNAME=>getUser(IUser::FIELD_USER_NAME), IAuth::KEY_PASSWORD=>$old])) {
                 $user = getAuth()->getUser();
                 if ($user && $user->changePassword($new1)) {
-                    $msg = Message::getMessage(23);
+                    $msg = Message::messageList(23);
                 } else {
-                    $msg = Message::getMessage(24);
+                    $msg = Message::messageList(24);
                 }
             } else {
-                $msg = Message::getMessage(24);
+                $msg = Message::messageList(24);
             }
+            $d = $msg->toApiArray();
         }
-        getOValue()->addOldOnce('msg', $msg);
-        $rpath = U(getConfig()->get('defined_routes.change_password'));
-        \Flight::redirect($rpath);
-        return false;
+        return self::getResponse()->setResType('json')->setData(TA($d))->send();
     }
 
     protected function getSignup()
     {
         if (getAuth()->isLogin()) {
-            $path = '/';
-            \Flight::redirect($path);
+            \Flight::redirect($this->loginRedirectTo);
         } else {
             $state = getCSRF()->generateCSRFCode();
             $builder = getCaptcha()->generateCaptcha();
+            getAssets()->addLibrary(['bootstrap-dialog']);
             self::getResponse()->setResType('view')
                 ->setHeader(DefaultController::$defaultViewHeaders)
                 ->setView('auth/signup')
@@ -258,63 +266,44 @@ class DefaultAuthController extends BaseController
         $phrase = self::getRequest()->getInput('captcha');
         getOValue()->addOld('signup_username', $name);
         getOValue()->addOld('signup_email', $email);
-        if (!CSRFCode::check()) {
-            $msg = Message::getMessage(25);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
-        } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
-            $msg = Message::getMessage(27);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
-        } elseif ($pwd != $pwd2) {
-            $msg = Message::getMessage(22);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
-        } elseif (preg_match('/^[_\w]+$/', $name) < 1) {
-            $msg = Message::getMessage(30);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
-        }
-        //check exists
         $u = getDataPool()->getConnection('auth')->getMapper('User');
         $uexist = $u->has([IUser::FIELD_USER_NAME=>$name]);
         $emailexist = $u->has([IUser::FIELD_EMAIL=>$email]);
-        if ($uexist) {
-            $msg = Message::getMessage(28);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
+        if (!CSRFCode::check()) {
+            $msg = Message::messageList(25);
+            $d = $msg->toApiArray();
+        } elseif (!getCaptcha()->verifyCaptcha($phrase)) {
+            $msg = Message::messageList(27);
+            $d = $msg->toApiArray();
+        } elseif ($pwd != $pwd2) {
+            $msg = Message::messageList(22);
+            $d = $msg->toApiArray();
+        } elseif (preg_match('/^[_\w]+$/', $name) < 1) {
+            $msg = Message::messageList(30);
+            $d = $msg->toApiArray();
+        } elseif ($uexist) {
+            $msg = Message::messageList(28);
+            $d = $msg->toApiArray();
         } elseif ($emailexist) {
-            $msg = Message::getMessage(29);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
-            return false;
-        }
-        $redirectPath = '/';
-        $defaultRoles = 'common_user';
-        $u = [IUser::FIELD_USER_NAME=>$name, IUser::FIELD_PASSWORD=>$pwd, IUser::FIELD_EMAIL=>$email, IUser::FIELD_ROLES=>$defaultRoles];
-        $user = getAuth()->signup($u);
-        if ($user) {
-            getOValue()->deleteOld('signup_username');
-            getOValue()->deleteOld('signup_email');
-            \Flight::redirect($redirectPath);
+            $msg = Message::messageList(29);
+            $d = $msg->toApiArray();
         } else {
-            $msg = Message::getMessage(26);
-            getOValue()->addOldOnce('msg', $msg);
-            $rpath = U(getConfig()->get('defined_routes.signup'));
-            \Flight::redirect($rpath);
+            $redirectPath = $this->loginRedirectTo;
+            $defaultRoles = 'common_user';
+            $u = [IUser::FIELD_USER_NAME=>$name, IUser::FIELD_PASSWORD=>$pwd, IUser::FIELD_EMAIL=>$email, IUser::FIELD_ROLES=>$defaultRoles];
+            $user = getAuth()->signup($u);
+            if ($user) {
+                getOValue()->deleteOld('signup_username');
+                getOValue()->deleteOld('signup_email');
+                $msg = Message::messageList(0);
+                $d = $msg->toApiArray();
+                $d['redirect_uri'] = $redirectPath;
+            } else {
+                $msg = Message::messageList(26);
+                $d = $msg->toApiArray();
+            }
         }
-        return false;
+        return self::getResponse()->setResType('json')->setData(TA($d))->send();
     }
 
     protected function getForgetPassword()

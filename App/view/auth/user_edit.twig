@@ -26,10 +26,6 @@
                 </div>
             </div>
             <div class="col-md-6">
-                {% set msg = old('msg') %}
-                {% if msg %}
-                    <div class="alert alert-{{ msg.type }}">{{ msg.message|T }}</div>
-                {% endif %}
                 <form class="form" role="form" id="form_user" method="post">
                     <div class="form-group">
                         <label class="control-label" for="txt_label">{{ 'userlabel'|T }}</label>
@@ -44,7 +40,7 @@
                         <input class="form-control" name="descr" type="text" id="txt_descr" value="{{ user.descr }}">
                     </div>
                     <input type="hidden" name="csrf_code" value="{{ csrf_code }}">
-                    <button class="btn btn-primary" type="submit">{{ 'Submit'|T }}</button>
+                    <button class="btn btn-primary" type="button" id="submit">{{ 'Submit'|T }}</button>
                     <button class="btn btn-default" type="reset">{{ 'Reset'|T }}</button>
                     <a href="{{ getConfig('base_url') }}" class="btn btn-default" type="button">{{ 'Return'|T }}</a>
                 </form>
@@ -52,7 +48,33 @@
         </div>
         <script>
             function init_center() {
-
+                $('#form_user').bindEnter(function() {
+                    $("#submit").click();
+                });
+                $('#submit').click(function() {
+                    var fd = new FormData(document.getElementById('form_user'));
+                    $.ajax({
+                        url: '{{ getConfig('defined_routes.user_edit')|U }}',
+                        type: 'POST',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            console.log(data);
+                            var url = '/';
+                            if (data.code == 0) {
+                                BootstrapDialog.alert(data.error, function() {
+                                    location.href = url;
+                                });
+                            } else {
+                                BootstrapDialog.alert(data.error);
+                            }
+                        },
+                        error: function(data) {
+                            BootstrapDialog.alert('{{ 'Error'|T }}');
+                        }
+                    });
+                });
             }
         </script>
     </div>

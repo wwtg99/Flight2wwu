@@ -72,10 +72,22 @@ if (isDebug()) {
     }
 });
 
-/**
- * Start session
- */
-session_start();
+//forbidden
+Flight::map('forbidden', function() {
+//    \Flight::halt(403, 'Forbidden');
+    $res = \Wwtg99\Flight2wwu\Common\Response::get()->setResCode(403);
+    if (\Wwtg99\Flight2wwu\Common\Request::get()->isAjax()) {
+        $msg = new \Wwtg99\App\Model\Message(403, 'forbidden', 'info');
+        return $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultApiHeaders)->setResType('json')->setData($msg->toApiArray())->send();
+    } else {
+        return $res->setHeader(\Wwtg99\App\Controller\DefaultController::$defaultViewHeaders)->setResType('view')->setView('error/403')->setData(['title'=>'authentication failed'])->send();
+    }
+});
+
+//method not allowed
+Flight::map('methodNotAllowed', function() {
+    \Flight::halt(405, 'Method not allowed');
+});
 
 /**
  * Other routes
@@ -110,6 +122,7 @@ Flight::route('/ajax_json', function () {
     Flight::json($re);
 });
 Flight::route('/unset', function() {
+    session_start();
     session_destroy();
     foreach ($_COOKIE as $k => $v) {
         setcookie($k, '', time() - 1);

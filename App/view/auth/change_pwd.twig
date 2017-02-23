@@ -27,15 +27,9 @@
                     </div>
                     <input type="hidden" name="csrf_code" value="{{ csrf_code }}">
                     <div class="form-group text-center">
-                        <button class="btn btn-primary" type="submit" id="submit" tabindex="3">{{ 'Submit'|T }}</button>
+                        <button class="btn btn-primary" type="button" id="submit" tabindex="3">{{ 'Submit'|T }}</button>
                         <button class="btn btn-default" type="reset" id="reset" tabindex="4">{{ 'Reset'|T }}</button>
                     </div>
-                    {% set msg = old('msg') %}
-                    {% if msg %}
-                        <div class="alert alert-{{ msg.type }} text-center">
-                            {{ msg.message|T }}
-                        </div>
-                    {% endif %}
                     <div class="text-center" id="sec"></div>
                 </form>
             </div>
@@ -43,9 +37,32 @@
     </div>
     <script>
         function init_center() {
-            {% if msg is defined and msg.type == 'success' %}
-            $('#sec').redirectAfter('{{ getConfig('base_url') }}', 3);
-            {% endif %}
+            $('#form_pwd').bindEnter(function() {
+                $("#submit").click();
+            });
+            $('#submit').click(function() {
+                var fd = new FormData(document.getElementById('form_pwd'));
+                $.ajax({
+                    url: '{{ getConfig('defined_routes.change_password')|U }}',
+                    type: 'POST',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var url = '/';
+                        if (data.code == 23) {
+                            BootstrapDialog.alert(data.error, function() {
+                                location.href = url;
+                            });
+                        } else {
+                            BootstrapDialog.alert(data.error);
+                        }
+                    },
+                    error: function(data) {
+                        BootstrapDialog.alert('{{ 'Error'|T }}');
+                    }
+                });
+            });
         }
     </script>
 {% endblock %}

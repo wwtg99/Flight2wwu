@@ -7,13 +7,14 @@
  */
 
 namespace Wwtg99\Flight2wwu\Component\Database;
+use Medoo\Medoo;
 
 
 /**
  * Class MedooDB
  * @package Flight2wwu\Component\Database
  */
-class MedooDB extends \medoo
+class MedooDB extends Medoo
 {
 
     /**

@@ -31,7 +31,7 @@ class CSRFCode
      */
     public function __construct($conf = [])
     {
-        $this->ttl = isset($conf['ttl']) ? $conf['ttl'] : 600;
+        $this->ttl = isset($conf['csrf_ttl']) ? $conf['csrf_ttl'] : 600;
     }
 
     /**
@@ -44,7 +44,7 @@ class CSRFCode
         $str = FormatUtils::randStr(10);
         $tm = time();
         $code = md5("CSRF_$ip;$url;$str;$tm");
-        getCache()->set($code, 1, $this->ttl);
+        getSession()->set($code, 1, $this->ttl);
         return $code;
     }
 
@@ -55,7 +55,7 @@ class CSRFCode
     public function verifyCSRFCode($code)
     {
         if ($code) {
-            $v = getCache()->get($code);
+            $v = getSession()->get($code);
             if ($v === 1) {
                 return true;
             }
@@ -83,6 +83,7 @@ class CSRFCode
     {
         $req = Request::get();
         $csrf_code = $req->getInput(self::$key);
+        getLog()->warning('====' . $csrf_code);
         $csrf = new CSRFCode();
         return $csrf->verifyCSRFCode($csrf_code);
     }

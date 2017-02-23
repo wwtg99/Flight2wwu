@@ -20,12 +20,14 @@ class Captcha
      */
     protected $ttl = 600;
 
+    protected $prefix = 'captcha_';
+
     /**
      * Captcha constructor.
      */
     public function __construct()
     {
-        $this->ttl = isset($conf['ttl']) ? $conf['ttl'] : 600;
+        $this->ttl = isset($conf['captcha_ttl']) ? $conf['captcha_ttl'] : 600;
     }
 
     /**
@@ -36,8 +38,8 @@ class Captcha
         $ip = Request::get()->getRequest()->ip;
         $builder = new CaptchaBuilder();
         $builder->build();
-        $key = md5($builder->getPhrase() . $ip);
-        getCache()->set($key, $builder->getPhrase(), $this->ttl);
+        $key = $this->prefix . $ip;
+        getSession()->set($key, $builder->getPhrase(), $this->ttl);
         return $builder;
     }
 
@@ -49,8 +51,8 @@ class Captcha
     {
         if ($phrase) {
             $ip = Request::get()->getRequest()->ip;
-            $key = md5($phrase . $ip);
-            $v = getCache()->get($key);
+            $key = $this->prefix . $ip;
+            $v = getSession()->get($key);
             $b = CaptchaBuilder::create($v);
             if ($b->testPhrase($phrase)) {
                 return true;
